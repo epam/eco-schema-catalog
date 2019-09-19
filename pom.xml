@@ -9,7 +9,7 @@
 
     <groupId>com.epam.eco.schemacatalog</groupId>
     <artifactId>schema-catalog-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <name>Eco Schema Catalog</name>
     <packaging>pom</packaging>
@@ -48,7 +48,7 @@
         <connection>scm:git:git@github.com:epam/eco-schema-catalog.git</connection>
         <developerConnection>scm:git:git@github.com:epam/eco-schema-catalog.git</developerConnection>
         <url>https://github.com/epam/eco-schema-catalog</url>
-        <tag>v0.1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
