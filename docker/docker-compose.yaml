@@ -1,0 +1,34 @@
+version: '3.5'
+services:
+
+  schema-catalog-rest:
+    build:
+      context: '../'
+      dockerfile: './rest/Dockerfile'
+    image: 'epam/schema-catalog-rest:latest'
+    hostname: 'schema-catalog-rest'
+    environment:
+      - 'KAFKA_SERVERS_URL=${KAFKA_SERVERS_URL:-}'
+      - 'SCHEMA_REGISTRY_URL=${SCHEMA_REGISTRY_URL:-}'
+      - 'JAVA_OPTS=${JAVA_OPTS:-}'
+    volumes:
+      - './schema-catalog-rest.properties:/app/config/application.properties'
+    ports:
+      - '8082:8082'
+    restart: 'on-failure'
+
+  schema-catalog-ui:
+    build: '../ui'
+    image: 'epam/schema-catalog-ui:latest'
+    hostname: 'schema-catalog-ui'
+    depends_on:
+      - 'schema-catalog-rest'
+    environment:
+      - 'PORT=8282'
+      - 'BASE_HREF='
+      - 'NODE_ENV=${NODE_ENV:-development}'
+      - 'GA_UA='
+      - 'TARGET_API=http://schema-catalog-rest:8082'
+    ports:
+      - '8282:8282'
+    restart: 'on-failure'

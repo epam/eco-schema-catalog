@@ -1,0 +1,37 @@
+{
+	"type": "record",
+	"name": "Address",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "name",
+			"type": "string"
+		},
+		{
+			"name": "city",
+			"type": "string"
+		},
+		{
+			"name": "state",
+			"type": "string"
+		},
+		{
+			"name": "firstLine",
+			"type": "string"
+		},
+		{
+			"name": "secondLine",
+			"type": "string",
+			"default": "N/A"
+		},
+		{
+			"name": "zip",
+			"type": "string",
+			"default": "N/A"
+		}
+	]
+}

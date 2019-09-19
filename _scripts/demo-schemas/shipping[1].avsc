@@ -1,0 +1,36 @@
+{
+	"type": "record",
+	"name": "Shipping",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "addressId",
+			"type": "int"
+		},
+		{
+			"name": "invoiceId",
+			"type": "int"
+		},
+		{
+			"name": "orderId",
+			"type": "int"
+		},
+		{
+			"name": "method",
+			"type": "string"
+		},
+		{
+			"name": "state",
+			"type": "string"
+		},
+		{
+			"name": "date",
+			"type": "int",
+			"logicalType": "date"
+		}
+	]
+}

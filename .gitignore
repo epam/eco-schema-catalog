@@ -1,0 +1,16 @@
+.settings
+target
+.classpath
+.project
+.metadataABC
+.recommenders
+
+.idea
+*.iml
+
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+.mvn/wrapper/maven-wrapper.jar
+
+/**/node_modules/
+npm-debug.log*
+yarn-error.log*

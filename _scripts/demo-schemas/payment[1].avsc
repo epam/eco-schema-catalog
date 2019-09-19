@@ -1,0 +1,34 @@
+{
+	"type": "record",
+	"name": "Payment",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "creditCardId",
+			"type": "int"
+		},
+		{
+			"name": "price",
+			"type": "string",
+			"doc": "For example, '100 USD'"
+		},
+		{
+			"name": "state",
+			"type": "string"
+		},
+		{
+			"name": "createdAt",
+			"type": "int",
+			"logicalType": "date"
+		},
+		{
+			"name": "lastModifiedAt",
+			"type": "int",
+			"logicalType": "date"
+		}
+	]
+}

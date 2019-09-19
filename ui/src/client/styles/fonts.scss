@@ -1,0 +1,85 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+@font-face {
+	font-family: 'Roboto Condensed Regualar';
+	src: url(./fonts/font-roboto-condesed/RobotoCondensed-Regular.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Oswald Regular';
+	src: url(./fonts/font-oswald/oswald-regular.eot);
+	src: url(./fonts/font-oswald/oswald-regular.eot?#iefix) format('embedded-opentype'), url(./fonts/font-oswald/oswald-regular.woff) format('woff'), url(./fonts/font-oswald/oswald-regular.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Oswald Bold';
+	src: url(./fonts/font-oswald/oswald-bold.eot);
+	src: url(./fonts/font-oswald/oswald-bold.eot?#iefix) format('embedded-opentype'), url(./fonts/font-oswald/oswald-bold.woff) format('woff'), url(./fonts/font-oswald/oswald-bold.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Oswald Light';
+	src: url(./fonts/font-oswald/oswald-light.eot);
+	src: url(./fonts/font-oswald/oswald-light.eot?#iefix) format('embedded-opentype'), url(./fonts/font-oswald/oswald-light.woff) format('woff'), url(./fonts/font-oswald/oswald-light.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro Regular';
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-regular.eot);
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-regular.eot?#iefix) format('embedded-opentype'), url(./fonts/font-sourcesanspro/sourcesanspro-regular.woff) format('woff'), url(./fonts/font-sourcesanspro/sourcesanspro-regular.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro Light';
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-light.eot);
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-light.eot?#iefix) format('embedded-opentype'), url(./fonts/font-sourcesanspro/sourcesanspro-light.woff) format('woff'), url(./fonts/font-sourcesanspro/sourcesanspro-light.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro Bold';
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-bold.eot);
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-bold.eot?#iefix) format('embedded-opentype'), url(./fonts/font-sourcesanspro/sourcesanspro-bold.woff) format('woff'), url(./fonts/font-sourcesanspro/sourcesanspro-bold.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro Semibold';
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-semibold.eot);
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-semibold.eot?#iefix) format('embedded-opentype'), url(./fonts/font-sourcesanspro/sourcesanspro-semibold.woff) format('woff'), url(./fonts/font-sourcesanspro/sourcesanspro-semibold.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro Italic';
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-it.eot);
+	src: url(./fonts/font-sourcesanspro/sourcesanspro-it.eot?#iefix) format('embedded-opentype'), url(./fonts/font-sourcesanspro/sourcesanspro-it.woff) format('woff'), url(./fonts/font-sourcesanspro/sourcesanspro-it.ttf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}

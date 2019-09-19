@@ -1,0 +1,29 @@
+{
+	"type": "record",
+	"name": "UserAccount",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "login",
+			"type": "string"
+		},
+		{
+			"name": "password",
+			"type": "string"
+		},
+		{
+			"name": "createdAt",
+			"type": "int",
+			"logicalType": "date"
+		},
+		{
+			"name": "lastModifiedAt",
+			"type": "int",
+			"logicalType": "date"
+		}
+	]
+}

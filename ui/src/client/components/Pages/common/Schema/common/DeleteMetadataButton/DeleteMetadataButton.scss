@@ -1,0 +1,11 @@
+@import '~styles/variables';
+
+.delete-metadata-button {
+  > button {
+    &:hover {
+      i {
+        color: $raspberry;
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+@import 'stars';
+
+.no-match {
+    position: relative;
+    flex: 1;
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    background: linear-gradient(257.13deg, #30B6DD 0%, #436AD6 100%);
+
+    z-index: 1;
+}
+
+.no-match-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 64px;
+    color: #FFFFFF;
+}
+
+.image-404 {
+    width: 469px;
+    height: 207px;
+    background: url(./img/404.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.oops {
+    margin-top: 40px;
+    margin-bottom: 37px;
+    font-family: 'Source Sans Pro Light';
+    font-size: 68px;
+    line-height: 70px;
+    font-weight: 300;
+    letter-spacing: 1.89px;
+    text-align: center;
+    color: #A4C8ED;
+}
+
+.something-wrong {
+    width: 670px;
+    font-size: 22px;
+    letter-spacing: 0.61px;
+    font-family: 'Source Sans Pro Regular';
+    text-align: center;
+    line-height: 28px;
+    color: white;
+}
+
+.homepage-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    margin-top: 44px;
+    padding: 0 35px;
+    border-width: 0;
+    border-radius: 24px;
+    background-color: #FF8500;
+    color: white;
+    font-family: 'Source Sans Pro Regular';
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 36px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.homepage-btn:hover{
+    background-color: #D97100;
+    text-decoration: none;
+    color: white;
+}

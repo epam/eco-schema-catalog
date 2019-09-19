@@ -1,0 +1,114 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+$borderColor: rgb(209, 212, 221);
+
+.table-with-details {
+  position: relative;
+  box-sizing: border-box;
+
+  >.table {
+    position: relative;
+    box-sizing: inherit;
+    z-index: 10;
+    font-family: 'Source Sans Pro Regular';
+    border: 1px solid $borderColor;
+    border-radius: 6px;
+
+    >.row {
+      display: flex;
+      box-sizing: inherit;
+      align-items: center;
+      justify-content: flex-start;
+
+      &.header {
+        border-bottom: 1px solid $borderColor;
+        .cell {
+          font-size: 14px;
+          color: #868996;
+        }
+      }
+
+      &.odd {
+        background-color: #f5f5f5;
+      }
+
+      &.selected {
+        background-color: rgb(201, 203, 209);
+      }
+
+      &.hoverable-row {
+        cursor: pointer;
+        color: #525462;
+
+        &:hover {
+			    background-color: #EBFAFC;
+        }
+      }
+
+      .cell {
+        padding: 6px 10px;
+        font-size: 16px;
+        word-break: break-all;
+        color: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .details {
+    display: none;
+    position: absolute;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: inherit;
+    transition: all 0.11s linear;
+
+    .details-container {
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      background: white;
+      border: 1px solid $borderColor;
+      border-radius: 6px;
+      overflow: hidden;
+
+      .details-container-header {
+        display: flex;
+        padding: 0 20px;
+        top: 0;
+        z-index: 150;
+        background: white;
+
+        .close-button {
+          margin-left: auto;
+        }
+      }
+
+      .details-container-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: auto;
+      }
+    }
+
+  }
+}

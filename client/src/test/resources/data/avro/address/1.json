@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "Address",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "name", "type": "string"},
+    { "name": "city", "type": "string" },
+    { "name": "state", "type": "string" },
+    { "name": "firstLine", "type": "string" }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "All": "*",
+  "By subject": "subject:location*",
+  "By version": "version:2",
+  "By namespace": "namespace:com.*",
+  "By all fields in schema": "name:location_id",
+  "By all metadata": "metadata.doc:text"
+}

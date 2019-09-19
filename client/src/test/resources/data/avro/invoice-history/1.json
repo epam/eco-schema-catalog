@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "InvoiceHistory",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "invoiceId", "type": "int" },
+    { "name": "notes", "type": "string" }
+  ]
+}

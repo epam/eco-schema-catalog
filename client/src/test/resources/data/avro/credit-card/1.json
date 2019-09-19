@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "CreditCard",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "userAccountId", "type": "int" },
+    { "name": "addressId", "type": "int" },
+    { "name": "number", "type": "string", "doc": "For example, '1111111111111111'" },
+    { "name": "holderName", "type": "string", "doc": "For example, 'John Doe'" },
+    { "name": "expirationDate", "type": "int", "logicalType": "date" }
+  ]
+}

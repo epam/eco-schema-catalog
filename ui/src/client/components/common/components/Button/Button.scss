@@ -1,0 +1,137 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+.dh-button {
+  height: 36px;
+  border-radius: 3px;
+  padding: 0px 18px;
+  text-align: center;
+  font-family: 'Source Sans Pro Regular';
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  line-height: 18px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline:none;
+  border: 1px solid transparent;
+
+  &.blue {
+    background-color: #39C2D7;
+
+    &:hover {
+      background-color: white;
+      border: 1px solid #39C2D7;
+      color: #39C2D7;
+    }
+
+    &.transparent {
+      color: #39C2D7;
+      background-color: white;
+      border: 1px solid #39C2D7;
+
+      &:hover {
+        background-color: #39C2D7;
+        border-color: #39C2D7;
+        color: white;
+      }
+    }
+  }
+
+  &.red {
+    background-color: #B22746;
+
+    &:hover {
+      background-color: white;
+      border: 1px solid #B22746;
+      color: #B22746;
+    }
+
+    &.transparent {
+      color: #B22746;
+      background-color: white;
+      border: 1px solid #B22746;
+
+      &:hover {
+        background-color: #B22746;
+        border-color: #B22746;
+        color: white;
+      }
+    }
+  }
+
+  &.green {
+    background-color: #a3c644;
+
+    &:hover {
+      background-color: white;
+      border: 1px solid #a3c644;
+      color: #a3c644;
+    }
+
+    &.transparent {
+      color: #a3c644;
+      background-color: white;
+      border: 1px solid #a3c644;
+
+      &:hover {
+        background-color: #a3c644;
+        border-color: #a3c644;
+        color: white;
+      }
+    }
+  }
+
+  &.grey {
+    background-color: #C0C2CE;
+
+    &:hover {
+      background-color: white;
+      border: 1px solid #C0C2CE;
+      color: #C0C2CE;
+    }
+
+    &.transparent {
+      color: #C0C2CE;
+      background-color: white;
+      border: 1px solid #C0C2CE;
+
+      &:hover {
+        background-color: #C0C2CE;
+        border-color: #C0C2CE;
+        color: white;
+      }
+    }
+  }
+
+
+  &.disable {
+    cursor: not-allowed;
+    background: #e5e5e5 !important;
+    border-color: #e5e5e5 !important;
+    color: #cccccc !important;
+
+    &:hover {
+      cursor: not-allowed;
+      background: #e5e5e5 !important;
+      border-color: #e5e5e5 !important;
+      color: #cccccc !important;
+    }
+  }
+
+
+}

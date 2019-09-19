@@ -1,0 +1,75 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+.query-examples {
+  position: absolute;
+  top: 52px;
+  z-index: 1000;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.03), 0 2px 22px 0 rgba(0,0,0,0.27);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-family: "Source Sans Pro Regular";
+  font-size: 14px;
+  color: #6C7283;
+
+  .query-examples-header {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding: 0 18px;
+    background-color: #F8F9FB;
+	  border: 1px solid #EAEDF5;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+
+    > h4 {
+      font-weight: 600;
+      letter-spacing: 0.22px;
+      line-height: 18px;
+      text-transform: uppercase;
+    }
+  }
+
+  .query-examples-panel{
+    min-width: 500px;
+    background-color: #FFFFFF;
+    border: 1px solid #EAEDF5;
+    border-top: 0;
+    line-height: 22px;
+  }
+
+  .query-examples-row {
+    display: flex;
+    cursor: pointer;
+    padding: 6px 12px;
+
+    &.odd {
+      background-color: rgba(242,243,247,0.5);
+    }
+
+    &:hover {
+      background-color: #EBFAFC;
+    }
+  }
+
+  .query-examples-row-key {
+    flex: 1;
+  }
+
+  .query-examples-row-value {
+    flex: 1.5;
+    word-break: break-word;
+  }
+}

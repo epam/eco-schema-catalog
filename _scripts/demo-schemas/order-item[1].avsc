@@ -1,0 +1,27 @@
+{
+	"type": "record",
+	"name": "OrderItem",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "inventoryItemId",
+			"type": "int"
+		},
+		{
+			"name": "orderId",
+			"type": "int"
+		},
+		{
+			"name": "shippingId",
+			"type": "int"
+		},
+		{
+			"name": "amount",
+			"type": "int"
+		}
+	]
+}

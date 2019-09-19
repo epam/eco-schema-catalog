@@ -1,0 +1,33 @@
+{
+	"type": "record",
+	"name": "Invoice",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "creditCardId",
+			"type": "int"
+		},
+		{
+			"name": "addressId",
+			"type": "int"
+		},
+		{
+			"name": "userSessionId",
+			"type": "int"
+		},
+		{
+			"name": "createdAt",
+			"type": "int",
+			"logicalType": "date"
+		},
+		{
+			"name": "lastModifiedAt",
+			"type": "int",
+			"logicalType": "date"
+		}
+	]
+}

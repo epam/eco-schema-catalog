@@ -1,0 +1,40 @@
+{
+    "extends": "airbnb",
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "rules": {
+      "no-underscore-dangle": "off",
+      "react/no-danger": [0],
+      "react/no-did-mount-set-state": [0],
+      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+      "react/prefer-stateless-function": [0, { "ignorePureComponents": true }],
+      "react/forbid-prop-types": [0, { "forbid": [], "checkContextTypes": false, "checkChildContextTypes": false }],
+      "react/require-default-props": [0],
+      "react/destructuring-assignment": [0, "always", { "ignoreClassFields": true }],
+      "jsx-a11y/label-has-for": [0],
+      "jsx-a11y/anchor-is-valid": [0],
+      "jsx-a11y/no-autofocus": [0],
+      "import/no-extraneous-dependencies": [0],
+      "prefer-destructuring": [0],
+      "jsx-a11y/click-events-have-key-events": [0],
+      "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error"
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "plugins": [ "react", "jest" ]
+}

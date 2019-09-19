@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sh ./upload-schemas http://localhost:8081 ./demo-schemas

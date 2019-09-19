@@ -1,0 +1,23 @@
+#!/bin/sh
+
+url=$1
+shift
+schema_files=$@
+
+if [ -d $schema_files ]; then
+  schema_files="$(echo $schema_files | sed 's:/*$::')/*"
+fi
+
+for filename in $schema_files;
+do
+  echo "\nRegistering $filename"
+
+  subject=$(echo $filename | rev | cut -d'/' -f1 | rev | cut -d'.' -f1 | cut -d'[' -f1)
+
+  schema=$(cat $filename)
+  schema=$(echo $schema | sed 's/"/\\\"/g')
+
+  curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+    --data '{"schema":"'"$schema"'"}' \
+    $url/subjects/${subject}/versions
+done

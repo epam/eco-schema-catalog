@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "UserSession",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "userAccountId", "type": "int" },
+    { "name": "ipAddress", "type": "string" },
+    { "name": "clicks", "type": "int" },
+    { "name": "createdAt", "type": "int", "logicalType": "date" },
+    { "name": "lastModifiedAt", "type": "int", "logicalType": "date" }
+  ]
+}

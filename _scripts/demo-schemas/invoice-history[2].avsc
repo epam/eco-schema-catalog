@@ -1,0 +1,31 @@
+{
+	"type": "record",
+	"name": "InvoiceHistory",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "invoiceId",
+			"type": "int"
+		},
+		{
+			"name": "notes",
+			"type": "string"
+		},
+		{
+			"name": "createdAt",
+			"type": "int",
+			"default": 0,
+			"logicalType": "date"
+		},
+		{
+			"name": "lastModifiedAt",
+			"type": "int",
+			"default": 0,
+			"logicalType": "date"
+		}
+	]
+}

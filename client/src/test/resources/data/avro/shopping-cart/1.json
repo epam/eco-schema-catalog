@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "ShoppingCart",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "userSessionId", "type": "int" },
+    { "name": "state", "type": { "type": "enum", "name": "ShoppingCartState", "symbols" : ["ACTIVE", "INVALID", "NEW"]} },
+    { "name": "expirationDate", "type": "int", "logicalType": "date" }
+  ]
+}

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.Unescaper" />
+        <Bug pattern="DMC_DUBIOUS_MAP_COLLECTION" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.VerifiableKafkaAvroDeserializer" />
+        <Method name="configureClientProperties" />
+        <Bug pattern="LEST_LOST_EXCEPTION_STACK_TRACE" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.MockExtendedSchemaRegistryClient" />
+        <Or>
+            <Method name="getClientPrivateMap" />
+            <Method name="callClientMethod" />
+        </Or>
+        <Bug pattern="RFI_SET_ACCESSIBLE" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.TagParser" />
+        <Method name="parseParam" />
+        <Bug pattern="URV_CHANGE_RETURN_TYPE" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.DocFormatter" />
+        <Method name="format" />
+        <Bug pattern="MOM_MISLEADING_OVERLOAD_MODEL" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.DocParser" />
+        <Method name="findNextTagPosition" />
+        <Bug pattern="UCPM_USE_CHARACTER_PARAMETERIZED_METHOD" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.TagParser" />
+        <Or>
+            <Method name="parseParams" />
+            <Method name="parseParams" />
+        </Or>
+        <Bug pattern="UCPM_USE_CHARACTER_PARAMETERIZED_METHOD" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.MockExtendedSchemaRegistryClient" />
+        <Or>
+            <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+            <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CHECKED" />
+        </Or>
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient" />
+        <Or>
+            <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+            <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CHECKED" />
+        </Or>
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.AbstractVerifier" />
+        <Method name="getSchemaVersion" />
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.VerifiableKafkaAvroDeserializer" />
+        <Or>
+            <Method name="getOriginalSchema" />
+            <Method name="instantiateVerifier" />
+        </Or>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.DocParser" />
+        <Bug pattern="PMB_POSSIBLE_MEMORY_BLOAT" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SearchResult" />
+        <Bug pattern="JACKSON_UNSAFE_DESERIALIZATION" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient" />
+        <Method name="getSchemaEntityUnchecked" />
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
+
+</FindBugsFilter>

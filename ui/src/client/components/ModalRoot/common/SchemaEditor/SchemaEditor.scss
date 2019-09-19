@@ -1,0 +1,30 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+.CodeMirror-lint-tooltip {
+  z-index: 1001;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: calc(90vh - 68px - 66px - 84px - 60px - 40px);
+  // 90vh - is the height of modal window wrapper;
+  // 68px - is the height of ModalHeader
+  // 66px - is the height of ModalFooter
+  // 84px - 22px(subject label height) + 22px(avro schema label height) + 40px(input height)
+  // 60px - 30px + 30px .modal-body padding
+  // 40px - some saved space
+}

@@ -1,0 +1,132 @@
+/*
+ * Copyright 2019 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+@import '~styles/variables';
+
+.primary-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 132px;
+  background: linear-gradient(226.62deg, #30B6DD 0%, #3A5FC8 100%);
+}
+
+.primary-search-controll {
+  position: relative;
+  display: flex;
+  width: 1440px;
+  padding: 0 18px;
+  box-sizing: border-box;
+
+  > .help-button {
+    width: 46px;
+    height: 46px;
+    background-color: white;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    &:hover {
+      background-color: $light-gray;
+    }
+  }
+
+  > .search-text-input {
+    width: 100%;
+    height: 46px;
+    border-radius: 0;
+    border-top: 0;
+    border-bottom: 0;
+    border-right-color: transparent;
+  }
+
+  > .search-button {
+    color: white;
+    height: 46px;
+    padding: 0 20px;
+    background-color: $lime-green;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+
+    &:hover {
+      background-color: $dark-green;
+    }
+
+    > span {
+      font-size: 18px;
+      margin-left: 10px;
+      text-transform: uppercase;
+      font-family: 'Source Sans Pro Regular';
+    }
+  }
+
+  > .advanced-search-button {
+    height: 46px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 0 18px;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    box-shadow: 0 17px 20px 0 rgba(0,0,0,0.04);
+    white-space: pre;
+
+    &:hover {
+      background-color: $light-gray;
+    }
+
+    > span {
+      margin-left: 6px;
+      color: #30B6DD;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.59px;
+      line-height: 20px;
+      font-family: 'Source Sans Pro Regular';
+    }
+  }
+
+  > .create-schema-button {
+    padding: 0 18px;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    box-shadow: 0 17px 20px 0 rgba(0,0,0,0.04);
+    white-space: pre;
+    color: $lime-green;
+
+    &:hover {
+      background-color: $light-gray;
+      color: $dark-green;
+    }
+
+    > i {
+      color: inherit;
+    }
+
+    > span {
+      padding: 0 0 0 6px;
+      color: $lime-green;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Source Sans Pro Regular';
+      color: inherit;
+    }
+  }
+}
+
+
+@media (max-width: 1440px) {
+  .primary-search-controll {
+    width: 100%;
+  }
+}

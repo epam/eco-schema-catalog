@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Search_Schemes" transform="translate(-19.000000, -19.000000)">
+            <g id="Group-6">
+                <g id="Group-5">
+                    <g id="Group-4">
+                        <g id="Group-3" transform="translate(19.000000, 19.000000)">
+                            <path d="M11,0 C4.95,0 0,4.95 0,11 C0,17.05 4.95,22 11,22 C17.05,22 22,17.05 22,11 C22,4.95 17.05,0 11,0 Z" id="help" fill="#9BC837" fill-rule="nonzero"></path>
+                            <path d="M9.9,17.6 L9.9,15.4 L12.1,15.4 L12.1,17.6 L9.9,17.6 Z M11,4.4 C13.42,4.4 15.4,6.38 15.4,8.8 C15.4,11.55 12.1,11.88 12.1,14.3 L9.9,14.3 C9.9,10.78 13.2,11 13.2,8.8 C13.2,7.59 12.21,6.6 11,6.6 C9.79,6.6 8.8,7.59 8.8,8.8 L6.6,8.8 C6.6,6.38 8.58,4.4 11,4.4 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

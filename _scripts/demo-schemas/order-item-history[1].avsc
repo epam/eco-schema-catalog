@@ -1,0 +1,23 @@
+{
+	"type": "record",
+	"name": "OrderItemHistory",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "orderItemId",
+			"type": "int"
+		},
+		{
+			"name": "notes",
+			"type": "string"
+		},
+		{
+			"name": "state",
+			"type": "string"
+		}
+	]
+}

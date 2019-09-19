@@ -1,0 +1,33 @@
+{
+	"type": "record",
+	"name": "Order",
+	"namespace": "com.epam.eco.schemacatalog.demo",
+	"fields": [
+		{
+			"name": "id",
+			"type": "int"
+		},
+		{
+			"name": "userAccountId",
+			"type": "int"
+		},
+		{
+			"name": "paymentId",
+			"type": "int"
+		},
+		{
+			"name": "orderDate",
+			"type": "int",
+			"logicalType": "date"
+		},
+		{
+			"name": "totalPrice",
+			"type": "string",
+			"doc": "For example, '100 USD'"
+		},
+		{
+			"name": "state",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "InventoryItem",
+  "fields": [
+    { "name": "id", "type": "int" },
+    { "name": "title", "type": "string" },
+    { "name": "price", "type": "string", "doc": "For example, '100 USD'" },
+    { "name": "createdAt", "type": "int", "logicalType": "date" },
+    { "name": "lastModifiedAt", "type": "int", "logicalType": "date" }
+  ]
+}

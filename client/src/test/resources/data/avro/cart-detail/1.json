@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "namespace": "com.epam.eco.schemacatalog.demo",
+  "name": "CartDetail",
+  "fields": [
+    { "name": "inventoryItemId", "type": "int" },
+    { "name": "shoppingCartId", "type": "int" },
+    { "name": "state", "type": "string" },
+    { "name": "amount", "type": "int" },
+    { "name": "createdAt", "type": "int", "logicalType": "date" },
+    { "name": "lastModifiedAt", "type": "int", "logicalType": "date" }
+  ]
+}
