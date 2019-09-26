@@ -20,9 +20,9 @@ Eco Schema Catalog UI is a UI web part of Schema Catalog application. It enables
 
 Software requirements include:
 
-* [Node.js](https://nodejs.org/en/) development version was v10.16
-* [npm](https://www.npmjs.com/) development version was 6.9
-* [Docker](https://www.docker.com/get-started) development version was 19.03
+* [Node.js](https://nodejs.org/en/) 10.16
+* [npm](https://www.npmjs.com/) 6.9
+* [Docker](https://www.docker.com/get-started) 19.03
 
 ## Technical stack
 
