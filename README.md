@@ -13,12 +13,13 @@ The currently supported version is [4.0.0](https://docs.confluent.io/4.0.0/schem
 ## Project structure
 
 The repository contains the following packages:
+
+* [rest](/rest) - RESTful interface (backend)
+* [ui](/ui) - web UI (frontend)
 * [commons](/commons) - common models, utilities, extensions, etc
 * [store](/store) - service to access data in the [Schema Registry](https://www.confluent.io/confluent-schema-registry/) store, manage metadata, etc
 * [fts](/fts) - service that enables Full-Text Search (FTS) capabilities against the store
-* [rest](/rest) - RESTful interface (backend)
 * [client](/client) - REST client
-* [ui](/ui) - web UI (frontend)
 
 ## Build
 
