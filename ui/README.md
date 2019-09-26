@@ -98,4 +98,4 @@ The list of npm commands includes:
 
 ## License
 
-The Eco Schema Catalog UI is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+Eco Schema Catalog UI is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
