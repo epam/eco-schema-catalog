@@ -1,18 +1,18 @@
 # Eco Schema Catalog UI
 
-This is a ui web part of schema-catalog application. See main features below.
-Static assets of application are served with node.js. Also there are two endpoints for health cheaking `/health`, `/info`.
+Eco Schema Catalog UI is a UI web part of Schema Catalog application. It enables users to view Avro schemas and makes the schemas more visual.
 
 ## Features
 
-* Full-text search against schemas, query DSL, aggregations, backed by [Elasticsearch](https://www.elastic.co/)
-* View schema definition (table/json), switch version, filter fields by name/type
-* Schema evolution history, difference between versions in [Unified format](https://en.wikipedia.org/wiki/Diff#Unified_format)
-* Create/evolve schema
-* Test schema compatibility, view compatibility issues
-* Delete subject/version
-* Change subject compatibility
-* Add metadata to schema/field, searchable, simple markup language (set of tags)
+* Performing full-text search against schemas, query DSL, aggregations, backed by [Elasticsearch](https://www.elastic.co/).
+* Viewing schema definition (table or json) and filtering schemas by name or type.
+* Switching schema versions, tracking schema evolution history and difference between versions in [Unified format](https://en.wikipedia.org/wiki/Diff#Unified_format).
+* Creating and evolving schemas.
+* Testing schema compatibility, viewing compatibility issues.
+* Deleting subject or version.
+* Changing subject compatibility.
+* Adding metadata (with simple markup language) to schemas or fields.
+* Searching by metadata.
 
 ![](sc.gif)
 
