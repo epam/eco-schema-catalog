@@ -1,8 +1,8 @@
 # Eco Schema Catalog UI
 
-Eco Schema Catalog UI is a UI web part of Schema Catalog application. It enables users to view Avro schemas and makes the schemas more visual.
+Eco Schema Catalog UI is a UI web part of the Schema Catalog application. It enables users to view Avro schemas and makes the schemas more visual.
 
-## The main features include
+## Main features:
 
 * Performing full-text search against schemas, query DSL, aggregations, backed by [Elasticsearch](https://www.elastic.co/).
 * Viewing schema definition (table or json) and filtering schemas by name or type.
@@ -38,35 +38,35 @@ The required technical stack includes:
 
 You can run Eco Schema Catalog UI using these three methods:
 
-* From source.
-* From source in development mode.
-* With Docker.
+* From source
+* From source in development mode
+* With Docker
 
 ### Running from source
 
 To run Eco Schema Catalog UI from source:
 
 1. Modify .env file before building with your own values.
-2. Install all dependencies `npm install`.
-3. Run build of production version `npm run build`.
-4. Start serving built files with `npm run start`.
+2. Install all dependencies: <br /> `npm install`
+3. Run build of production version: <br /> `npm run build`
+4. Start serving built files with: <br /> `npm run start`
 
 ### Running in development mode
 
 To run Eco Schema Catalog UI from source in development mode:
 
 1. Modify .env file before building with your own values.
-2. Install all dependencies `npm install`.
-3. Run build of development version `npm run build:dev` or in watching mode `npm run build:watch`.
-4. Run new console instance and start serving built files with `npm run start:dev`.
+2. Install all dependencies: <br /> `npm install`
+3. Run build of development version: <br />  `npm run build:dev` <br />  or in watching mode: <br /> `npm run build:watch`.
+4. Run new console instance and start serving built files with: <br /> `npm run start:dev`
 
 ### Running with docker
 
 To run Eco Schema Catalog UI with Docker:
 
 1. Modify .env file before building with your own values.
-2. Build docker image `docker build -t epam/schema-catalog-ui:latest .`
-3. Run the created docker image `docker run  --name schema-catalog-ui --rm -p 8282:8282 epam/schema-catalog-ui:latest`
+2. Build docker image: <br /> `docker build -t epam/schema-catalog-ui:latest .`
+3. Run the created docker image: <br /> `docker run  --name schema-catalog-ui --rm -p 8282:8282 epam/schema-catalog-ui:latest`
 
 ## Configuration
 
