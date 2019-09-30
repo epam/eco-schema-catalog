@@ -1,6 +1,6 @@
 # Eco Schema Catalog Client
 
-It's a Spring Boot auto-configuration library, provides client for the Schema Catalog REST service. 
+It's a Spring Boot auto-configuration library, provides client for the Schema Catalog REST service.
 
 The library can be obtained from the Maven by adding the following dependency in the pom.xml:
 
@@ -44,4 +44,4 @@ Name | Description | Default
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+Eco Schema Catalog Client is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
