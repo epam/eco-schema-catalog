@@ -1,6 +1,6 @@
 # Eco Schema Catalog REST
 
-It's a Spring Boot web application, exposes RESTful interface for interaction of third-party services and applications with the Schema Catalog.
+Eco Schema Catalog REST is a Spring Boot web application that exposes RESTful interface for interaction of third-party services and applications with the Schema Catalog.
 
 ## Minimum configuration file
 
@@ -25,14 +25,22 @@ eco:
                     bootstrapServers: kafka:9092
 ```
 
-## Running as standalone
+## Running Eco Schema Catalog REST 
 
-Prerequisites:
+You can run Eco Schema Catalog: 
+
+* As a standalone service 
+
+* In Docker 
+
+### Running as standalone
+
+The prerequisites include:
 * Java 8+
 * [Confluent Platform (Kafka)](https://www.confluent.io/)
 * [Schema Registry](https://www.confluent.io/confluent-schema-registry/)
 
-Build and run:
+Run the following command sequence:
 ```
 git clone git@github.com:epam/eco-schema-catalog.git
 cd /eco-schema-catalog/rest
@@ -40,12 +48,11 @@ mvn clean package
 java -jar ./target/schema-catalog-rest-<version>.jar --spring.config.location=file://<path-to-config-file>
 ```
 
-## Running in docker
+### Running in docker
 
-Prerequisites:
-* [Docker](https://www.docker.com/get-started)
+The prerequisite includes [Docker](https://www.docker.com/get-started).
 
-Build the image:
+To build the image, run the following command sequence:
 ```
 git clone git@github.com:epam/eco-schema-catalog.git
 cd /eco-schema-catalog/rest
@@ -61,10 +68,13 @@ docker run --name schema-catalog-rest \
  epam/schema-catalog-rest:latest
 ```
 
-Follow the link to open Schema Catalog REST API (swagger): [http://localhost:8082/swagger-ui.html#](http://localhost:8082/swagger-ui.html#)
+To open Schema Catalog REST API (swagger), go to [http://localhost:8082/swagger-ui.html#](http://localhost:8082/swagger-ui.html#)
 
-If you need to reference some files from config file you can just mount them with
-`-v` option and if you want to tune JVM consider `-e 'JAVA_OPTS=<some JVM options>'` .
+### Note:
+
+To reference files from the config file, it is possible to mount them with the
+`-v` option. <br />
+To tune JVM, use `-e 'JAVA_OPTS=<some JVM options>'`.
 For example:
 ```
 docker run --name schema-catalog-rest \
@@ -83,13 +93,13 @@ Name | Description | Default
 ---  | ---         | --- 
 `eco.schemacatalog.store.schemaRegistryUrl` | URL to the Schema Registry REST API. | 
 `eco.schemacatalog.store.schema.kafka.bootstrapServers` | A comma-separated list of Kafka brokers used by the Schema Registry to store schemas. |
-`eco.schemacatalog.store.schema.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Registry schema storage (topic). If timeout is too small, you may observe stale data for some time (gets consistent eventually) after service is started. | 60000
+`eco.schemacatalog.store.schema.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Registry schema storage (topic). If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | 60000
 `eco.schemacatalog.store.schema.kafka.consumerConfig.<property>=<value>` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Registry schema storage (topic). |
 `eco.schemacatalog.store.metadata.kafka.bootstrapServers` | A comma-separated list of Kafka brokers used by Schema Catalog to store metadata. In most cases should contain the same value as `eco.schemacatalog.store.schema.kafka.bootstrapServers`. |
-`eco.schemacatalog.store.metadata.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Catalog metadata storage (topic). If timeout is too small, you may observe stale data for some time (gets consistent eventually) after service is started. | 60000
+`eco.schemacatalog.store.metadata.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Catalog metadata storage (topic). If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | 60000
 `eco.schemacatalog.store.metadata.kafka.consumerConfig.<property>=<value>` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Catalog metadata storage (topic). |
 `eco.schemacatalog.store.metadata.kafka.producerConfig.<property>=<value>` | Kafka [producer properties](https://kafka.apache.org/10/documentation.html#producerconfigs) to connect to the Schema Catalog metadata storage (topic). |
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+Eco Schema Catalog REST is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
