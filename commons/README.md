@@ -2,7 +2,7 @@
 
 Eco Schema Catalog Commons is a lightweight Java library that contains common models, utilities, extended versions of Schema Registry client, SerDe's, and other.
 
-The library can be obtained from the Maven by adding the following dependency in the pom.xml:
+The library can be obtained from Maven by adding the following dependency in the pom.xml:
 
 ```
 <dependency>

@@ -2,7 +2,7 @@
 
 Eco Schema Catalog FTS is a Spring Boot auto-configuration library, provides service that enables Full-Text Search (FTS) capabilities against the data in the [Schema Registry](https://www.confluent.io/confluent-schema-registry/).
 
-The library can be obtained from the Maven by adding the following dependency in the pom.xml:
+The library can be obtained from Maven by adding the following dependency in the pom.xml:
 
 ```
 <dependency>

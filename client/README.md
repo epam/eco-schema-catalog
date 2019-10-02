@@ -2,7 +2,7 @@
 
 It's a Spring Boot auto-configuration library, provides client for the Schema Catalog REST service.
 
-The library can be obtained from the Maven by adding the following dependency in the pom.xml:
+The library can be obtained from Maven by adding the following dependency in the pom.xml:
 
 ```
 <dependency>

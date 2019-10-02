@@ -2,7 +2,7 @@
 
 Eco Schema Catalog Store is a Spring Boot auto-configuration library that provides service to access data in the [Schema Registry](https://www.confluent.io/confluent-schema-registry/) store and manage metadata.
 
-The library can be obtained from the Maven by adding the following dependency in the pom.xml:
+The library can be obtained from Maven by adding the following dependency in the pom.xml:
 
 ```
 <dependency>
