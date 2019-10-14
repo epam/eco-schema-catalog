@@ -51,6 +51,9 @@ public class SchemaCatalogClientAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaCatalogClientAutoConfiguration.class);
 
+    private static final String DEFAULT_MESSAGE_RESPONSE_CONTENT =
+            "Message is not available, because it doesn't appear in the response body.";
+
     @Autowired
     private SchemaCatalogClientProperties properties;
 
@@ -73,19 +76,27 @@ public class SchemaCatalogClientAutoConfiguration {
         return new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                try {
-                    if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                        MessageResponse messageResponse = JsonMapper.inputStreamToObject(
-                                response.getBody(),
-                                MessageResponse.class);
-                        throw new NotFoundException(messageResponse.getMessage());
-                    }
-                } catch (IOException ex) {
-                    LOGGER.warn("Error response from Schema Catalog REST service is not recognizable.", ex);
+                if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    MessageResponse messageResponse = toMessageResponse(response);
+                    throw new NotFoundException(messageResponse.getMessage());
+                } else if (response.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                    MessageResponse messageResponse = toMessageResponse(response);
+                    throw new IllegalArgumentException(messageResponse.getMessage());
                 }
                 super.handleError(response);
             }
         };
+    }
+
+    private MessageResponse toMessageResponse(ClientHttpResponse response) {
+        try {
+            return JsonMapper.inputStreamToObject(
+                    response.getBody(),
+                    MessageResponse.class);
+        } catch (IOException ex) {
+            LOGGER.debug("Error occurs while trying to parse client response body.", ex);
+        }
+        return MessageResponse.with(DEFAULT_MESSAGE_RESPONSE_CONTENT);
     }
 
 }
