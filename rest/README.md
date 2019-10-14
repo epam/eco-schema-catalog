@@ -94,11 +94,11 @@ Name | Description | Default
 `eco.schemacatalog.store.schemaRegistryUrl` | URL to the Schema Registry REST API. | 
 `eco.schemacatalog.store.schema.kafka.bootstrapServers` | A comma-separated list of Kafka brokers used by the Schema Registry to store schemas. |
 `eco.schemacatalog.store.schema.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Registry schema storage (topic). If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | 60000
-`eco.schemacatalog.store.schema.kafka.consumerConfig.<property>=<value>` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Registry schema storage (topic). |
+`eco.schemacatalog.store.schema.kafka.consumerConfig[property]` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Registry schema storage (topic). |
 `eco.schemacatalog.store.metadata.kafka.bootstrapServers` | A comma-separated list of Kafka brokers used by Schema Catalog to store metadata. In most cases should contain the same value as `eco.schemacatalog.store.schema.kafka.bootstrapServers`. |
 `eco.schemacatalog.store.metadata.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Catalog metadata storage (topic). If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | 60000
-`eco.schemacatalog.store.metadata.kafka.consumerConfig.<property>=<value>` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Catalog metadata storage (topic). |
-`eco.schemacatalog.store.metadata.kafka.producerConfig.<property>=<value>` | Kafka [producer properties](https://kafka.apache.org/10/documentation.html#producerconfigs) to connect to the Schema Catalog metadata storage (topic). |
+`eco.schemacatalog.store.metadata.kafka.consumerConfig[property]` | Kafka [consumer properties](https://kafka.apache.org/10/documentation.html#consumerconfigs) to connect to the Schema Catalog metadata storage (topic). |
+`eco.schemacatalog.store.metadata.kafka.producerConfig[property]` | Kafka [producer properties](https://kafka.apache.org/10/documentation.html#producerconfigs) to connect to the Schema Catalog metadata storage (topic). |
 
 ## License
 

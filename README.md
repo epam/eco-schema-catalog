@@ -21,8 +21,8 @@ The repository contains the following packages:
 * [fts](/fts) - service that enables Full-Text Search (FTS) capabilities against the store
 * [client](/client) - REST client
 
-## Building artefacts
-To build artefacts, run the following command sequence:
+## Building artifacts
+To build artifacts, run the following command sequence:
 ```
 git clone git@github.com:epam/eco-schema-catalog.git
 cd eco-schema-catalog
