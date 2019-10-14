@@ -15,6 +15,7 @@
  */
 package com.epam.eco.schemacatalog.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,9 +41,9 @@ public final class SchemaRegistryServiceInfo {
             Properties properties = new Properties();
             properties.load(props);
             VERSION = properties.getProperty(PROP_VERSION);
-        } catch (Exception ex) {
+        } catch (IOException ioe) {
             throw new RuntimeException(
-                    "Failed to read schemaregistry serviceinfo properties", ex);
+                    "Failed to read schemaregistry serviceinfo properties", ioe);
         }
     }
 

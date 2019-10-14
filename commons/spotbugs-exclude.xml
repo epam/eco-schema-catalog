@@ -84,5 +84,10 @@
         <Method name="getSchemaEntityUnchecked" />
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
     </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.SchemaRegistryServiceInfo" />
+        <Method name='&lt;clinit&gt;'/>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+    </Match>
 
 </FindBugsFilter>
