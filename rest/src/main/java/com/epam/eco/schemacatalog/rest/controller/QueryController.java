@@ -24,9 +24,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,19 +63,19 @@ public class QueryController {
     @Autowired
     private SchemaDocumentRepository schemaDocumentRepository;
 
-    @RequestMapping(value = {"/schemas-by-params", "/schemas-by-params/"}, method = RequestMethod.GET)
+    @GetMapping("/schemas-by-params")
     public SearchResult<LiteSchemaInfo> getSchemasByParams(SearchParams params) {
         return schemaDocumentRepository.searchByParams(params)
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
     }
 
-    @RequestMapping(value = {"/schemas-by-params", "/schemas-by-params/"}, method = RequestMethod.POST)
+    @PostMapping("/schemas-by-params")
     public SearchResult<LiteSchemaInfo> postSchemasByParams(@RequestBody SearchParams params) {
         return schemaDocumentRepository.searchByParams(params)
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
     }
 
-    @RequestMapping(value = {"/schemas-by-query", "/schemas-by-query/"}, method = RequestMethod.GET)
+    @GetMapping("/schemas-by-query")
     public SearchResult<LiteSchemaInfo> getSchemasByFtsQuery(
             @RequestParam("query") String query,
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
@@ -84,8 +85,8 @@ public class QueryController {
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
     }
 
-    @RequestMapping(value = {"/schemas-by-query", "/schemas-by-query/"}, method = RequestMethod.POST)
-    public SearchResult<LiteSchemaInfo> postSchemasFtsQuery(
+    @PostMapping("/schemas-by-query")
+    public SearchResult<LiteSchemaInfo> postSchemasByFtsQuery(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize,
             @RequestBody String query) {
@@ -93,7 +94,7 @@ public class QueryController {
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
     }
 
-    @RequestMapping(value = {"/schemas-diff", "/schemas-diff/"}, method = RequestMethod.GET)
+    @GetMapping("/schemas-diff")
     public ResponseEntity<?> getSchemasDiff(
             @RequestParam("subject") String subject,
             @RequestParam(value = "originalVersion", required = false) Integer originalVersion,
@@ -116,8 +117,8 @@ public class QueryController {
                         " should be given"));
     }
 
-    @RequestMapping(value = {"/schemas-compatibility-test", "/schemas-compatibility-test/"}, method = RequestMethod.POST)
-    public ResponseEntity<?> testSchemasCompatibility(
+    @PostMapping("/schemas-compatibility-test")
+    public ResponseEntity<?> postSchemasCompatibilityTest(
             @RequestParam(value = "detailed", required = false, defaultValue = "false") Boolean detailed,
             @RequestBody SchemaRegisterParams params) {
         if (detailed) {
@@ -127,28 +128,24 @@ public class QueryController {
         }
     }
 
-    @RequestMapping(value = {"/metadata-doc-parts", "/metadata-doc-parts/"},
-            method = RequestMethod.POST, consumes = "text/plain")
-    public List<Part> parseDoc(@RequestBody String doc) {
+    @PostMapping(value = "/metadata-doc-parts", consumes = "text/plain")
+    public List<Part> postMetadataDocParts(@RequestBody String doc) {
         return DocParser.parse(doc);
     }
 
-    @RequestMapping(value = {"/html-formatted-metadata-doc", "/html-formatted-metadata-doc/"},
-            method = RequestMethod.POST, consumes = "text/plain")
-    public String renderDoc(@RequestBody String doc) {
+    @PostMapping(value = "/html-formatted-metadata-doc", consumes = "text/plain")
+    public String postHtmlFormattedMetadataDoc(@RequestBody String doc) {
         return new DocFormatter(doc).format(HtmlPartFormatter.INSTANCE);
     }
 
-    @RequestMapping(value = {"/metadata-doc-parts/$batch", "/metadata-doc-parts/$batch/"},
-            method = RequestMethod.POST)
-    public Map<Integer, List<Part>> parseDocBatch(@RequestBody Map<Integer, String> docs) {
+    @PostMapping("/metadata-doc-parts/$batch")
+    public Map<Integer, List<Part>> postMetadataDocPartsBatch(@RequestBody Map<Integer, String> docs) {
         return docs.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> DocParser.parse(entry.getValue())));
     }
 
-    @RequestMapping(value = {"/html-formatted-metadata-doc/$batch", "/html-formatted-metadata-doc/$batch/"},
-            method = RequestMethod.POST)
-    public Map<Integer, String> renderDocBatch(@RequestBody Map<Integer, String> docs) {
+    @PostMapping("/html-formatted-metadata-doc/$batch")
+    public Map<Integer, String> postHtmlFormattedMetadataDocBatch(@RequestBody Map<Integer, String> docs) {
         Map<Integer, String> response = new HashMap<>();
         docs.forEach((key, value) -> response.put(key, new DocFormatter(value).format(HtmlPartFormatter.INSTANCE)));
         return response;

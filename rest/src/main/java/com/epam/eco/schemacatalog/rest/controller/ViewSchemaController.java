@@ -24,9 +24,9 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,7 +54,7 @@ public class ViewSchemaController {
     @Autowired
     private SchemaProfileCreator schemaProfileCreator;
 
-    @RequestMapping(value = {"/profile/{subject}/{version}", "/profile/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/profile/{subject}/{version}")
     public SchemaProfile getSchemaProfile(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -66,7 +66,7 @@ public class ViewSchemaController {
         return schemaProfileCreator.createSchemaProfile(schemaInfo, ToStringPartFormatter.INSTANCE);
     }
 
-    @RequestMapping(value = {"/json/{subject}", "/json/{subject}/"}, method = RequestMethod.GET)
+    @GetMapping("/json/{subject}")
     public ResponseEntity<Map<Integer, String>> getJsonSchemas(
             @PathVariable("subject") String subject,
             @RequestParam(value = "latest", required = false, defaultValue = "false") Boolean latest,
@@ -95,7 +95,7 @@ public class ViewSchemaController {
         return ResponseEntity.ok(schema);
     }
 
-    @RequestMapping(value = {"/json/{subject}/{version}", "/json/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/json/{subject}/{version}")
     public ResponseEntity<String> getJsonSchema(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -110,7 +110,7 @@ public class ViewSchemaController {
         return ResponseEntity.ok(schemaJson);
     }
 
-    @RequestMapping(value = {"/full/{subject}", "/full/{subject}/"}, method = RequestMethod.GET)
+    @GetMapping("/full/{subject}")
     public SubjectSchemas<FullSchemaInfo> getFullSubjectSchemas(
             @PathVariable("subject") String subject,
             @RequestParam(value = "htmlFormattedMetadataDoc", required = false, defaultValue = "true") Boolean htmlFormattedMetadataDoc) {
@@ -123,7 +123,7 @@ public class ViewSchemaController {
                 .toSchemaWithFormattedMetadata(ToStringPartFormatter.INSTANCE));
     }
 
-    @RequestMapping(value = {"/full/{subject}/{version}", "/full/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/full/{subject}/{version}")
     public FullSchemaInfo getFullSchemaInfo(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -135,7 +135,7 @@ public class ViewSchemaController {
         return schema.toSchemaWithFormattedMetadata(ToStringPartFormatter.INSTANCE);
     }
 
-    @RequestMapping(value = {"/basic/{subject}", "/basic/{subject}/"}, method = RequestMethod.GET)
+    @GetMapping("/basic/{subject}")
     public SubjectSchemas<BasicSchemaInfo> getBasicSubjectSchemas(
             @PathVariable("subject") String subject) {
         SubjectSchemas<FullSchemaInfo> subjectSchemas = schemaCatalogStore.getSubjectSchemas(subject);
@@ -145,7 +145,7 @@ public class ViewSchemaController {
         return SubjectSchemas.with(schemas);
     }
 
-    @RequestMapping(value = {"/basic/{subject}/{version}", "/basic/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/basic/{subject}/{version}")
     public BasicSchemaInfo getBasicSchemaInfo(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version) {
@@ -153,7 +153,7 @@ public class ViewSchemaController {
         return schemaInfo.toBasic();
     }
 
-    @RequestMapping(value = {"/identity/{subject}", "/identity/{subject}/"}, method = RequestMethod.GET)
+    @GetMapping("/identity/{subject}")
     public SubjectSchemas<IdentitySchemaInfo> getIdentitySubjectSchemas(
             @PathVariable("subject") String subject) {
         SubjectSchemas<FullSchemaInfo> subjectSchemas = schemaCatalogStore.getSubjectSchemas(subject);
@@ -163,7 +163,7 @@ public class ViewSchemaController {
         return SubjectSchemas.with(schemas);
     }
 
-    @RequestMapping(value = {"/identity/{subject}/{version}", "/identity/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/identity/{subject}/{version}")
     public IdentitySchemaInfo getIdentitySchemaInfo(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version) {

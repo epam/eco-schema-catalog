@@ -18,8 +18,8 @@ package com.epam.eco.schemacatalog.rest.controller;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +35,7 @@ import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 @RequestMapping("/api/enums")
 public class EnumController {
 
-    @RequestMapping(value = {"/tag-types", "/tag-types/"}, method = RequestMethod.GET)
+    @GetMapping("/tag-types")
     public Object getMetadataDocTagType(
             @RequestParam(value = "detailed", required = false, defaultValue = "false") Boolean detailed) {
         if (detailed) {
@@ -46,7 +46,7 @@ public class EnumController {
         return TagType.values();
     }
 
-    @RequestMapping(value = {"/avro-compatibility-levels", "/avro-compatibility-levels/"}, method = RequestMethod.GET)
+    @GetMapping("/avro-compatibility-levels")
     public AvroCompatibilityLevel[] getAvroCompatibilityLevel() {
         return AvroCompatibilityLevel.values();
     }

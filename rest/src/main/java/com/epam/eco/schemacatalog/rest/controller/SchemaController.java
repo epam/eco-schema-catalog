@@ -17,10 +17,13 @@ package com.epam.eco.schemacatalog.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,13 +55,13 @@ public class SchemaController {
     @Autowired
     private SchemaCatalogStore schemaCatalogStore;
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @GetMapping("")
     public SearchResult<LiteSchemaInfo> getSubjects(SearchParams params) {
         return schemaDocumentRepository.searchByParams(params)
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
     }
 
-    @RequestMapping(value = {"/{subject}", "/{subject}/"}, method = RequestMethod.GET)
+    @GetMapping("/{subject}")
     public Object getSubject(
             @PathVariable("subject") String subject,
             @RequestParam(value = "onlyLatest", required = false, defaultValue = "false") Boolean onlyLatest) {
@@ -71,7 +74,7 @@ public class SchemaController {
                         toSchemaWithFormattedMetadata(HtmlPartFormatter.INSTANCE));
     }
 
-    @RequestMapping(value = {"/{subject}/{version}", "/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/{subject}/{version}")
     public FullSchemaInfo getSchema(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version) {
@@ -79,7 +82,7 @@ public class SchemaController {
                 .toSchemaWithFormattedMetadata(HtmlPartFormatter.INSTANCE);
     }
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.POST)
+    @PostMapping("")
     public VersionResponse postSchema(@RequestBody SchemaRequest request) {
         SchemaRegisterParams params = SchemaRegisterParams.builder()
                 .subject(request.getSubject())
@@ -89,7 +92,7 @@ public class SchemaController {
         return VersionResponse.with(fullSchemaInfo.getVersion());
     }
 
-    @RequestMapping(value = {"/{subject}", "/{subject}/"}, method = RequestMethod.PUT)
+    @PutMapping("/{subject}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void putSubject(
             @PathVariable("subject") String subject,
@@ -101,13 +104,13 @@ public class SchemaController {
         schemaCatalogStore.updateSubject(params);
     }
 
-    @RequestMapping(value = {"/{subject}", "/{subject}/"}, method = RequestMethod.DELETE)
+    @DeleteMapping("/{subject}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSubject(@PathVariable("subject") String subject) {
         schemaCatalogStore.deleteSubject(subject);
     }
 
-    @RequestMapping(value = {"/{subject}/{version}", "/{subject}/{version}/"}, method = RequestMethod.DELETE)
+    @DeleteMapping("/{subject}/{version}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSchema(
             @PathVariable("subject") String subject,

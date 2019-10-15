@@ -16,8 +16,8 @@
 package com.epam.eco.schemacatalog.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
@@ -33,7 +33,7 @@ public class ApiController {
     @Autowired
     private ExtendedSchemaRegistryClient schemaRegistryClient;
 
-    @RequestMapping(value = {"/schemaregistry-info", "/schemaregistry-info/"}, method = RequestMethod.GET)
+    @GetMapping("/schemaregistry-info")
     public SchemaRegistryServiceInfo getSchemaRegistryServiceInfo() {
         return schemaRegistryClient.getServiceInfo();
     }

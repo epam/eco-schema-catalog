@@ -25,10 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,7 +61,7 @@ public class MetadataSchemaController {
     @Autowired
     private SchemaCatalogStore schemaCatalogStore;
 
-    @RequestMapping(value = {"/{subject}/{version}/fields", "/{subject}/{version}/fields/"}, method = RequestMethod.GET)
+    @GetMapping("/{subject}/{version}/fields")
     public List<Metadata> getFieldsMetadata(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -76,7 +78,7 @@ public class MetadataSchemaController {
         }
     }
 
-    @RequestMapping(value = {"/{subject}/{version}", "/{subject}/{version}/"}, method = RequestMethod.GET)
+    @GetMapping("/{subject}/{version}")
     public Metadata getSchemaMetadata(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -91,10 +93,7 @@ public class MetadataSchemaController {
         }
     }
 
-    @RequestMapping(value = {
-            "/{subject}/{version}/fields/{schemaFullName}/{field}",
-            "/{subject}/{version}/fields/{schemaFullName}/{field}/"},
-            method = RequestMethod.GET)
+    @GetMapping("/{subject}/{version}/fields/{schemaFullName}/{field}")
     public Metadata getFieldMetadata(
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version,
@@ -110,7 +109,7 @@ public class MetadataSchemaController {
         }
     }
 
-    @RequestMapping(value = {"/{subject}/{version}", "/{subject}/{version}/"}, method = RequestMethod.PUT)
+    @PutMapping("/{subject}/{version}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void putSchemaMetadata(
             @PathVariable("subject") String subject,
@@ -124,10 +123,7 @@ public class MetadataSchemaController {
                 build());
     }
 
-    @RequestMapping(value = {
-            "/{subject}/{version}/fields/{schemaFullName}/{field}",
-            "/{subject}/{version}/fields/{schemaFullName}/{field}/"},
-            method = RequestMethod.PUT)
+    @PutMapping("/{subject}/{version}/fields/{schemaFullName}/{field}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void putFieldMetadata(
             @PathVariable("subject") String subject,
@@ -143,7 +139,7 @@ public class MetadataSchemaController {
                 build());
     }
 
-    @RequestMapping(value = {"/$batch", "/$batch/"}, method = RequestMethod.PUT)
+    @PutMapping("/$batch")
     public ResponseEntity<?> putMetadataBatch(
             @RequestBody Map<String, MetadataRequest> batch) {
         MetadataBatchUpdateParams.Builder builder = MetadataBatchUpdateParams.builder();
@@ -178,7 +174,7 @@ public class MetadataSchemaController {
     }
 
 
-    @RequestMapping(value = {"/{subject}/{version}", "/{subject}/{version}/"}, method = RequestMethod.DELETE)
+    @DeleteMapping("/{subject}/{version}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSchemaMetadata(
             @PathVariable("subject") String subject,
@@ -187,10 +183,7 @@ public class MetadataSchemaController {
         schemaCatalogStore.deleteMetadata(key);
     }
 
-    @RequestMapping(value = {
-            "/{subject}/{version}/fields/{schemaFullName}/{field}",
-            "/{subject}/{version}/fields/{schemaFullName}/{field}/"},
-            method = RequestMethod.DELETE)
+    @DeleteMapping("/{subject}/{version}/fields/{schemaFullName}/{field}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFieldMetadata(
             @PathVariable("subject") String subject,
