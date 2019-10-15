@@ -8,7 +8,8 @@ With Eco Schema Catalog you can use:
 * Various services to work with schemas.
 * Utilities, helpers, and other classes that extend and augment the Schema Registry library.
 
-The currently supported version of Confluent is [5.0.3](https://docs.confluent.io/5.0.3/schema-registry/docs/index.html)
+The currently supported version of Confluent is [5.1.3](https://docs.confluent.io/5.1.3/schema-registry/index.html)
+
 
 ## Project structure
 
