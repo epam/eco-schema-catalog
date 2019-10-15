@@ -21,8 +21,8 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
+import com.epam.eco.schemacatalog.domain.schema.SchemaVersionRange;
 import com.epam.eco.schemacatalog.serde.kafka.VerificationResult.Status;
-import com.epam.eco.schemacatalog.utils.SchemaVersionRange;
 
 /**
  * @author Andrei_Tytsik

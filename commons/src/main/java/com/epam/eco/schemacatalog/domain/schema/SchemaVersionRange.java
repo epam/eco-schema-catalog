@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.epam.eco.schemacatalog.utils;
+package com.epam.eco.schemacatalog.domain.schema;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

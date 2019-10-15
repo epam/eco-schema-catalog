@@ -13,10 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.epam.eco.schemacatalog.utils;
+package com.epam.eco.schemacatalog.domain.schema;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.epam.eco.schemacatalog.domain.schema.SchemaVersionRange;
 
 /**
  * @author Andrei_Tytsik

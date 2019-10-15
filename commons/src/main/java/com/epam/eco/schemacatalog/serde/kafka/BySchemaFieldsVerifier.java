@@ -28,9 +28,9 @@ import com.epam.eco.commons.avro.traversal.SchemaTraverseListener;
 import com.epam.eco.commons.avro.traversal.SchemaTraverser;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.SchemaVersionRange;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 import com.epam.eco.schemacatalog.serde.kafka.VerificationResult.Status;
-import com.epam.eco.schemacatalog.utils.SchemaVersionRange;
 
 /**
  * @author Andrei_Tytsik
