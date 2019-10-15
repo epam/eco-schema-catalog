@@ -34,10 +34,10 @@ public final class HttpSecurityConfigurer {
     public static HttpSecurity configureAuthorizeRequests(HttpSecurity http) throws Exception {
         return http.authorizeRequests().
                 antMatchers(
-                        "/health",
-                        "/info",
+                        "/actuator/health",
+                        "/actuator/info",
                         "/api/schemaregistry-info").permitAll().
-                antMatchers("/api/query/schemas-by-params", "/api/query/schemas-by-query").authenticated().
+                antMatchers("/api/queries/schemas-by-params", "/api/queries/schemas-by-query").authenticated().
                 antMatchers(HttpMethod.PUT, "/api/**").hasRole(ADMIN_ROLE).
                 antMatchers(HttpMethod.POST, "/api/**").hasRole(ADMIN_ROLE).
                 antMatchers(HttpMethod.DELETE, "/api/**").hasRole(ADMIN_ROLE).
