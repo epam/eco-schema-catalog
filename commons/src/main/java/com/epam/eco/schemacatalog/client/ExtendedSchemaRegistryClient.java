@@ -34,7 +34,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     SchemaRegistryServiceInfo getServiceInfo();
     Collection<String> getAllSubjectsUnchecked();
-    List<Integer> getAllVersions(String subject);
+    List<Integer> getAllVersionsUnchecked(String subject);
     Schema getBySubjectAndVersion(String subject, int version);
     Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject);
     AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject);
@@ -63,7 +63,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
             List<SchemaModification> modifications);
     void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
     boolean subjectExists(String subject);
-    List<Integer> deleteSubject(String subject);
+    List<Integer> deleteSubjectUnchecked(String subject);
     Integer deleteSchema(String subject, int version);
     boolean testCompatibilityUnchecked(String subject, Schema schema);
     int registerUnchecked(String subject, Schema schema);

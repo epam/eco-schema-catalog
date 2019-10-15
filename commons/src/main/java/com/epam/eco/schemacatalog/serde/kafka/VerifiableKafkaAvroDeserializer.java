@@ -86,9 +86,7 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
 
     @Override
     public Object deserialize(String topic, byte[] bytes) {
-        String subject = resolveSubjectName(topic);
-
-        initVerifierIfNeeded(subject);
+        initVerifierIfNeeded(topic);
 
         GenericContainer data = (GenericContainer)super.deserialize(topic, bytes);
         Schema originalSchema = getOriginalSchema(bytes);
@@ -121,20 +119,22 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
         return buffer;
     }
 
-    private void initVerifierIfNeeded(String subject) {
+    private void initVerifierIfNeeded(String topic) {
         if (verifier != null) {
             return;
         }
 
         Map<String, ?> verifierConfig = extractVerifierConfig();
+        String subject = resolveSubjectName(topic);
         verifier = instantiateVerifier(subject, verifierConfig);
     }
 
+    // valid for simple namings only (<= 4.0.x version)...
     private String resolveSubjectName(String topic) {
         if (geSchemaRegistryClient().subjectExists(topic)) {
             return topic;
         } else {
-            return getSubjectName(topic, isKey);
+            return getSubjectName(topic, isKey, null, null);
         }
     }
 

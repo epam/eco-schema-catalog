@@ -48,8 +48,8 @@ public final class BySchemaFieldsVerifier extends AbstractVerifier<GenericRecord
 
     @Override
     public void init(
-            String subject, ExtendedSchemaRegistryClient
-            schemaRegistryClient,
+            String subject,
+            ExtendedSchemaRegistryClient schemaRegistryClient,
             Map<String, ?> config) {
         super.init(subject, schemaRegistryClient, config);
 

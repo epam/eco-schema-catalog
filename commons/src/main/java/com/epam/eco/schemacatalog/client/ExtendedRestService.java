@@ -141,6 +141,18 @@ public class ExtendedRestService extends RestService {
     }
 
     @Override
+    public String getVersionSchemaOnly(
+            String subject,
+            int version) throws IOException, RestClientException {
+        return super.getVersionSchemaOnly(encodeSubject(subject), version);
+    }
+
+    @Override
+    public String getLatestVersionSchemaOnly(String subject) throws IOException, RestClientException {
+        return super.getLatestVersionSchemaOnly(encodeSubject(subject));
+    }
+
+    @Override
     public List<Integer> getAllVersions(
             Map<String, String> requestProperties,
             String subject) throws IOException, RestClientException {
@@ -151,16 +163,22 @@ public class ExtendedRestService extends RestService {
 
     @Override
     public Integer deleteSchemaVersion(
+            Map<String, String> requestProperties,
             String subject,
             String version) throws IOException, RestClientException {
         return super.deleteSchemaVersion(
+                requestProperties,
                 encodeSubject(subject),
                 version);
     }
 
     @Override
-    public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
-        return super.deleteSubject(encodeSubject(subject));
+    public List<Integer> deleteSubject(
+            Map<String, String> requestProperties,
+            String subject) throws IOException, RestClientException {
+        return super.deleteSubject(
+                requestProperties,
+                encodeSubject(subject));
     }
 
     private static String encodeSubject(String subject) throws UnsupportedEncodingException {

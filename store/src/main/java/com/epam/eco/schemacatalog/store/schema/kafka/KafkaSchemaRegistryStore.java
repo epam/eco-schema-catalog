@@ -348,7 +348,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         try (ResourceSemaphore<String, SubjectOperation> semaphore =
                 subjectSemaphores.createSemaphore(subject, SubjectOperation.DELETE)) {
-            schemaRegistryClient.deleteSubject(subject);
+            schemaRegistryClient.deleteSubjectUnchecked(subject);
             semaphore.awaitUnchecked();
         }
     }

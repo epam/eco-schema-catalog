@@ -59,6 +59,11 @@
         </Or>
     </Match>
     <Match>
+        <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient" />
+        <Method name="checkSchemaExists" />
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_RETURN_FALSE" />
+    </Match>
+    <Match>
         <Class name="com.epam.eco.schemacatalog.serde.kafka.AbstractVerifier" />
         <Method name="getSchemaVersion" />
         <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
@@ -78,11 +83,6 @@
     <Match>
         <Class name="com.epam.eco.schemacatalog.fts.SearchResult" />
         <Bug pattern="JACKSON_UNSAFE_DESERIALIZATION" />
-    </Match>
-    <Match>
-        <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient" />
-        <Method name="getSchemaEntityUnchecked" />
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
     </Match>
     <Match>
         <Class name="com.epam.eco.schemacatalog.client.SchemaRegistryServiceInfo" />

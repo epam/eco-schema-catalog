@@ -190,15 +190,12 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @Override
-    public List<Integer> deleteSubject(String subject) {
-        Validate.notBlank(subject, "Subject is blank");
+    public List<Integer> deleteSubjectUnchecked(String subject) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer deleteSchema(String subject, int version) {
-        Validate.notBlank(subject, "Subject is blank");
-        Validate.isTrue(version >= 0, "Version is invalid");
         throw new UnsupportedOperationException();
     }
 
@@ -254,7 +251,7 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @Override
-    public List<Integer> getAllVersions(String subject) {
+    public List<Integer> getAllVersionsUnchecked(String subject) {
         return new ArrayList<>(getVersionsCache().getOrDefault(subject, emptyMap()).values());
     }
 

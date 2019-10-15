@@ -17,6 +17,8 @@ package com.epam.eco.schemacatalog.client;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
@@ -80,6 +82,11 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     }
 
     @Override
+    public List<Integer> getAllVersions(String subject) throws IOException, RestClientException {
+        return decorated().getAllVersions(subject);
+    }
+
+    @Override
     public boolean testCompatibility(String subject, Schema schema) throws IOException, RestClientException {
         return decorated().testCompatibility(subject, schema);
     }
@@ -102,6 +109,26 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     @Override
     public int getId(String subject, Schema schema) throws IOException, RestClientException {
         return decorated().getId(subject, schema);
+    }
+
+    @Override
+    public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
+        return decorated().deleteSubject(subject);
+    }
+
+    @Override
+    public List<Integer> deleteSubject(Map<String, String> requestProperties, String subject) throws IOException, RestClientException {
+        return decorated().deleteSubject(requestProperties, subject);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(String subject, String version) throws IOException, RestClientException {
+        return decorated().deleteSchemaVersion(subject, version);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version) throws IOException, RestClientException {
+        return decorated().deleteSchemaVersion(requestProperties, subject, version);
     }
 
     @Override

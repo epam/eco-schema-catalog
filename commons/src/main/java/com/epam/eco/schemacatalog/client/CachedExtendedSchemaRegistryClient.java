@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.epam.eco.commons.avro.modification.CachedSchemaModifications;
 import com.epam.eco.commons.avro.modification.SchemaModification;
@@ -40,8 +39,8 @@ import com.epam.eco.schemacatalog.utils.UrlListExtractor;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
-import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
@@ -52,7 +51,6 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
     private static final int DEFAULT_IDENTITY_MAP_CAPACITY = 10000;
 
     private final SchemaRegistryServiceInfo schemaRegistryServiceInfo;
-    private final RestService _restService;
 
     private final Map<SubjectAndVersion, BasicSchemaInfo> schemaCache = new ConcurrentHashMap<>();
     private final Set<String> subjectCache = ConcurrentHashMap.newKeySet();
@@ -67,7 +65,6 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         super(new ExtendedRestService(baseUrls), identityMapCapacity);
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrls);
-        this._restService = readRestServiceField();
     }
 
     public CachedExtendedSchemaRegistryClient(RestService restService) {
@@ -81,7 +78,6 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(
                 UrlListExtractor.extract(restService.getBaseUrls()));
-        this._restService = readRestServiceField();
     }
 
     public CachedExtendedSchemaRegistryClient(String baseUrl) {
@@ -92,15 +88,6 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         super(new ExtendedRestService(baseUrl), identityMapCapacity);
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrl);
-        this._restService = readRestServiceField();
-    }
-
-    private RestService readRestServiceField() {
-        try {
-            return (RestService)FieldUtils.readField(this, "restService", true);
-        } catch (IllegalAccessException iae) {
-            throw new RuntimeException(iae);
-        }
     }
 
     @Override
@@ -114,11 +101,11 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
     }
 
     @Override
-    public List<Integer> getAllVersions(String subject) {
+    public List<Integer> getAllVersionsUnchecked(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
         try {
-            return _restService.getAllVersions(subject);
+            return getAllVersions(subject);
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException(ex);
         }
@@ -133,16 +120,16 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        return Optional.ofNullable(getConfigEntityAndConvertToCompatibility(subject));
+        return Optional.ofNullable(getCompatibilityLevelOrNullIfNotFound(subject));
     }
 
     @Override
     public AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        AvroCompatibilityLevel compatilityLevel = getConfigEntityAndConvertToCompatibility(subject);
+        AvroCompatibilityLevel compatilityLevel = getCompatibilityLevelOrNullIfNotFound(subject);
         if (compatilityLevel == null) {
-            compatilityLevel = getConfigEntityAndConvertToCompatibility(null); // global
+            compatilityLevel = getCompatibilityLevelOrNullIfNotFound(null); // global
         }
 
         if (compatilityLevel == null) {
@@ -176,7 +163,7 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
         List<BasicSchemaInfo> schemaInfos = new ArrayList<>();
 
-        List<Integer> versions = getAllVersions(subject);
+        List<Integer> versions = getAllVersionsUnchecked(subject);
         versions.forEach(
                 version -> schemaInfos.add(getCachedSchemaInfoOrRefresh(subject, version, null)));
 
@@ -249,7 +236,11 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
 
-        updateCompatibilityUnchecked(subject, compatibilityLevel);
+        try {
+            updateCompatibility(subject, compatibilityLevel.name());
+        } catch (IOException | RestClientException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -262,11 +253,18 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
     }
 
     @Override
-    public List<Integer> deleteSubject(String subject) {
+    public List<Integer> deleteSubjectUnchecked(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
         try {
-            return _restService.deleteSubject(subject);
+            List<Integer> versions = deleteSubject(subject);
+
+            removeFromSchemaCache(subject, null);
+            removeFromSubjectCache(subject);
+            removeFromWritableVersionCache(subject, null);
+            removeFromWritableSchemaCache(subject, null);
+
+            return versions;
         } catch (IOException | RestClientException e) {
             throw new RuntimeException(e);
         }
@@ -278,7 +276,15 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         Validate.isTrue(version >= 0, "Version is invalid");
 
         try {
-            return _restService.deleteSchemaVersion(subject, Integer.toString(version));
+            BasicSchemaInfo schemaInfo = getSchemaInfo(subject, version);
+
+            Integer deletedVersion = deleteSchemaVersion(subject, Integer.toString(version));
+
+            removeFromSchemaCache(subject, version);
+            removeFromWritableVersionCache(subject, version);
+            removeFromWritableSchemaCache(subject, schemaInfo.getSchemaAvro());
+
+            return deletedVersion;
         } catch (IOException | RestClientException e) {
             throw new RuntimeException(e);
         }
@@ -349,7 +355,8 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
     private boolean checkSchemaExists(String subject, Schema schema) {
         try {
-            return getSchemaEntity(subject, schema) != null;
+            getId(subject, schema);
+            return true;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (RestClientException rce) {
@@ -363,11 +370,7 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
     private boolean checkSchemaExists(String subject, Integer version) {
         try {
-            if (version != null) {
-                return getSchemaEntity(subject, version) != null;
-            } else {
-                return getSchemaEntity(subject, (Integer)null) != null;
-            }
+            return getSchemaMetadataOrLatest(subject, version) != null;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (RestClientException rce) {
@@ -377,19 +380,6 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
                 throw new RuntimeException(rce);
             }
         }
-    }
-
-    private boolean isNotFoundError(RestClientException rce) {
-        /*
-         * See io.confluent.kafka.schemaregistry.rest.exceptions.Errors
-         * public static final int SUBJECT_NOT_FOUND_ERROR_CODE = 40401;
-         * public static final int VERSION_NOT_FOUND_ERROR_CODE = 40402;
-         * public static final int SCHEMA_NOT_FOUND_ERROR_CODE = 40403;
-         */
-        return
-                rce.getErrorCode() == 40401 ||
-                rce.getErrorCode() == 40402 ||
-                rce.getErrorCode() == 40403;
     }
 
     private Set<String> getAllCachedSubjectsOrRefreshUnchecked(boolean forceRefresh) {
@@ -409,18 +399,18 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
         AvroCompatibilityLevel sourceCompatibilityLevel =
-                getConfigEntityAndConvertToCompatibility(sourceSubject);
+                getCompatibilityLevelOrNullIfNotFound(sourceSubject);
         if (sourceCompatibilityLevel == null) {
             return;
         }
 
         AvroCompatibilityLevel destinationCompatibilityLevel =
-                getConfigEntityAndConvertToCompatibility(destinationSubject);
+                getCompatibilityLevelOrNullIfNotFound(destinationSubject);
         if (destinationCompatibilityLevel != null) {
             return;
         }
 
-        updateCompatibilityUnchecked(destinationSubject, sourceCompatibilityLevel);
+        updateCompatibility(destinationSubject, sourceCompatibilityLevel);
     }
 
     private BasicSchemaInfo getCachedSchemaInfoOrRefresh(
@@ -431,9 +421,9 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
             SubjectAndVersion key = SubjectAndVersion.with(subject, version);
             return schemaCache.computeIfAbsent(
                     key,
-                    k -> getSchemaEntityAndConvertToInfo(subject, version, initConsumer));
+                    k -> getSchemaMetadataAndConvertToInfo(subject, version, initConsumer));
         } else {
-            BasicSchemaInfo schemaInfo = getSchemaEntityAndConvertToInfo(subject, null, initConsumer);
+            BasicSchemaInfo schemaInfo = getSchemaMetadataAndConvertToInfo(subject, null, initConsumer);
             schemaCache.put(
                     SubjectAndVersion.of(schemaInfo),
                     schemaInfo);
@@ -441,100 +431,98 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         }
     }
 
-    private BasicSchemaInfo getSchemaEntityAndConvertToInfo(
+    private BasicSchemaInfo getSchemaMetadataAndConvertToInfo(
             String subject,
             Integer version,
             Consumer<BasicSchemaInfo> initConsumer) {
-        io.confluent.kafka.schemaregistry.client.rest.entities.Schema schemaEntity =
-                getSchemaEntityUnchecked(subject, version);
-        BasicSchemaInfo schemaInfo = toSchemaInfo(schemaEntity);
+        SchemaMetadata schemaMetadata = getSchemaMetadataOrLatestUnchecked(subject, version);
+        BasicSchemaInfo schemaInfo = toSchemaInfo(subject, schemaMetadata);
         if (initConsumer != null) {
             initConsumer.accept(schemaInfo);
         }
         return schemaInfo;
     }
 
-    private io.confluent.kafka.schemaregistry.client.rest.entities.Schema getSchemaEntityUnchecked(
-            String subject,
-            Integer version) {
+    private SchemaMetadata getSchemaMetadataOrLatestUnchecked(String subject, Integer version) {
         try {
-            return getSchemaEntity(subject, version);
+            return getSchemaMetadataOrLatest(subject, version);
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private io.confluent.kafka.schemaregistry.client.rest.entities.Schema getSchemaEntity(
+    private SchemaMetadata getSchemaMetadataOrLatest(
             String subject,
             Integer version) throws IOException, RestClientException {
         if (version != null) {
-            return _restService.getVersion(subject, version);
+            return getSchemaMetadata(subject, version.intValue());
         } else {
-            return _restService.getLatestVersion(subject);
+            return getLatestSchemaMetadata(subject);
         }
     }
 
-    @SuppressWarnings("unused")
-    private io.confluent.kafka.schemaregistry.client.rest.entities.Schema getSchemaEntityUnchecked(
-            String subject,
-            Schema schema) {
+    private AvroCompatibilityLevel getCompatibilityLevelOrNullIfNotFound(String subject) {
+        AvroCompatibilityLevel compatibilityLevel = null;
         try {
-            return getSchemaEntity(subject, schema);
-        } catch (IOException | RestClientException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private io.confluent.kafka.schemaregistry.client.rest.entities.Schema getSchemaEntity(
-            String subject,
-            Schema schema) throws IOException, RestClientException {
-        return _restService.lookUpSubjectVersion(schema.toString(), subject);
-    }
-
-    private AvroCompatibilityLevel getConfigEntityAndConvertToCompatibility(String subject) {
-        Config configEntity = getConfigEntityUnchecked(subject);
-        return configEntity != null ? toCompatibilityLevel(configEntity) : null;
-    }
-
-    private Config getConfigEntityUnchecked(String subject) {
-        Config configEntity = null;
-        try {
-            configEntity = _restService.getConfig(subject);
+            compatibilityLevel = AvroCompatibilityLevel.forName(getCompatibility(subject));
         } catch (RestClientException rce) {
-            /*
-             * See io.confluent.kafka.schemaregistry.rest.exceptions.Errors
-             * public static final int SUBJECT_NOT_FOUND_ERROR_CODE = 40401;
-             */
-            // supress 40401 "config not found" exception if subject isn't global
-            if (subject == null || rce.getErrorCode() != 40401) {
+            if (subject == null || !isNotFoundError(rce)) {
                 throw new RuntimeException(rce);
             }
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
-        return configEntity;
+        return compatibilityLevel;
     }
 
-    private void updateCompatibilityUnchecked(String subject, AvroCompatibilityLevel compatibilityLevel) {
-        try {
-            updateCompatibility(subject, compatibilityLevel.name());
-        } catch (IOException | RestClientException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private BasicSchemaInfo toSchemaInfo(
-            io.confluent.kafka.schemaregistry.client.rest.entities.Schema schemaEntity) {
+    private BasicSchemaInfo toSchemaInfo(String subject, SchemaMetadata schemaMetadata) {
         return BasicSchemaInfo.builder().
-                subject(schemaEntity.getSubject()).
-                version(schemaEntity.getVersion()).
-                schemaRegistryId(schemaEntity.getId()).
-                schemaJson(schemaEntity.getSchema()).
+                subject(subject).
+                version(schemaMetadata.getVersion()).
+                schemaRegistryId(schemaMetadata.getId()).
+                schemaJson(schemaMetadata.getSchema()).
                 build();
     }
 
-    private AvroCompatibilityLevel toCompatibilityLevel(Config configEntity) {
-        return AvroCompatibilityLevel.forName(configEntity.getCompatibilityLevel());
+    private void removeFromSchemaCache(String subject, Integer version) {
+        if (version == null) {
+            schemaCache.keySet().removeIf(sav -> sav.getSubject().equals(subject));
+        } else {
+            schemaCache.remove(SubjectAndVersion.with(subject, version));
+        }
+    }
+
+    private void removeFromSubjectCache(String subject) {
+        subjectCache.remove(subject);
+    }
+
+    private void removeFromWritableVersionCache(String subject, Integer version) {
+        if (version == null) {
+            writableVersionCache.keySet().removeIf(sav -> sav.getSubject().equals(subject));
+        } else {
+            writableVersionCache.remove(SubjectAndVersion.with(subject, version));
+        }
+    }
+
+    private void removeFromWritableSchemaCache(String subject, Schema schema) {
+        if (schema == null) {
+            writableSchemaCache.keySet().removeIf(sav -> sav.getSubject().equals(subject));
+        } else {
+            writableSchemaCache.remove(SubjectAndSchema.with(subject, schema));
+        }
+    }
+
+    private boolean isNotFoundError(RestClientException rce) {
+        /*
+         * See io.confluent.kafka.schemaregistry.rest.exceptions.Errors
+         * public static final int SUBJECT_NOT_FOUND_ERROR_CODE = 40401;
+         * public static final int VERSION_NOT_FOUND_ERROR_CODE = 40402;
+         * public static final int SCHEMA_NOT_FOUND_ERROR_CODE = 40403;
+         */
+        return
+                rce.getErrorCode() == 40401 ||
+                rce.getErrorCode() == 40402 ||
+                rce.getErrorCode() == 40403;
     }
 
 }

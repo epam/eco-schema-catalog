@@ -15,9 +15,14 @@
  */
 package com.epam.eco.schemacatalog.client;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.avro.Schema;
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
  * @author Andrei_Tytsik
@@ -35,6 +40,26 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
 
     @Override
     public final String updateCompatibility(String subject, String compatibility) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Integer> deleteSubject(Map<String, String> requestProperties, String subject) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(String subject, String version) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
