@@ -492,34 +492,38 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     private Set<SubjectAndVersion> applySchemaUpdateAndGetAffected(SchemaKey key, SchemaValue value) {
+        if (value == null) { // "delete" not supported for a while...
+            return Collections.emptySet();
+        }
+
         NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseCreate(key.getSubject());
 
         SchemaValue oldValue = subjectSchemas.put(key.getVersion(), value);
         if (Objects.equals(oldValue, value)) {
             return Collections.emptySet();
-        } else {
-            populateSchemasDeleteIfNeededAndGetAffeted(key.getSubject());
-
-            SubjectAndVersion subjectAndVersion =
-                    new SubjectAndVersion(key.getSubject(), key.getVersion());
-
-            Set<SubjectAndVersion> affected = new HashSet<>();
-            affected.add(subjectAndVersion);
-            if (subjectSchemas.size() > 1 && subjectSchemas.lastKey().equals(key.getVersion())) {
-                affected.add(
-                        new SubjectAndVersion(
-                                key.getSubject(),
-                                subjectSchemas.lowerKey(key.getVersion())));
-            }
-
-            if (oldValue == null) { // schema REGISTER semaphore
-                schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.REGISTER);
-            } else if (value.isDeleted() && !oldValue.isDeleted()) { // schema DELETE semaphore
-                schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.DELETE);
-            }
-
-            return affected;
         }
+
+        populateSchemasDeleteIfNeededAndGetAffeted(key.getSubject());
+
+        SubjectAndVersion subjectAndVersion =
+                new SubjectAndVersion(key.getSubject(), key.getVersion());
+
+        Set<SubjectAndVersion> affected = new HashSet<>();
+        affected.add(subjectAndVersion);
+        if (subjectSchemas.size() > 1 && subjectSchemas.lastKey().equals(key.getVersion())) {
+            affected.add(
+                    new SubjectAndVersion(
+                            key.getSubject(),
+                            subjectSchemas.lowerKey(key.getVersion())));
+        }
+
+        if (oldValue == null) { // schema REGISTER semaphore
+            schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.REGISTER);
+        } else if (value.isDeleted() && !oldValue.isDeleted()) { // schema DELETE semaphore
+            schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.DELETE);
+        }
+
+        return affected;
     }
 
     private Set<SubjectAndVersion> applySubjectDeleteAndGetAffected(
