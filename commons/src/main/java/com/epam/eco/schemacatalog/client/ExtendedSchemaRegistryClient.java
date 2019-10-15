@@ -36,6 +36,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     Collection<String> getAllSubjectsUnchecked();
     List<Integer> getAllVersionsUnchecked(String subject);
     Schema getBySubjectAndVersion(String subject, int version);
+    AvroCompatibilityLevel getGlobalCompatibilityLevel();
     Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject);
     AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject);
     BasicSchemaInfo getSchemaInfo(String subject, int version);

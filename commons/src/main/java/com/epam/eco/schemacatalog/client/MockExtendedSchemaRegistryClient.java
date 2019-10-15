@@ -61,6 +61,11 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @Override
+    public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
+        return retrieveConfigAndConvertToCompatibility(null);
+    }
+
+    @Override
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 

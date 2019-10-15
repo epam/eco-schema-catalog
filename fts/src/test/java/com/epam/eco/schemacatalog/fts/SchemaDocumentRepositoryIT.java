@@ -39,6 +39,7 @@ import org.springframework.test.context.TestPropertySource;
 import com.epam.eco.commons.avro.modification.RenameSchema;
 import com.epam.eco.commons.avro.modification.SchemaModifications;
 import com.epam.eco.commons.avro.modification.SetSchemaProperties;
+import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.fts.datagen.FtsTestCaseGenerator;
 import com.epam.eco.schemacatalog.fts.datagen.FtsTestFactory;
@@ -47,7 +48,6 @@ import com.epam.eco.schemacatalog.fts.repo.SchemaDocumentRepository;
 import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -67,7 +67,7 @@ public class SchemaDocumentRepositoryIT {
     private SchemaDocumentRepository repository;
 
     @Autowired
-    private SchemaRegistryClient client;
+    private ExtendedSchemaRegistryClient client;
 
     public SchemaDocumentRepositoryIT() throws Exception {
         new TestContextManager(getClass()).prepareTestInstance(this);
@@ -409,7 +409,7 @@ public class SchemaDocumentRepositoryIT {
 
     @Test
     public void testCompatibilityTermFilter() throws Exception {
-        AvroCompatibilityLevel compatibility = AvroCompatibilityLevel.FULL;
+        AvroCompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
         searchParams.setQuery("*");

@@ -142,8 +142,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     private void readGlobalConfig() throws Exception {
         // retry at start-up only
         AvroCompatibilityLevel globalCompatibilityLevel = retryTemplate.
-                execute(context -> AvroCompatibilityLevel.
-                        forName(schemaRegistryClient.getCompatibility(null)));
+                execute(context -> schemaRegistryClient.getGlobalCompatibilityLevel());
 
         if (globalCompatibilityLevel == null) {
             throw new RuntimeException("Global compatibility level is null");

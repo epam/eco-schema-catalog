@@ -117,6 +117,11 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
     }
 
     @Override
+    public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
+        return getCompatibilityLevelOrNullIfNotFound(null);
+    }
+
+    @Override
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
