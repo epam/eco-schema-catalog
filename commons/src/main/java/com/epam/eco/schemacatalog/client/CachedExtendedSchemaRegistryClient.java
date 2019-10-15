@@ -262,14 +262,7 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         Validate.notBlank(subject, "Subject is blank");
 
         try {
-            List<Integer> versions = deleteSubject(subject);
-
-            removeFromSchemaCache(subject, null);
-            removeFromSubjectCache(subject);
-            removeFromWritableVersionCache(subject, null);
-            removeFromWritableSchemaCache(subject, null);
-
-            return versions;
+            return deleteSubject(subject);
         } catch (IOException | RestClientException e) {
             throw new RuntimeException(e);
         }
@@ -281,18 +274,41 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
         Validate.isTrue(version >= 0, "Version is invalid");
 
         try {
-            BasicSchemaInfo schemaInfo = getSchemaInfo(subject, version);
-
-            Integer deletedVersion = deleteSchemaVersion(subject, Integer.toString(version));
-
-            removeFromSchemaCache(subject, version);
-            removeFromWritableVersionCache(subject, version);
-            removeFromWritableSchemaCache(subject, schemaInfo.getSchemaAvro());
-
-            return deletedVersion;
+            return deleteSchemaVersion(subject, Integer.toString(version));
         } catch (IOException | RestClientException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<Integer> deleteSubject(
+            Map<String, String> requestProperties,
+            String subject) throws IOException, RestClientException {
+        List<Integer> versions = super.deleteSubject(requestProperties, subject);
+
+        removeFromSchemaCache(subject, null);
+        removeFromSubjectCache(subject);
+        removeFromWritableVersionCache(subject, null);
+        removeFromWritableSchemaCache(subject, null);
+
+        return versions;
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(
+            Map<String, String> requestProperties,
+            String subject,
+            String version) throws IOException, RestClientException {
+        Integer versionInt = Integer.valueOf(version);
+        Schema schema = getBySubjectAndVersion(subject, versionInt);
+
+        Integer deleted = super.deleteSchemaVersion(requestProperties, subject, version);
+
+        removeFromSchemaCache(subject, versionInt);
+        removeFromWritableVersionCache(subject, versionInt);
+        removeFromWritableSchemaCache(subject, schema);
+
+        return deleted;
     }
 
     @Override
@@ -389,17 +405,13 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
     private Set<String> getAllCachedSubjectsOrRefreshUnchecked(boolean forceRefresh) {
         try {
-            return getAllCachedSubjectsOrRefresh(forceRefresh);
+            if (forceRefresh) {
+                subjectCache.addAll(getAllSubjects());
+            }
+            return subjectCache;
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    private Set<String> getAllCachedSubjectsOrRefresh(boolean forceRefresh) throws IOException, RestClientException {
-        if (forceRefresh) {
-            subjectCache.addAll(getAllSubjects());
-        }
-        return subjectCache;
     }
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
@@ -511,7 +523,7 @@ public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClie
 
     private void removeFromWritableSchemaCache(String subject, Schema schema) {
         if (schema == null) {
-            writableSchemaCache.keySet().removeIf(sav -> sav.getSubject().equals(subject));
+            writableSchemaCache.keySet().removeIf(sas -> sas.getSubject().equals(subject));
         } else {
             writableSchemaCache.remove(SubjectAndSchema.with(subject, schema));
         }
