@@ -29,5 +29,6 @@ public interface MetadataStore {
     void createOrReplace(MetadataKey key, MetadataValue value);
     void executeBatchUpdate(Map<MetadataKey, MetadataValue> batch);
     void delete(MetadataKey key);
+    void deleteAll(String subject, int version);
     void registerListener(MetadataStoreUpdateListener listener);
 }

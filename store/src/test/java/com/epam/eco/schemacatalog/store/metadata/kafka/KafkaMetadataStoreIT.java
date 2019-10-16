@@ -16,6 +16,7 @@
 package com.epam.eco.schemacatalog.store.metadata.kafka;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,10 @@ import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
 import com.epam.eco.schemacatalog.store.utils.TestMetadata;
 import com.epam.eco.schemacatalog.store.utils.TestMetadataStoreUpdateListener;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Andrei_Tytsik
@@ -118,6 +122,30 @@ public class KafkaMetadataStoreIT {
         for (Map.Entry<MetadataKey, MetadataValue> entry : TestMetadata.samples()) {
             returnedValue = metadataStore.get(entry.getKey());
             Assert.assertEquals(returnedValue, entry.getValue());
+        }
+
+        Iterator<Integer> versionIterator = TestMetadata.versions().iterator();
+        Integer firstVersion = versionIterator.next();
+        Integer nextVersion = versionIterator.next();
+
+        Integer blankVersionBetween = TestMetadata.greatestBlankVersionBetween(firstVersion, nextVersion);
+        assertNotNull(blankVersionBetween);
+        updatedSubjects.clear();
+        metadataStore.deleteAll(TestMetadata.subject(), blankVersionBetween);
+        TimeUnit.SECONDS.sleep(EVENTUAL_CONSISTENCY_SECONDS);
+
+        assertTrue(updatedSubjects.isEmpty());
+
+        metadataStore.deleteAll(TestMetadata.subject(), nextVersion);
+        TimeUnit.SECONDS.sleep(EVENTUAL_CONSISTENCY_SECONDS);
+
+        assertFalse(updatedSubjects.isEmpty());
+
+        assertEquals(
+                metadataStore.getCollection(TestMetadata.subject(), firstVersion),
+                metadataStore.getCollection(TestMetadata.subject(), nextVersion));
+
+        for (Map.Entry<MetadataKey, MetadataValue> entry : TestMetadata.samples()) {
             batch.put(entry.getKey(), null);
         }
 

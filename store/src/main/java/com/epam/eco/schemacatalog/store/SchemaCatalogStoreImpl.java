@@ -204,7 +204,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
     @Override
     public void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
-        // TODO delete metadata
+        subjectAndVersions.forEach(sav -> metadataStore.deleteAll(sav.getSubject(), sav.getVersion()));
         fireSchemasDeleted(subjectAndVersions);
     }
 

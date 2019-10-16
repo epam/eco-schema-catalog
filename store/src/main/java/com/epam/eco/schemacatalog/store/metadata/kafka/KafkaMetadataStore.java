@@ -176,6 +176,19 @@ public class KafkaMetadataStore implements MetadataStore, CacheListener<Metadata
     }
 
     @Override
+    public void deleteAll(String subject, int version) {
+        Validate.notNull(subject, "Subject is null");
+        Validate.isTrue(version >= 0, "Version is negative");
+
+        lock.writeLock().lock();
+        try {
+            doDeleteAll(subject, version);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
     public void executeBatchUpdate(Map<MetadataKey, MetadataValue> batch) {
         Validate.notNull(batch, "Batch is null");
 
@@ -299,6 +312,30 @@ public class KafkaMetadataStore implements MetadataStore, CacheListener<Metadata
                 }
             }
         }
+    }
+
+    public void doDeleteAll(String subject, int version) {
+        MetadataContainer metadataContainer = storeCache.get(subject);
+        if (metadataContainer == null) {
+            return;
+        }
+        Map<MetadataKey, MetadataValue> collection = metadataContainer.getCollection(version);
+        if (collection == null) {
+            return;
+        }
+
+        List<MetadataKey> relatedKeys = collection.keySet().stream()
+                .filter(key -> key.getSubject().equals(subject) && key.getVersion() == version)
+                .collect(Collectors.toList());
+        if (relatedKeys.isEmpty()) {
+            return;
+        }
+
+        Map<MetadataKey, MetadataValue> batch = new HashMap<>(relatedKeys.size(), 1);
+        for (MetadataKey key : relatedKeys) {
+            batch.put(key, null);
+        }
+        doExecuteBatchUpdate(batch);
     }
 
     private void saveToKafka(MetadataKey key, MetadataValue value) {
