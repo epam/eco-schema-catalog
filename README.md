@@ -10,7 +10,6 @@ With Eco Schema Catalog you can use:
 
 The currently supported version of Confluent is [5.1.3](https://docs.confluent.io/5.1.3/schema-registry/index.html)
 
-
 ## Project structure
 
 The repository contains the following packages:
@@ -96,6 +95,14 @@ To stop all services, run:
 ```
 docker-compose -f docker/docker-compose-all.yaml down
 ```
+
+## Compatibility matrix
+
+Eco Schema Catalog | Confluent Platform | Kafka
+---  | --- | ---
+1.1.x-SNAPSHOT | 5.1.x | 2.1.x
+1.0.x | 5.0.x | 2.0.x
+0.1.x | 4.0.x | 1.0.x
 
 ## License
 
