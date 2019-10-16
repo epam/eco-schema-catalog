@@ -25,7 +25,7 @@
     "express": "^4.16.4",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
-    "helmet": "^3.18.0",
+    "helmet": "^3.21.1",
     "history": "^4.9.0",
     "jsonlint-mod": "^1.7.4",
     "lodash-es": "^4.17.11",
