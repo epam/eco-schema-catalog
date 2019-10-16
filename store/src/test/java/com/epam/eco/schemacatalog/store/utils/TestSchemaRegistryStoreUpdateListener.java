@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStoreUpdateListener;
 
@@ -28,14 +29,24 @@ import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStoreUpdateListener
 public class TestSchemaRegistryStoreUpdateListener implements SchemaRegistryStoreUpdateListener {
 
     private List<SchemaEntity> updated = new ArrayList<>();
+    private List<SubjectAndVersion> deleted = new ArrayList<>();
 
     @Override
     public void onSchemasUpdated(Collection<SchemaEntity> schemas) {
         updated.addAll(schemas);
     }
 
+    @Override
+    public void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
+        deleted.addAll(subjectAndVersions);
+    }
+
     public List<SchemaEntity> getUpdated() {
         return updated;
+    }
+
+    public List<SubjectAndVersion> getDeleted() {
+        return deleted;
     }
 
 }

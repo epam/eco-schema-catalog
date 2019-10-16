@@ -32,8 +32,10 @@ import com.epam.eco.schemacatalog.domain.metadata.MetadataAware;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataBrowser;
 import com.epam.eco.schemacatalog.domain.metadata.format.DocFormatter;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.fts.MetadataDocument;
 import com.epam.eco.schemacatalog.fts.SchemaDocument;
+import com.epam.eco.schemacatalog.utils.EcoIdUtils;
 import com.epam.eco.schemacatalog.utils.MetadataDocAttributeExtractor;
 
 /**
@@ -100,6 +102,14 @@ public abstract class SchemaDocumentConverter {
             }
         }).walk(schemaInfo.getSchemaAvro());
 
+        return document;
+    }
+
+    public static SchemaDocument convert(SubjectAndVersion subjectAndVersion) {
+        SchemaDocument document = new SchemaDocument();
+        document.setSubject(subjectAndVersion.getSubject());
+        document.setVersion(subjectAndVersion.getVersion());
+        document.setEcoId(EcoIdUtils.formatId(subjectAndVersion));
         return document;
     }
 

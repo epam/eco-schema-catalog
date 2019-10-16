@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.avro.Schema;
 
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
 
@@ -34,11 +36,13 @@ public interface SchemaRegistryStore {
     SchemaEntity getLatestSchema(String subject);
     SchemaEntity getSchema(String subject, Integer version);
     AvroCompatibilityLevel getSubjectCompatibility(String subject);
+    boolean schemaExists(SubjectAndVersion subjectAndVersion);
     boolean schemaExists(String subject, int version);
     boolean subjectExists(String subject);
     boolean testSchemaCompatible(String subject, Schema schema);
     SchemaEntity registerSchema(String subject, Schema schema);
     void deleteSubject(String subject);
+    void deleteSchema(SubjectAndVersion subjectAndVersion);
     void deleteSchema(String subject, int version);
     void updateSubjectCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
     void registerListener(SchemaRegistryStoreUpdateListener listener);

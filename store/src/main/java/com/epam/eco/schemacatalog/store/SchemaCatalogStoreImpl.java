@@ -40,6 +40,7 @@ import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.SchemaCompatibilityCheckResult;
 import com.epam.eco.schemacatalog.domain.schema.SchemaCompatibilityError;
 import com.epam.eco.schemacatalog.domain.schema.SchemaRegisterParams;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.domain.schema.SubjectCompatibilityUpdateParams;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
@@ -197,19 +198,25 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
     @Override
     public void onSchemasUpdated(Collection<SchemaEntity> schemas) {
-        fireUpdateListeners(
+        fireSchemasUpdated(
                 schemas.stream().map(this::toFullSchemaInfo).collect(Collectors.toList()));
     }
 
     @Override
+    public void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
+        // TODO delete metadata
+        fireSchemasDeleted(subjectAndVersions);
+    }
+
+    @Override
     public void onMetadataSubjectsUpdated(Collection<String> subjects) {
-        fireUpdateListeners(schemaRegistryStore.getSchemas(subjects).stream().
+        fireSchemasUpdated(schemaRegistryStore.getSchemas(subjects).stream().
                 map(this::toFullSchemaInfo).
                 collect(Collectors.toList()));
     }
 
-    private void fireUpdateListeners(Collection<FullSchemaInfo> schemas) {
-        if (CollectionUtils.isEmpty(updateListeners)) {
+    private void fireSchemasUpdated(Collection<FullSchemaInfo> schemas) {
+        if (CollectionUtils.isEmpty(updateListeners) || CollectionUtils.isEmpty(schemas)) {
             return;
         }
 
@@ -217,7 +224,21 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
             try {
                 listener.onSchemasUpdated(schemas);
             } catch (Exception ex) {
-                LOGGER.error("Failed to handle 'schema updated' event.", ex);
+                LOGGER.error("Failed to handle 'schemas updated' event.", ex);
+            }
+        });
+    }
+
+    private void fireSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
+        if (CollectionUtils.isEmpty(updateListeners) || CollectionUtils.isEmpty(subjectAndVersions)) {
+            return;
+        }
+
+        updateListeners.forEach(listener -> {
+            try {
+                listener.onSchemasDeleted(subjectAndVersions);
+            } catch (Exception ex) {
+                LOGGER.error("Failed to handle 'schemas deleted' event.", ex);
             }
         });
     }

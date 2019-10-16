@@ -18,14 +18,23 @@ package com.epam.eco.schemacatalog.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+
 /**
  * @author Andrei_Tytsik
  */
 public class EcoIdUtilsTest {
 
     @Test
-    public void testIdIfFormatted() throws Exception {
+    public void testIdFormatted1() throws Exception {
         String ecoId = EcoIdUtils.formatId("subject", 10);
+
+        Assert.assertNotNull(ecoId);
+    }
+
+    @Test
+    public void testIdFormatted2() throws Exception {
+        String ecoId = EcoIdUtils.formatId(SubjectAndVersion.with("subject", 10));
 
         Assert.assertNotNull(ecoId);
     }

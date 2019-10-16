@@ -17,9 +17,12 @@ package com.epam.eco.schemacatalog.store.schema;
 
 import java.util.Collection;
 
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+
 /**
  * @author Andrei_Tytsik
  */
 public interface SchemaRegistryStoreUpdateListener {
     void onSchemasUpdated(Collection<SchemaEntity> schemas);
+    void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions);
 }

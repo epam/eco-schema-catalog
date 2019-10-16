@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.store.SchemaCatalogStoreUpdateListener;
 
 /**
@@ -28,14 +29,24 @@ import com.epam.eco.schemacatalog.store.SchemaCatalogStoreUpdateListener;
 public class TestSchemaCatalogStoreUpdateListener implements SchemaCatalogStoreUpdateListener {
 
     private List<FullSchemaInfo> updated = new ArrayList<>();
+    private List<SubjectAndVersion> deleted = new ArrayList<>();
 
     @Override
     public void onSchemasUpdated(Collection<FullSchemaInfo> schemas) {
         updated.addAll(schemas);
     }
 
+    @Override
+    public void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
+        deleted.addAll(subjectAndVersions);
+    }
+
     public List<FullSchemaInfo> getUpdated() {
         return updated;
+    }
+
+    public List<SubjectAndVersion> getDeleted() {
+        return deleted;
     }
 
 }

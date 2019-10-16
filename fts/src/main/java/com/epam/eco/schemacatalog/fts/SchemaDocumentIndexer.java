@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.fts.convert.SchemaDocumentConverter;
 import com.epam.eco.schemacatalog.fts.repo.SchemaDocumentRepository;
 import com.epam.eco.schemacatalog.store.SchemaCatalogStoreUpdateListener;
@@ -59,12 +61,25 @@ public class SchemaDocumentIndexer implements SchemaCatalogStoreUpdateListener {
                         filter(s -> !schemaFiltered(s)).
                         map(SchemaDocumentConverter::convert).
                         collect(Collectors.toList());
-                if (!documents.isEmpty()) {
+                if (!CollectionUtils.isEmpty(documents)) {
                     repository.saveAll(documents);
                 }
             } catch (Exception ex) {
                 LOGGER.error("Failed to index schemas", ex);
             }
+        }
+    }
+
+    @Override
+    public void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions) {
+        List<SchemaDocument> schemaList = subjectAndVersions.stream().
+                map(SchemaDocumentConverter::convert).
+                collect(Collectors.toList());
+
+        try {
+            repository.deleteAll(schemaList);
+        } catch (Exception ex) {
+            LOGGER.error("Failed to delete schemas", ex);
         }
     }
 

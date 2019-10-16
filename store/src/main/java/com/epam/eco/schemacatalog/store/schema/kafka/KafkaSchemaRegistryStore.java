@@ -33,6 +33,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,6 +265,13 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
+    public boolean schemaExists(SubjectAndVersion subjectAndVersion) {
+        Validate.notNull(subjectAndVersion, "SubjectAndVersion is null");
+
+        return schemaExists(subjectAndVersion.getSubject(), subjectAndVersion.getVersion());
+    }
+
+    @Override
     public boolean schemaExists(String subject, int version) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.isTrue(version >= 0, "Version is invalid");
@@ -353,6 +361,13 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
+    public void deleteSchema(SubjectAndVersion subjectAndVersion) {
+        Validate.notNull(subjectAndVersion, "SubjectAndVersion is null");
+
+        deleteSchema(subjectAndVersion.getSubject(), subjectAndVersion.getVersion());
+    }
+
+    @Override
     public void deleteSchema(String subject, int version) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.isTrue(version >= 0, "Version is invalid");
@@ -414,37 +429,34 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
             lock.writeLock().unlock();
         }
 
-        fireUpdateListeners(affected);
+        fireListenersFor(affected);
     }
 
-    private SchemaEntity toSchemaEntity(SchemaValue schemaValue) {
-        ConfigValue configValue = getEffectiveConfig(schemaValue.getSubject());
-        NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseFail(
-                schemaValue.getSubject());
-        SchemaEntity schemaEntity = new SchemaEntity();
-        schemaEntity.setId(schemaValue.getId());
-        schemaEntity.setSubject(schemaValue.getSubject());
-        schemaEntity.setVersion(schemaValue.getVersion());
-        schemaEntity.setCompatibilityLevel(configValue.getCompatibilityLevel());
-        schemaEntity.setSchema(schemaValue.getSchema());
-        schemaEntity.setVersionLatest(subjectSchemas.lastKey().equals(schemaValue.getVersion()));
-        schemaEntity.setDeleted(schemaValue.isDeleted());
-        return schemaEntity;
-    }
-
-    private void fireUpdateListeners(Set<SubjectAndVersion> subjectAndVersions) {
-        if (listeners.isEmpty()) {
+    private void fireListenersFor(Set<SubjectAndVersion> subjectAndVersions) {
+        if (CollectionUtils.isEmpty(listeners) || CollectionUtils.isEmpty(subjectAndVersions)) {
             return;
         }
 
-        List<SchemaEntity> schemas = subjectAndVersions.stream().
-                map(sav -> getSubjectSchemasOrElseFail(sav.getSubject()).get(sav.getVersion())).
-                map(this::toSchemaEntity).
-                collect(Collectors.toList());
+        List<SchemaEntity> updated = new ArrayList<>();
+        List<SubjectAndVersion> deleted = new ArrayList<>();
+        subjectAndVersions.forEach(sav -> {
+            SchemaValue schemaValue = getSubjectSchemasOrElseFail(sav.getSubject()).get(sav.getVersion());
+            if (schemaValue != null) {
+                updated.add(toSchemaEntity(schemaValue));
+            } else {
+                deleted.add(sav);
+            }
+        });
 
         listeners.forEach(listener -> {
             try {
-                listener.onSchemasUpdated(schemas);
+                listener.onSchemasDeleted(deleted);
+            } catch (Exception ex) {
+                LOGGER.error("Failed to handle 'schemas deleted' event", ex);
+            }
+
+            try {
+                listener.onSchemasUpdated(updated);
             } catch (Exception ex) {
                 LOGGER.error("Failed to handle 'schemas updated' event", ex);
             }
@@ -492,13 +504,15 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     private Set<SubjectAndVersion> applySchemaUpdateAndGetAffected(SchemaKey key, SchemaValue value) {
-        if (value == null) { // "delete" not supported for a while...
-            return Collections.emptySet();
-        }
-
         NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseCreate(key.getSubject());
 
-        SchemaValue oldValue = subjectSchemas.put(key.getVersion(), value);
+        SchemaValue oldValue = null;
+        if (value != null) {
+            oldValue = subjectSchemas.put(key.getVersion(), value);
+        } else {
+            oldValue = subjectSchemas.remove(key.getVersion());
+        }
+
         if (Objects.equals(oldValue, value)) {
             return Collections.emptySet();
         }
@@ -519,7 +533,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         if (oldValue == null) { // schema REGISTER semaphore
             schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.REGISTER);
-        } else if (value.isDeleted() && !oldValue.isDeleted()) { // schema DELETE semaphore
+        } else if (value != null && value.isDeleted() && !oldValue.isDeleted()) { // schema DELETE semaphore
             schemaSemaphores.signalDoneFor(subjectAndVersion, SchemaOperation.DELETE);
         }
 
@@ -595,6 +609,21 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         }
 
         return schemas;
+    }
+
+    private SchemaEntity toSchemaEntity(SchemaValue schemaValue) {
+        ConfigValue configValue = getEffectiveConfig(schemaValue.getSubject());
+        NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseFail(
+                schemaValue.getSubject());
+        SchemaEntity schemaEntity = new SchemaEntity();
+        schemaEntity.setId(schemaValue.getId());
+        schemaEntity.setSubject(schemaValue.getSubject());
+        schemaEntity.setVersion(schemaValue.getVersion());
+        schemaEntity.setCompatibilityLevel(configValue.getCompatibilityLevel());
+        schemaEntity.setSchema(schemaValue.getSchema());
+        schemaEntity.setVersionLatest(subjectSchemas.lastKey().equals(schemaValue.getVersion()));
+        schemaEntity.setDeleted(schemaValue.isDeleted());
+        return schemaEntity;
     }
 
     private enum SubjectOperation {

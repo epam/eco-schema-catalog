@@ -18,10 +18,12 @@ package com.epam.eco.schemacatalog.store;
 import java.util.Collection;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 
 /**
  * @author Andrei_Tytsik
  */
 public interface SchemaCatalogStoreUpdateListener {
     void onSchemasUpdated(Collection<FullSchemaInfo> schemas);
+    void onSchemasDeleted(Collection<SubjectAndVersion> subjectAndVersions);
 }

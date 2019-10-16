@@ -15,6 +15,10 @@
  */
 package com.epam.eco.schemacatalog.utils;
 
+import org.apache.commons.lang3.Validate;
+
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+
 /**
  * @author Andrei_Tytsik
  */
@@ -25,7 +29,16 @@ public abstract class EcoIdUtils {
     private EcoIdUtils() {
     }
 
+    public static String formatId(SubjectAndVersion subjectAndVersion) {
+        Validate.notNull(subjectAndVersion, "SubjectAndVersion is null");
+
+        return formatId(subjectAndVersion.getSubject(), subjectAndVersion.getVersion());
+    }
+
     public static String formatId(String subject, int version) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.isTrue(version >= 0, "Version is invalid");
+
         return String.format(FORMAT, subject, version);
     }
 

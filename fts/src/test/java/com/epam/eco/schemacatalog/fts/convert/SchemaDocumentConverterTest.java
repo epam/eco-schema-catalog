@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.epam.eco.schemacatalog.fts;
+package com.epam.eco.schemacatalog.fts.convert;
 
 import java.util.Arrays;
 
@@ -21,7 +21,9 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
-import com.epam.eco.schemacatalog.fts.convert.SchemaDocumentConverter;
+import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+import com.epam.eco.schemacatalog.fts.KeyValue;
+import com.epam.eco.schemacatalog.fts.SchemaDocument;
 import com.epam.eco.schemacatalog.fts.datagen.SchemaInfoGenerator;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
@@ -34,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SchemaDocumentConverterTest {
 
     @Test
-    public void expectedDataMappedTest() throws Exception {
+    public void testSchemaConverted() throws Exception {
         FullSchemaInfo schemaInfo = SchemaInfoGenerator.randomFull("Subject", 3);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
@@ -94,6 +96,20 @@ public class SchemaDocumentConverterTest {
                             SchemaInfoGenerator.PROP_VALUES[i])
             );
         }
+    }
+
+    @Test
+    public void testSubjectAndVersionConverted() throws Exception {
+        SubjectAndVersion subjectAndVersion = SubjectAndVersion.with("TestSubject", 42);
+
+        SchemaDocument schemaDocument = SchemaDocumentConverter.convert(subjectAndVersion);
+
+        assertThat(schemaDocument).isNotNull();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(schemaDocument.getEcoId()).isNotNull();
+        softly.assertThat(schemaDocument.getSubject()).isEqualTo("TestSubject");
+        softly.assertThat(schemaDocument.getVersion()).isEqualTo(42);
     }
 
 }
