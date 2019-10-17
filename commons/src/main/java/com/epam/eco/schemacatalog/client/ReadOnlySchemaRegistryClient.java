@@ -34,12 +34,12 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
     }
 
     @Override
-    public final int register(String subject, Schema schema) {
+    public final int register(String subject, Schema schema) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final String updateCompatibility(String subject, String compatibility) {
+    public final String updateCompatibility(String subject, String compatibility) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 

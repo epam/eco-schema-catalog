@@ -38,7 +38,6 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 import com.epam.eco.schemacatalog.utils.UrlListExtractor;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -46,7 +45,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 /**
  * @author Raman_Babich
  */
-public class CachedExtendedSchemaRegistryClient extends CachedSchemaRegistryClient implements ExtendedSchemaRegistryClient {
+public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryClient implements ExtendedSchemaRegistryClient {
 
     private static final int DEFAULT_IDENTITY_MAP_CAPACITY = 10000;
 
