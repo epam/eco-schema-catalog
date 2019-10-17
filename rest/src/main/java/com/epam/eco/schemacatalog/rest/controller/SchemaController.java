@@ -55,7 +55,7 @@ public class SchemaController {
     @Autowired
     private SchemaCatalogStore schemaCatalogStore;
 
-    @GetMapping("")
+    @GetMapping
     public SearchResult<LiteSchemaInfo> getSubjects(SearchParams params) {
         return schemaDocumentRepository.searchByParams(params)
                 .map(SchemaDocumentConverter::toLiteSchemaInfo);
@@ -82,7 +82,7 @@ public class SchemaController {
                 .toSchemaWithFormattedMetadata(HtmlPartFormatter.INSTANCE);
     }
 
-    @PostMapping("")
+    @PostMapping
     public VersionResponse postSchema(@RequestBody SchemaRequest request) {
         SchemaRegisterParams params = SchemaRegisterParams.builder()
                 .subject(request.getSubject())
