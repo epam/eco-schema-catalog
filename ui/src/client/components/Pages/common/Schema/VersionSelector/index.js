@@ -13,21 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import { connect } from 'react-redux';
-import { selectSchema, getSchemaLatestVersionAsync } from '../../../../../actions/schemaActions/schemaActions';
+import { selectSchema, getSchemaIdentityAsync } from '../../../../../actions/schemaActions/schemaActions';
 import VersionSelector from './VersionSelector';
 
 const mapStateToProps = state => ({
   subject: state.schemaReducer.subject,
   version: state.schemaReducer.version,
-  versionLatest: state.schemaReducer.versionLatest,
 });
 
 const mapDispatchToProps = dispatch => ({
   selectSchema: (subject, version) => {
     dispatch(selectSchema(subject, version));
   },
-  getLatestVersion: subject => dispatch(getSchemaLatestVersionAsync(subject)),
+  getSchemaIdentity: subject => dispatch(getSchemaIdentityAsync(subject)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(VersionSelector);

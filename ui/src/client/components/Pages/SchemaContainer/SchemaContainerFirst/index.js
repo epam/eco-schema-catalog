@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { getSchemaLatestVersionAsync, selectSchema, closeSchema } from '../../../../actions/schemaActions/schemaActions';
+import { getSchemaIdentityAsync, selectSchema, closeSchema } from '../../../../actions/schemaActions/schemaActions';
 import SchemaContainer from './SchemaContainerFirst';
 
 const mapStateToProps = state => ({
@@ -23,7 +24,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  getLatestVersion: subject => dispatch(getSchemaLatestVersionAsync(subject)),
+  getSchemaIdentity: subject => dispatch(getSchemaIdentityAsync(subject)),
   selectSchema: (subject, version) => {
     dispatch(selectSchema(subject, version));
   },

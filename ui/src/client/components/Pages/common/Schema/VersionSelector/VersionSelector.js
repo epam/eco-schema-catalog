@@ -28,34 +28,39 @@ class VersionSelector extends PureComponent {
     subject: PropTypes.string,
     version: PropTypes.number,
     selectSchema: PropTypes.func,
-    getLatestVersion: PropTypes.func,
+    getSchemaIdentity: PropTypes.func,
   }
 
   constructor(props) {
     super(props);
     this.state = {
       isLoading: false,
-      latestVersion: null,
+      versions: null,
     };
   }
 
-  async componentDidMount() {
-    const { getLatestVersion, subject } = this.props;
-    this.setState({ isLoading: true });
-    try {
-      const latestVersion = await getLatestVersion(subject);
-      this.setState({ latestVersion, isLoading: false });
-    } catch (_error) {
-      this.setState({ isLoading: false });
+  componentDidMount() {
+    this.getAvailbleVersion();
+  }
+
+  componentDidUpdate() {
+    const { version } = this.props;
+    const { versions } = this.state;
+    if (versions !== null && !this.state.versions.includes(version)) {
+      this.getAvailbleVersion();
     }
   }
 
-  getVersionsStack = (latestVersion) => {
-    const versions = [];
-    for (let index = 1; index <= latestVersion; index++) {
-      versions.push(index.toString());
+  getAvailbleVersion = async () => {
+    const { getSchemaIdentity, subject } = this.props;
+    this.setState({ isLoading: true });
+    try {
+      const identity = await getSchemaIdentity(subject);
+      const versions = identity.schemas.map(schema => schema.version);
+      this.setState({ versions, isLoading: false });
+    } finally {
+      this.setState({ isLoading: false });
     }
-    return versions;
   }
 
   handleSelectVersion = (currentVersion) => {
@@ -68,8 +73,8 @@ class VersionSelector extends PureComponent {
 
   render() {
     const { version } = this.props;
-    const { latestVersion, isLoading } = this.state;
-    if (Number.isNaN(version)) {
+    const { versions, isLoading } = this.state;
+    if (!version || Number.isNaN(version) || versions === null) {
       return null;
     }
     return (
@@ -78,10 +83,8 @@ class VersionSelector extends PureComponent {
         {!isLoading
           && (
             <Selector
-              // className="version-selector"
               buttonHeight={26}
-              // buttonClassName="version-selector-button"
-              options={this.getVersionsStack(latestVersion)}
+              options={versions}
               selectedOption={version.toString()}
               onOptionChange={this.handleSelectVersion}
               arrowComponent={selectorArrow}

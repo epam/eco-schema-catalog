@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import React, { Component } from 'react';
@@ -26,19 +27,20 @@ import '../SchemaContainer.scss';
 class SchemaContainerFirst extends Component {
   static propTypes = {
     selectSchema: PropTypes.func,
-    getLatestVersion: PropTypes.func,
+    getSchemaIdentity: PropTypes.func,
     closeSchema: PropTypes.func,
     match: PropTypes.object,
     history: PropTypes.object,
   }
 
   componentDidMount() {
-    const { getLatestVersion, selectSchema, match } = this.props;
+    const { getSchemaIdentity, selectSchema, match } = this.props;
     const { subject, version } = match.params;
     if (!version || Number.isNaN(+version)) {
       // to open last version
-      getLatestVersion(subject)
-        .then((latestVersion) => {
+      getSchemaIdentity(subject)
+        .then((identity) => {
+          const latestVersion = identity.schemas.slice(-1)[0].version;
           selectSchema(subject, +latestVersion);
         });
     } else {

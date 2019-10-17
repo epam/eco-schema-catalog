@@ -119,18 +119,17 @@ export const getSchemaAsync = (subject, version, params) => (dispatch) => {
       dispatch(gotSchema(res));
     })
     .catch((error) => {
-      const { statusText } = error.response;
-      dispatch(gotErrorMessage({ message: statusText }));
+      dispatch(gotErrorMessage({ message: error }));
     })
     .then(() => {
       dispatch(isFetching(SET_SCHEMA_TABLE_LOADING, false));
     });
 };
 
-export const getSchemaLatestVersionAsync = subject => async (dispatch) => {
+export const getSchemaIdentityAsync = subject => async (dispatch) => {
   try {
     const res = await getSchemaIdentity(subject);
-    return res.schemas.slice(-1)[0].version;
+    return res;
   } catch (error) {
     dispatch(gotErrorMessage({ message: error }));
     return null;

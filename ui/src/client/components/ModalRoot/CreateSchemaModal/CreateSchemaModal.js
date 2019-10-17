@@ -74,7 +74,6 @@ class CreateSchemaModal extends Component {
         this.setState({ error: '', testErrors: res.errors, tested: true });
       })
       .catch((error) => {
-        debugger;
         this.setState({ error });
       })
       .finally(() => {

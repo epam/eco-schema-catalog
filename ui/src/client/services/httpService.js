@@ -52,7 +52,8 @@ export const deleteSchemas = subject => axios.delete(`/api/schemas/${subject}`)
 
 /* schema */
 export const getSchema = (subject, version, params) => axios.get(`/api/views/schemas/profile/${subject}/${version}/`, { params })
-  .then(res => res.data);
+  .then(res => res.data)
+  .catch(error => Promise.reject(hadleError(error)));
 
 export const getDetails = (subject, version) => axios.get(`/api/views/schemas/json/${subject}/${version}/`)
   .then(res => res.data);
