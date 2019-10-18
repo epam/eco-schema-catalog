@@ -158,7 +158,7 @@ public class QueryController {
         return ResponseEntity.ok().body(schemaDiff.getDiff());
     }
 
-    private ResponseEntity<List<List<String>>> createSchemaFullDiff(String subject, boolean ignoreFieldOrder) {
+    private ResponseEntity<List<Diff>> createSchemaFullDiff(String subject, boolean ignoreFieldOrder) {
         SubjectSchemas<FullSchemaInfo> subjectSchemas = schemaCatalogStore.getSubjectSchemas(subject);
         List<Diff> schemasDiffs = new ArrayList<>(subjectSchemas.size());
         FullSchemaInfo originalSchemaInfo = null;
@@ -170,9 +170,7 @@ public class QueryController {
 
         Collections.reverse(schemasDiffs);
 
-        return ResponseEntity.ok().body(schemasDiffs.stream()
-                .map(Diff::getDiff)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok().body(schemasDiffs);
     }
 
 }
