@@ -22,24 +22,17 @@ import { TabsContainer, Loader } from 'react-eco-ui';
 
 import './SchemaHistory.scss';
 
-
 class SchemaHistory extends PureComponent {
   static propTypes = {
     diff: PropTypes.array,
     subject: PropTypes.string,
-    version: PropTypes.number,
     getHistory: PropTypes.func,
     isLoading: PropTypes.bool,
   }
 
-  static VERSION = 'version'
-
   constructor(props) {
     super(props);
-    this.state = {
-      currentVersion: `${SchemaHistory.VERSION} ${props.version}`,
-      currentVersionIndex: props.version - 1,
-    };
+    this.state = { currentDiffIndex: 0 };
   }
 
   componentDidMount() {
@@ -48,8 +41,9 @@ class SchemaHistory extends PureComponent {
   }
 
   handleTabClick = (version) => {
-    const selectedIndex = +version.slice(SchemaHistory.VERSION.length);
-    this.setState({ currentVersion: version, currentVersionIndex: selectedIndex - 1 });
+    const { diff } = this.props;
+    const i = version.slice(SchemaHistory.VERSION.length + 1);
+    this.setState({ currentDiffIndex: diff.findIndex(item => item.parsedVersion === i) });
   }
 
   selectRowColor = (char) => {
@@ -61,26 +55,32 @@ class SchemaHistory extends PureComponent {
     return null;
   }
 
+  static VERSION = 'version'
+
   render() {
     const { diff, isLoading } = this.props;
-    const { currentVersion, currentVersionIndex } = this.state;
+    const { currentDiffIndex } = this.state;
 
-    if (isLoading || !diff.length || !diff[currentVersionIndex]) {
+    if (diff.length === 0 || currentDiffIndex < 0) {
+      return null;
+    }
+
+    if (isLoading) {
       return (<Loader type="spinner" color="lime-green" />);
     }
 
-    const tabs = diff.map((_item, index) => `${SchemaHistory.VERSION} ${index + 1}`);
+    const tabs = diff.map(item => `${SchemaHistory.VERSION} ${item.parsedVersion}`);
 
     return (
       <TabsContainer
         tabs={tabs}
-        selectedTab={currentVersion}
+        selectedTab={`${SchemaHistory.VERSION} ${diff[currentDiffIndex].parsedVersion}`}
         onTabClick={this.handleTabClick}
       >
         <div className="schema-history">
-          {!diff[currentVersionIndex].length && <span>no changes</span>}
+          {!diff[currentDiffIndex].diff.length && <span>no changes</span>}
           {
-            diff[currentVersionIndex].map((row, index) => (
+            diff[currentDiffIndex].diff.map((row, index) => (
               <span
                 key={`${row + index}`}
                 className={this.selectRowColor(row[0])}

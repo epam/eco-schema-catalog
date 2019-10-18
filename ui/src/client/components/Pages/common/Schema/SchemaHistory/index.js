@@ -17,11 +17,11 @@
 import { connect } from 'react-redux';
 import { getSchemaHistoryAsync } from '../../../../../actions/schemaActions/schemaActions';
 import SchemaHistory from './SchemaHistory';
+import { getSchemaHistoryWithVersions } from '../../../../../selectors/schemaHistorySelectors/schemaHistorySelectors';
 
 const mapStateToProps = state => ({
   subject: state.schemaReducer.subject,
-  version: state.schemaReducer.version,
-  diff: state.schemaReducer.diff,
+  diff: getSchemaHistoryWithVersions(state),
   isLoading: state.fetchingReducer.isSchemaHistoryLoading,
 });
 
