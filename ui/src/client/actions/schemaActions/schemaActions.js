@@ -333,10 +333,10 @@ export const deleteFieldMetadataAsync = (...args) => (dispatch, getState) => {
 export const deleteSchemaActionAsync = () => async (dispatch, getState) => {
   const { subject, version } = getState().schemaReducer;
   try {
-    const message = await deleteSchema(subject, version);
+    await deleteSchema(subject, version);
     dispatch(getSchemaAsync(subject, version));
-    dispatch(gotSuccessMessage(message));
-    return message;
+    dispatch(gotSuccessMessage({ message: 'deleted' }));
+    return 'deleted';
   } catch (error) {
     dispatch(gotErrorMessage({ message: error }));
     return null;
@@ -346,10 +346,10 @@ export const deleteSchemaActionAsync = () => async (dispatch, getState) => {
 export const deleteSchemasActionAsync = () => async (dispatch, getState) => {
   const { subject, version } = getState().schemaReducer;
   try {
-    const message = await deleteSchemas(subject);
+    await deleteSchemas(subject);
     dispatch(getSchemaAsync(subject, version));
-    dispatch(gotSuccessMessage(message));
-    return message;
+    dispatch(gotSuccessMessage({ message: 'deleted' }));
+    return 'deleted';
   } catch (error) {
     dispatch(gotErrorMessage({ message: error }));
     return null;
@@ -378,7 +378,7 @@ export const setCompatibilityLevelAsync = newLevel => async (dispatch, getState)
       type: SET_COMPATIBILITY_LEVEL,
     });
     const res = await setCompatibilityLevel(subject, newLevel);
-    dispatch(gotSuccessMessage(res));
+    dispatch(gotSuccessMessage({ message: 'compatibility was set'}));
     return res.message;
   } catch (error) {
     dispatch({
