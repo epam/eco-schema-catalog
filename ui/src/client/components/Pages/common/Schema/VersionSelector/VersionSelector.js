@@ -74,13 +74,15 @@ class VersionSelector extends PureComponent {
   render() {
     const { version } = this.props;
     const { versions, isLoading } = this.state;
-    if (!version || Number.isNaN(version) || versions === null) {
+
+    if (!version || Number.isNaN(version)) {
       return null;
     }
+
     return (
       <div className="version-selector">
         {isLoading && <Loader width={26} height={26} type="spinner" color="lime-green" />}
-        {!isLoading
+        {!isLoading && versions !== null
           && (
             <Selector
               buttonHeight={26}

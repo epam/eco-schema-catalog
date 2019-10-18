@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import {
   SET_SCHEMA_TABLE_LOADING,
   SET_SCHEMA_HISTORY_LOADING,
@@ -53,7 +54,7 @@ const fetchingReducer = (state = initialState, action) => {
       });
     }
     default:
-      return initialState;
+      return state;
   }
 };
 

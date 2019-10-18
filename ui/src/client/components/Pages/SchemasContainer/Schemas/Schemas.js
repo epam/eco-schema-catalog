@@ -21,9 +21,8 @@ import PropTypes from 'prop-types';
 import { TableWithDetails, Loader } from 'react-eco-ui';
 import Schema from '../../common/Schema';
 import DeletedIcon from '../../common/DeletedIcon/DeletedIcon';
-
-import './Schemas.scss';
 import parseSearchString from '../../../../utils/parseSearchString/parseSearchString';
+import './Schemas.scss';
 
 class Schemas extends Component {
   static propTypes = {
@@ -136,7 +135,7 @@ class Schemas extends Component {
         <div className="schemas-table">
 
           <TableWithDetails
-            key={subject + version}
+            key={subject}
             headers={this.tableHeader}
             body={this.mutateSchemas(schemas)}
             onRowClick={this.handleSelectSchema}

@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import schemasReducer from './schemasReducer/schemasReducer';

@@ -121,7 +121,7 @@ export const getSchemaAsync = (subject, version, params) => (dispatch) => {
     .catch((error) => {
       dispatch(gotErrorMessage({ message: error }));
     })
-    .then(() => {
+    .finally(() => {
       dispatch(isFetching(SET_SCHEMA_TABLE_LOADING, false));
     });
 };
