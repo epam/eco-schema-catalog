@@ -390,7 +390,8 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
 
     private boolean checkSchemaExists(String subject, Integer version) {
         try {
-            return getSchemaMetadataOrLatest(subject, version) != null;
+            getSchemaMetadataOrLatest(subject, version);
+            return true;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (RestClientException rce) {

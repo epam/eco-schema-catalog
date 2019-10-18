@@ -17,6 +17,7 @@ package com.epam.eco.schemacatalog.client;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +46,11 @@ import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCred
  */
 public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
-    public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES = new HashMap<String, String>();
+    public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES;
     static {
-        DEFAULT_REQUEST_PROPERTIES.put("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
+        Map<String, String> requestProps = new HashMap<String, String>();
+        requestProps.put("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
+        DEFAULT_REQUEST_PROPERTIES = Collections.unmodifiableMap(requestProps);
     }
 
     private final Map<Integer, Schema> schemaCache = new ConcurrentHashMap<>();
@@ -295,7 +298,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             String version) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
 
-        int versionInt = Integer.valueOf(version);
+        int versionInt = Integer.parseInt(version);
         Validate.isTrue(versionInt >= 0 , "Version is negative");
 
         SubjectCache subjectCache = getSubjectCache(subject);
@@ -318,7 +321,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             String subject,
             Schema schema) throws IOException, RestClientException {
         int id = restService.registerSchema(schema.toString(), subject);
-        schemaCache.putIfAbsent(id, schema);
+        schemaCache.put(id, schema);
         return id;
     }
 
@@ -330,7 +333,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
         SchemaString schemaString = restService.getId(id);
         schema = new Schema.Parser().parse(schemaString.getSchemaString());
-        schemaCache.putIfAbsent(id, schema);
+        schemaCache.put(id, schema);
         return schema;
     }
 
@@ -339,7 +342,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                     restService.getVersion(subject, version);
             Schema schema = new Schema.Parser().parse(response.getSchema());
-            schemaCache.putIfAbsent(response.getId(), schema);
+            schemaCache.put(response.getId(), schema);
             return schema;
         } catch (IOException | RestClientException ex) {
             return null;
