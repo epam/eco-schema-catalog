@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(value = Parameterized.class)
-public class ExtendedSchemaRegistryClientIT {
+public class CachedExtendedSchemaRegistryClientIT {
 
     private static final String TEST_SCHEMA_JSON1 = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": []}";
     private static final String TEST_SCHEMA_JSON2 = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"a\", \"type\": \"string\", \"default\": \"\"}]}";
@@ -53,7 +53,7 @@ public class ExtendedSchemaRegistryClientIT {
 
     private static ExtendedSchemaRegistryClient buildEcoClient() throws Exception {
         Properties properties = new Properties();
-        properties.load(ExtendedSchemaRegistryClientIT.class.getResourceAsStream(
+        properties.load(CachedExtendedSchemaRegistryClientIT.class.getResourceAsStream(
                 "/extended-schemaregistry-client-it.properties"));
         String schemaRegistryUrl = properties.getProperty("schema.registry.url");
         return new CachedExtendedSchemaRegistryClient(schemaRegistryUrl, 1_000);
@@ -61,7 +61,7 @@ public class ExtendedSchemaRegistryClientIT {
 
     private ExtendedSchemaRegistryClient client;
 
-    public ExtendedSchemaRegistryClientIT(ExtendedSchemaRegistryClient client) {
+    public CachedExtendedSchemaRegistryClientIT(ExtendedSchemaRegistryClient client) {
         this.client = client;
     }
 
