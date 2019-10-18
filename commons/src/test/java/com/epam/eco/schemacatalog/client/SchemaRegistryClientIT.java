@@ -237,11 +237,15 @@ public class SchemaRegistryClientIT {
         String subject = randomSubject();
         Schema schema = randomSchema();
 
-        int id = CLIENT.register(subject, schema);
-        CLIENT.deleteSchemaVersion(subject, "" + 1);
-        int idActual = CLIENT.register(subject, schema);
+        CLIENT.register(subject, schema);
+        int version1 = CLIENT.getVersion(subject, schema);
 
-        Assert.assertEquals(id, idActual);
+        CLIENT.deleteSchemaVersion(subject, "" + 1);
+
+        CLIENT.register(subject, schema);
+        int version2 = CLIENT.getVersion(subject, schema);
+
+        Assert.assertTrue(version2 > version1);
     }
 
     private String randomSubject() {

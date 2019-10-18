@@ -166,12 +166,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     public SchemaMetadata getLatestSchemaMetadata(String subject) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
 
-        io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
-                restService.getLatestVersion(subject);
-        int id = response.getId();
-        int version = response.getVersion();
-        String schema = response.getSchema();
-        return new SchemaMetadata(id, version, schema);
+        return getSchemaMetadataFromRegistry(subject, null);
     }
 
     @Override
@@ -181,11 +176,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         Validate.notBlank(subject, "Subject is blank");
         Validate.isTrue(version >= 0, "Version is negative");
 
-        io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
-                restService.getVersion(subject, version);
-        int id = response.getId();
-        String schema = response.getSchema();
-        return new SchemaMetadata(id, version, schema);
+        return getSchemaMetadataFromRegistry(subject, version);
     }
 
     @Override
@@ -201,7 +192,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 return version;
             }
 
-            version = getVersionFromRegistry(subject, schema);
+            version = getSchemaVersionFromRegistry(subject, schema);
             subjectCache.addSchemaWithVersion(schema, version);
             return version;
         } finally {
@@ -261,7 +252,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 return id;
             }
 
-            id = getIdFromRegistry(subject, schema);
+            id = getSchemaIdFromRegistry(subject, schema);
             subjectCache.addSchemaWithId(schema, id);
             return id;
         } finally {
@@ -310,6 +301,8 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         SubjectCache subjectCache = getSubjectCache(subject);
         subjectCache.lock();
         try {
+            Schema schema = getSchemaByVersionFromRegistryQuietly(subject, versionInt);
+            subjectCache.removeSchema(schema);
             subjectCache.removeSchemaByVersion(versionInt);
             return restService.deleteSchemaVersion(requestProperties, subject, version);
         } finally {
@@ -341,20 +334,49 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         return schema;
     }
 
-    private int getIdFromRegistry(String subject, Schema schema) throws IOException, RestClientException {
+    private Schema getSchemaByVersionFromRegistryQuietly(String subject, int version) {
+        try {
+            io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
+                    restService.getVersion(subject, version);
+            Schema schema = new Schema.Parser().parse(response.getSchema());
+            schemaCache.putIfAbsent(response.getId(), schema);
+            return schema;
+        } catch (IOException | RestClientException ex) {
+            return null;
+        }
+    }
+
+    private int getSchemaIdFromRegistry(
+            String subject,
+            Schema schema) throws IOException, RestClientException {
         io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                 restService.lookUpSubjectVersion(schema.toString(), subject, false);
         schemaCache.putIfAbsent(response.getId(), schema);
         return response.getId();
     }
 
-    private int getVersionFromRegistry(
+    private int getSchemaVersionFromRegistry(
             String subject,
             Schema schema) throws IOException, RestClientException {
         io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                 restService.lookUpSubjectVersion(schema.toString(), subject, true);
         schemaCache.putIfAbsent(response.getId(), schema);
         return response.getVersion();
+    }
+
+    private SchemaMetadata getSchemaMetadataFromRegistry(
+            String subject,
+            Integer version) throws IOException, RestClientException {
+        io.confluent.kafka.schemaregistry.client.rest.entities.Schema response;
+        if (version != null) {
+            response = restService.getVersion(subject, version);
+        } else {
+            response = restService.getLatestVersion(subject);
+        }
+        int id = response.getId();
+        int versionActual = response.getVersion();
+        String schema = response.getSchema();
+        return new SchemaMetadata(id, versionActual, schema);
     }
 
     private class SubjectCache {
