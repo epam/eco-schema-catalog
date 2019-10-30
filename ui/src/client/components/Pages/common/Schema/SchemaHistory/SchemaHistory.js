@@ -61,12 +61,12 @@ class SchemaHistory extends PureComponent {
     const { diff, isLoading } = this.props;
     const { currentDiffIndex } = this.state;
 
-    if (diff.length === 0 || currentDiffIndex < 0) {
-      return null;
-    }
-
     if (isLoading) {
       return (<Loader type="spinner" color="lime-green" />);
+    }
+
+    if (diff.length === 0 || currentDiffIndex < 0) {
+      return null;
     }
 
     const tabs = diff.map(item => `${SchemaHistory.VERSION} ${item.parsedVersion}`);
