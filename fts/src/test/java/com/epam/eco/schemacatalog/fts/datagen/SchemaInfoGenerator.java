@@ -20,6 +20,7 @@ import java.util.Random;
 import org.apache.avro.Schema;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
@@ -122,6 +123,7 @@ public class SchemaInfoGenerator {
                 .version(Math.max(1, new Random().nextInt(latestSchemaVersion)))
                 .schemaRegistryId(new Random().nextInt(100))
                 .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .mode(Mode.READWRITE)
                 .deleted(new Random().nextBoolean())
                 .build();
     }

@@ -171,6 +171,7 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
         boostingMap.put(FtsConstants.FIELD_VERSION, params.getVersionBoost());
         boostingMap.put(FtsConstants.FIELD_VERSION_LATEST, params.getVersionLatestBoost());
         boostingMap.put(FtsConstants.FIELD_COMPATIBILITY, params.getCompatibilityBoost());
+        boostingMap.put(FtsConstants.FIELD_MODE, params.getModeBoost());
         boostingMap.put(FtsConstants.FIELD_ROOT_NAME, params.getNameBoost());
         boostingMap.put(FtsConstants.FIELD_ROOT_NAMESPACE, params.getNamespaceBoost());
         boostingMap.put(FtsConstants.FIELD_ROOT_FULLNAME, params.getFullnameBoost());
@@ -207,6 +208,7 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
         fieldMap.put(FtsConstants.FIELD_VERSION, params.getVersionTerm());
         fieldMap.put(FtsConstants.FIELD_VERSION_LATEST, params.getVersionLatestTerm());
         fieldMap.put(FtsConstants.FIELD_COMPATIBILITY, params.getCompatibilityTerm());
+        fieldMap.put(FtsConstants.FIELD_MODE, params.getModeTerm());
         fieldMap.put(FtsConstants.FIELD_ROOT_NAMESPACE, params.getNamespaceTerm());
         fieldMap.put(FtsConstants.FIELD_METADATA_UPDATED_BY, params.getMetadataUpdatedByTerm());
 

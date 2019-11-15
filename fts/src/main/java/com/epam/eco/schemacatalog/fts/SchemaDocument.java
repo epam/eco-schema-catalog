@@ -48,6 +48,7 @@ public final class SchemaDocument {
     private Integer version;
     private Boolean versionLatest;
     private String compatibility;
+    private String mode;
     private String rootName;
     private String rootNamespace;
     private String rootFullname;
@@ -91,6 +92,12 @@ public final class SchemaDocument {
     }
     public void setCompatibility(String compatibility) {
         this.compatibility = compatibility;
+    }
+    public String getMode() {
+        return mode;
+    }
+    public void setMode(String mode) {
+        this.mode = mode;
     }
     public String getRootName() {
         return rootName;
@@ -301,6 +308,7 @@ public final class SchemaDocument {
                 Objects.equals(version, that.version) &&
                 Objects.equals(versionLatest, that.versionLatest) &&
                 Objects.equals(compatibility, that.compatibility) &&
+                Objects.equals(mode, that.mode) &&
                 Objects.equals(rootName, that.rootName) &&
                 Objects.equals(rootNamespace, that.rootNamespace) &&
                 Objects.equals(rootFullname, that.rootFullname) &&
@@ -325,6 +333,7 @@ public final class SchemaDocument {
                 version,
                 versionLatest,
                 compatibility,
+                mode,
                 rootName,
                 rootNamespace,
                 rootFullname,
@@ -349,6 +358,7 @@ public final class SchemaDocument {
                 ", version: " + version +
                 ", versionLatest: " + versionLatest +
                 ", compatibility: " + compatibility +
+                ", mode: " + mode +
                 ", rootName: " + rootName +
                 ", rootNamespace: " + rootNamespace +
                 ", rootFullname: " + rootFullname +

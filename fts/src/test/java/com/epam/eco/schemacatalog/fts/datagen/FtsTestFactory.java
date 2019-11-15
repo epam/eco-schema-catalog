@@ -39,6 +39,7 @@ import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
 import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.fts.constant.FtsTestConstants;
 import com.epam.eco.schemacatalog.fts.entity.TestSchemaEntity;
 import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
@@ -103,6 +104,7 @@ public class FtsTestFactory {
         return FullSchemaInfo.builder()
                 .subject(entity.getSubject())
                 .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .mode(Mode.READONLY)
                 .deleted(false)
                 .versionLatest(true)
                 .metadata(getTestMetadata(schema, entity.getSubject()))

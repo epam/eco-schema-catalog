@@ -16,6 +16,10 @@
             "type": "keyword",
             "index": true
         },
+        "mode": {
+            "type": "keyword",
+            "index": true
+        },
         "path": {
             "type": "keyword",
             "index": true

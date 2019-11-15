@@ -54,6 +54,7 @@ public abstract class SchemaDocumentConverter {
         document.setEcoId(schemaInfo.getEcoId());
         document.setVersionLatest(schemaInfo.isVersionLatest());
         document.setCompatibility(schemaInfo.getCompatibilityLevel().name());
+        document.setMode(schemaInfo.getMode().name());
         document.setDeleted(schemaInfo.isDeleted());
         if (schemaInfo.getSchemaAvro().getType() == Type.RECORD) {
             document.setRootName(schemaInfo.getSchemaAvro().getName());
