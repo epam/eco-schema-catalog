@@ -33,6 +33,7 @@ import org.apache.commons.lang3.Validate;
 import com.epam.eco.commons.avro.modification.CachedSchemaModifications;
 import com.epam.eco.commons.avro.modification.SchemaModification;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
@@ -62,23 +63,23 @@ public final class MockExtendedSchemaRegistryClient
 
     @Override
     public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
-        return retrieveConfigAndConvertToCompatibility(null);
+        return retrieveCompatibility(null);
     }
 
     @Override
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        return Optional.ofNullable(retrieveConfigAndConvertToCompatibility(subject));
+        return Optional.ofNullable(retrieveCompatibility(subject));
     }
 
     @Override
     public AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        AvroCompatibilityLevel compatilityLevel = retrieveConfigAndConvertToCompatibility(subject);
+        AvroCompatibilityLevel compatilityLevel = retrieveCompatibility(subject);
         if (compatilityLevel == null) {
-            compatilityLevel = retrieveConfigAndConvertToCompatibility(null);
+            compatilityLevel = retrieveCompatibility(null);
         }
 
         if (compatilityLevel == null) {
@@ -89,6 +90,29 @@ public final class MockExtendedSchemaRegistryClient
         }
 
         return compatilityLevel;
+    }
+
+    @Override
+    public Mode getModeValue() {
+        return retrieveMode();
+    }
+
+    @Override
+    public Optional<Mode> getModeValue(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+
+        return Optional.ofNullable(retrieveMode(subject));
+    }
+
+    @Override
+    public Mode getEffectiveModeValue(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+
+        Mode mode = retrieveMode(subject);
+        if (mode == null) {
+            mode = retrieveMode();
+        }
+        return mode;
     }
 
     @Override
@@ -188,6 +212,14 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @Override
+    public void updateMode(String subject, Mode mode) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(mode, "Mode is null");
+
+        updateModeUnchecked(subject, mode);
+    }
+
+    @Override
     public boolean subjectExists(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
@@ -277,13 +309,13 @@ public final class MockExtendedSchemaRegistryClient
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
         AvroCompatibilityLevel sourceCompatibilityLevel =
-                retrieveConfigAndConvertToCompatibility(sourceSubject);
+                retrieveCompatibility(sourceSubject);
         if (sourceCompatibilityLevel == null) {
             return;
         }
 
         AvroCompatibilityLevel destinationCompatibilityLevel =
-                retrieveConfigAndConvertToCompatibility(destinationSubject);
+                retrieveCompatibility(destinationSubject);
         if (destinationCompatibilityLevel != null) {
             return;
         }
@@ -319,10 +351,28 @@ public final class MockExtendedSchemaRegistryClient
         return schemaInfo;
     }
 
-    private AvroCompatibilityLevel retrieveConfigAndConvertToCompatibility(String subject) {
+    private Mode retrieveMode() {
+        try {
+            String mode = super.getMode();
+            return mode != null ? Mode.valueOf(mode) : null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private AvroCompatibilityLevel retrieveCompatibility(String subject) {
         try {
             String compatibility = super.getCompatibility(subject);
             return compatibility != null ? AvroCompatibilityLevel.valueOf(compatibility) : null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Mode retrieveMode(String subject) {
+        try {
+            String mode = super.getMode(subject);
+            return mode != null ? Mode.valueOf(mode) : null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -348,6 +398,14 @@ public final class MockExtendedSchemaRegistryClient
     private void updateCompatibilityUnchecked(String subject, AvroCompatibilityLevel compatibilityLevel) {
         try {
             updateCompatibility(subject, compatibilityLevel.name());
+        } catch (IOException | RestClientException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void updateModeUnchecked(String subject, Mode mode) {
+        try {
+            setMode(mode.name(), subject);
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException(ex);
         }

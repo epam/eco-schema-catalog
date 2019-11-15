@@ -32,6 +32,7 @@ import org.apache.commons.lang3.Validate;
 import com.epam.eco.commons.avro.modification.CachedSchemaModifications;
 import com.epam.eco.commons.avro.modification.SchemaModification;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndSchema;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
@@ -147,6 +148,33 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     }
 
     @Override
+    public Mode getModeValue() {
+        try {
+            return Mode.valueOf(getMode());
+        } catch (IOException | RestClientException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public Optional<Mode> getModeValue(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+
+        return Optional.ofNullable(getModeValueOrNullIfNotFound(subject));
+    }
+
+    @Override
+    public Mode getEffectiveModeValue(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+
+        Mode mode = getModeValueOrNullIfNotFound(subject);
+        if (mode == null) {
+            mode = getModeValue(); // global
+        }
+        return mode;
+    }
+
+    @Override
     public BasicSchemaInfo getSchemaInfo(String subject, int version) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.isTrue(version >= 0, "Version is invalid");
@@ -242,6 +270,18 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
 
         try {
             updateCompatibility(subject, compatibilityLevel.name());
+        } catch (IOException | RestClientException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void updateMode(String subject, Mode mode) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(mode, "Mode is null");
+
+        try {
+            setMode(mode.name(), subject);
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException(ex);
         }
@@ -490,6 +530,20 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
             throw new RuntimeException(ioe);
         }
         return compatibilityLevel;
+    }
+
+    private Mode getModeValueOrNullIfNotFound(String subject) {
+        Mode mode = null;
+        try {
+            mode = Mode.valueOf(getMode(subject));
+        } catch (RestClientException rce) {
+            if (subject == null || !isNotFoundError(rce)) {
+                throw new RuntimeException(rce);
+            }
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+        return mode;
     }
 
     private BasicSchemaInfo toSchemaInfo(String subject, SchemaMetadata schemaMetadata) {

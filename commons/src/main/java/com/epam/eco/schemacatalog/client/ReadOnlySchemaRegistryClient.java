@@ -39,6 +39,11 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
     }
 
     @Override
+    public int register(String subject, Schema schema, int version, int id) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public final String updateCompatibility(String subject, String compatibility) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
@@ -60,6 +65,16 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
 
     @Override
     public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String setMode(String mode) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String setMode(String mode, String subject) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 

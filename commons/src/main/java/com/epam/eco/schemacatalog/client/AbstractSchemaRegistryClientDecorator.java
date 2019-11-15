@@ -46,6 +46,12 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
         return decorated().register(subject, schema);
     }
 
+
+    @Override
+    public int register(String subject, Schema schema, int version, int id) throws IOException, RestClientException {
+        return decorated().register(subject, schema, version, id);
+    }
+
     @Override
     public Schema getByID(int id) throws IOException, RestClientException {
         return decorated().getByID(id);
@@ -129,6 +135,31 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     @Override
     public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version) throws IOException, RestClientException {
         return decorated().deleteSchemaVersion(requestProperties, subject, version);
+    }
+
+    @Override
+    public String setMode(String mode) throws IOException, RestClientException {
+        return decorated().setMode(mode);
+    }
+
+    @Override
+    public String setMode(String mode, String subject) throws IOException, RestClientException {
+        return decorated().setMode(mode, subject);
+    }
+
+    @Override
+    public String getMode() throws IOException, RestClientException {
+        return decorated().getMode();
+    }
+
+    @Override
+    public String getMode(String subject) throws IOException, RestClientException {
+        return decorated().getMode(subject);
+    }
+
+    @Override
+    public void reset() {
+        decorated().reset();
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.apache.avro.Schema;
 
 import com.epam.eco.commons.avro.modification.SchemaModification;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
@@ -39,6 +40,9 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     AvroCompatibilityLevel getGlobalCompatibilityLevel();
     Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject);
     AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject);
+    Mode getModeValue();
+    Optional<Mode> getModeValue(String subject);
+    Mode getEffectiveModeValue(String subject);
     BasicSchemaInfo getSchemaInfo(String subject, int version);
     BasicSchemaInfo getLatestSchemaInfo(String subject);
     SubjectSchemas<BasicSchemaInfo> getSubjectSchemaInfos(String subject);
@@ -63,6 +67,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
             String destinationSubject,
             List<SchemaModification> modifications);
     void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
+    void updateMode(String subject, Mode mode);
     boolean subjectExists(String subject);
     List<Integer> deleteSubjectUnchecked(String subject);
     Integer deleteSchema(String subject, int version);
