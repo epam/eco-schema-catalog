@@ -250,6 +250,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
                 schemaRegistryId(schemaEntity.getId()).
                 schemaJson(schemaEntity.getSchema()).
                 compatibilityLevel(schemaEntity.getCompatibilityLevel()).
+                mode(schemaEntity.getMode()).
                 deleted(schemaEntity.isDeleted()).
                 versionLatest(schemaEntity.isVersionLatest()).
                 metadata(

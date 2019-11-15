@@ -63,6 +63,10 @@ public abstract class SchemaRegistrySerde {
                 return MAPPER.readValue(keyBytes, SchemaKey.class);
             } else if (keyType == KeyType.DELETE_SUBJECT) {
                 return MAPPER.readValue(keyBytes, DeleteSubjectKey.class);
+            } else if (keyType == KeyType.MODE) {
+                return MAPPER.readValue(keyBytes, ModeKey.class);
+            } else if (keyType == KeyType.CLEAR_SUBJECT) {
+                return MAPPER.readValue(keyBytes, ClearSubjectKey.class);
             } else {
                 throw new SchemaRegistrySerdeException(
                         String.format("Unsupported schema registry key type %s", keyType.name()));
@@ -97,6 +101,10 @@ public abstract class SchemaRegistrySerde {
                 return MAPPER.readValue(valueBytes, SchemaValue.class);
             } else if (KeyType.DELETE_SUBJECT == key.getKeytype()) {
                 return MAPPER.readValue(valueBytes, DeleteSubjectValue.class);
+            } else if (KeyType.MODE == key.getKeytype()) {
+                return MAPPER.readValue(valueBytes, ModeValue.class);
+            } else if (KeyType.CLEAR_SUBJECT == key.getKeytype()) {
+                return MAPPER.readValue(valueBytes, ClearSubjectValue.class);
             } else {
                 throw new SchemaRegistrySerdeException(
                         String.format(

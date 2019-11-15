@@ -19,5 +19,5 @@ package com.epam.eco.schemacatalog.store.schema.kafka;
  * @author Andrei_Tytsik
  */
 public enum KeyType {
-    CONFIG, SCHEMA, NOOP, DELETE_SUBJECT
+    CONFIG, SCHEMA, NOOP, DELETE_SUBJECT, MODE, CLEAR_SUBJECT
 }

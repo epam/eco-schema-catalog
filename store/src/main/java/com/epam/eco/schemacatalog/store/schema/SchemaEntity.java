@@ -17,6 +17,8 @@ package com.epam.eco.schemacatalog.store.schema;
 
 import java.util.Objects;
 
+import com.epam.eco.schemacatalog.domain.schema.Mode;
+
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
 /**
@@ -28,6 +30,7 @@ public final class SchemaEntity {
     private String subject;
     private int version;
     private AvroCompatibilityLevel compatibilityLevel;
+    private Mode mode;
     private String schema;
     private boolean versionLatest;
     private boolean deleted;
@@ -55,6 +58,12 @@ public final class SchemaEntity {
     }
     public void setCompatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
+    }
+    public Mode getMode() {
+        return mode;
+    }
+    public void setMode(Mode mode) {
+        this.mode = mode;
     }
     public String getSchema() {
         return schema;
@@ -89,6 +98,7 @@ public final class SchemaEntity {
                 Objects.equals(this.subject, that.subject) &&
                 Objects.equals(this.version, that.version) &&
                 Objects.equals(this.compatibilityLevel, that.compatibilityLevel) &&
+                Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.schema, that.schema) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
                 Objects.equals(this.deleted, that.deleted);
@@ -96,7 +106,15 @@ public final class SchemaEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, subject, version, compatibilityLevel, schema, versionLatest, deleted);
+        return Objects.hash(
+                id,
+                subject,
+                version,
+                compatibilityLevel,
+                mode,
+                schema,
+                versionLatest,
+                deleted);
     }
 
     @Override
@@ -106,6 +124,7 @@ public final class SchemaEntity {
                 ", subject: " + subject +
                 ", version: " + version +
                 ", compatibilityLevel: " + compatibilityLevel +
+                ", mode: " + mode +
                 ", schema: " + schema +
                 ", versionLatest: " + versionLatest +
                 ", deleted: " + deleted +

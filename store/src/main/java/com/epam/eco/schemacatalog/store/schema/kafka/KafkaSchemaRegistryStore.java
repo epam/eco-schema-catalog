@@ -47,6 +47,7 @@ import com.epam.eco.commons.kafka.cache.CacheListener;
 import com.epam.eco.commons.kafka.cache.KafkaCache;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.exception.NotFoundException;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
@@ -80,6 +81,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     private KafkaCache<Key, Value> schemaRegistryCache;
 
     private final Map<String, ConfigValue> configCache = new HashMap<>();
+    private final Map<String, ModeValue> modeCache = new HashMap<>();
     private final Map<String, NavigableMap<Integer, SchemaValue>> schemaCache = new HashMap<>();
     private final Map<String, DeleteSubjectValue> deleteSubjectCache = new HashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -100,6 +102,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         try {
             readGlobalConfig();
+            readGlobalMode();
             initAndStartSchemaRegistryCache();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -152,6 +155,20 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         configCache.put(
                 null,
                 new ConfigValue(globalCompatibilityLevel));
+    }
+
+    private void readGlobalMode() throws Exception {
+        // retry at start-up only
+        Mode globalMode = retryTemplate.
+                execute(context -> schemaRegistryClient.getModeValue());
+
+        if (globalMode == null) {
+            throw new RuntimeException("Global mode is null");
+        }
+
+        modeCache.put(
+                null,
+                new ModeValue(globalMode));
     }
 
     private void initAndStartSchemaRegistryCache() throws Exception {
@@ -412,6 +429,10 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                                 applySubjectDeleteAndGetAffected(
                                         (DeleteSubjectKey) key,
                                         (DeleteSubjectValue) value));
+                    } else if (key.getKeytype() == KeyType.MODE) {
+                        affected.addAll(
+                                applyModeUpdateAndGetAffected(
+                                        (ModeKey) key, (ModeValue) value));
                     } else {
                         LOGGER.warn(
                                 "Ignoring unsupported 'schema registry update' record. Key = {}, value = {}",
@@ -499,6 +520,48 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         if (value != null && !Objects.equals(oldValue, value)) {
             subjectSemaphores.signalDoneFor(key.getSubject(), SubjectOperation.UPDATE);
         }
+
+        return affected;
+    }
+
+    private Set<SubjectAndVersion> applyModeUpdateAndGetAffected(ModeKey key, ModeValue value) {
+        ModeValue oldValue;
+        if (value != null) {
+            oldValue = modeCache.put(key.getSubject(), value);
+        } else {
+            oldValue = modeCache.remove(key.getSubject());
+        }
+
+        if (Objects.equals(oldValue, value)) {
+            return Collections.emptySet();
+        }
+
+        Set<SubjectAndVersion> affected = new HashSet<>();
+        if (key.getSubject() == null) { // global
+            for (String subject : schemaCache.keySet()) {
+                if (!modeCache.containsKey(subject)) {
+                    NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseEmpty(subject);
+                    affected.addAll(
+                            subjectSchemas.keySet().stream().
+                                map(version -> new SubjectAndVersion(subject, version)).
+                                collect(Collectors.toSet()));
+                }
+            }
+        } else {
+            NavigableMap<Integer, SchemaValue> subjectSchemas =
+                    getSubjectSchemasOrElseEmpty(key.getSubject());
+            affected.addAll(
+                    subjectSchemas.keySet().stream().
+                        map(version -> new SubjectAndVersion(key.getSubject(), version)).
+                        collect(Collectors.toSet()));
+        }
+
+        // subject UPDATE semaphore
+        /* not needed unless we expose possibility to change mode
+        if (value != null && !Objects.equals(oldValue, value)) {
+            subjectSemaphores.signalDoneFor(key.getSubject(), SubjectOperation.UPDATE);
+        }
+        */
 
         return affected;
     }
@@ -593,6 +656,20 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         return config;
     }
 
+    private ModeValue getEffectiveMode(String subject) {
+        ModeValue mode = modeCache.get(subject);
+        if (mode == null && subject != null) {
+            mode = modeCache.get(null); // global
+        }
+
+        if (mode == null) {
+            throw new RuntimeException(
+                    String.format("Can't determine effective mode for subject '%s'", subject));
+        }
+
+        return mode;
+    }
+
     @SuppressWarnings("unchecked")
     private NavigableMap<Integer, SchemaValue> getSubjectSchemasOrElseEmpty(String subject) {
         return schemaCache.getOrDefault(subject, (NavigableMap<Integer, SchemaValue>)EMPTY_MAP);
@@ -613,6 +690,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
     private SchemaEntity toSchemaEntity(SchemaValue schemaValue) {
         ConfigValue configValue = getEffectiveConfig(schemaValue.getSubject());
+        ModeValue modeValue = getEffectiveMode(schemaValue.getSubject());
         NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseFail(
                 schemaValue.getSubject());
         SchemaEntity schemaEntity = new SchemaEntity();
@@ -620,6 +698,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         schemaEntity.setSubject(schemaValue.getSubject());
         schemaEntity.setVersion(schemaValue.getVersion());
         schemaEntity.setCompatibilityLevel(configValue.getCompatibilityLevel());
+        schemaEntity.setMode(modeValue.getMode());
         schemaEntity.setSchema(schemaValue.getSchema());
         schemaEntity.setVersionLatest(subjectSchemas.lastKey().equals(schemaValue.getVersion()));
         schemaEntity.setDeleted(schemaValue.isDeleted());
