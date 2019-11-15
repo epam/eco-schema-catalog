@@ -43,9 +43,10 @@ import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
  */
 public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<FullSchemaInfo> {
 
-    protected final AvroCompatibilityLevel compatibilityLevel;
-    protected final boolean deleted;
-    protected final boolean versionLatest;
+    private final AvroCompatibilityLevel compatibilityLevel;
+    private final Mode mode;
+    private final boolean deleted;
+    private final boolean versionLatest;
     @JsonSerialize(keyUsing=MetadataKeySerializer.class)
     @JsonDeserialize(keyUsing=MetadataKeyDeserializer.class)
     private final Map<MetadataKey, MetadataValue> metadata;
@@ -58,14 +59,17 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             @JsonProperty("schemaRegistryId") int schemaRegistryId,
             @JsonProperty("schemaJson") String schemaJson,
             @JsonProperty("compatibilityLevel") AvroCompatibilityLevel compatibilityLevel,
+            @JsonProperty("mode") Mode mode,
             @JsonProperty("deleted") boolean deleted,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("metadata") Map<MetadataKey, MetadataValue> metadata) {
         super(subject, version, schemaRegistryId, schemaJson);
 
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
+        Validate.notNull(mode, "Mode is null");
 
         this.compatibilityLevel = compatibilityLevel;
+        this.mode = mode;
         this.deleted = deleted;
         this.versionLatest = versionLatest;
         this.metadata =
@@ -78,6 +82,9 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
 
     public AvroCompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
+    }
+    public Mode getMode() {
+        return mode;
     }
     public boolean isDeleted() {
         return deleted;
@@ -101,6 +108,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         return Objects.hash(
                 super.hashCode(),
                 compatibilityLevel,
+                mode,
                 deleted,
                 versionLatest,
                 metadata);
@@ -115,6 +123,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         FullSchemaInfo that = (FullSchemaInfo)obj;
         return
                 Objects.equals(this.compatibilityLevel, that.compatibilityLevel) &&
+                Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.deleted, that.deleted) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
                 Objects.equals(this.metadata, that.metadata);
@@ -128,6 +137,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                 ", schemaRegistryId: " + schemaRegistryId +
                 ", schemaJson: " + schemaJson +
                 ", compatibilityLevel: " + compatibilityLevel +
+                ", mode: " + mode +
                 ", deleted: " + deleted +
                 ", versionLatest: " + versionLatest +
                 ", metadata: " + metadata +
@@ -171,6 +181,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
     public static class Builder<T extends Builder<T>> extends BasicSchemaInfo.Builder<T> {
 
         protected AvroCompatibilityLevel compatibilityLevel;
+        protected Mode mode;
         protected boolean deleted = false;
         protected boolean versionLatest = false;
         protected Map<MetadataKey, MetadataValue> metadata = new HashMap<>();
@@ -186,6 +197,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             }
 
             this.compatibilityLevel = origin.compatibilityLevel;
+            this.mode = origin.mode;
             this.deleted = origin.deleted;
             this.versionLatest = origin.versionLatest;
             this.metadata.putAll(origin.metadata);
@@ -197,6 +209,15 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
 
         public T compatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
+            return (T)this;
+        }
+
+        public T mode(String mode) {
+            return mode(Mode.valueOf(mode));
+        }
+
+        public T mode(Mode mode) {
+            this.mode = mode;
             return (T)this;
         }
 
@@ -238,6 +259,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                     schemaRegistryId,
                     schemaJson,
                     compatibilityLevel,
+                    mode,
                     deleted,
                     versionLatest,
                     metadata);

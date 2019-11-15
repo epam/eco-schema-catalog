@@ -33,6 +33,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
     private final String namespace;
     private final String fullName;
     private final AvroCompatibilityLevel compatibility;
+    private final Mode mode;
     private final boolean versionLatest;
     private final boolean deleted;
 
@@ -45,16 +46,19 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
             @JsonProperty("namespace") String namespace,
             @JsonProperty("fullName") String fullName,
             @JsonProperty("compatibility") AvroCompatibilityLevel compatibility,
+            @JsonProperty("mode") Mode mode,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("deleted") boolean deleted) {
         super(subject, version, schemaRegistryId);
 
         Validate.notNull(compatibility, "Compatibility is null");
+        Validate.notNull(mode, "Mode is null");
 
         this.name = name;
         this.namespace = namespace;
         this.fullName = fullName;
         this.compatibility = compatibility;
+        this.mode = mode;
         this.versionLatest = versionLatest;
         this.deleted = deleted;
     }
@@ -71,6 +75,9 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
     public AvroCompatibilityLevel getCompatibility() {
         return compatibility;
     }
+    public Mode getMode() {
+        return mode;
+    }
     public boolean isVersionLatest() {
         return versionLatest;
     }
@@ -80,7 +87,15 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, namespace, fullName, compatibility, versionLatest, deleted);
+        return Objects.hash(
+                super.hashCode(),
+                name,
+                namespace,
+                fullName,
+                compatibility,
+                mode,
+                versionLatest,
+                deleted);
     }
 
     @Override
@@ -95,6 +110,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
                 Objects.equals(this.namespace, that.namespace) &&
                 Objects.equals(this.fullName, that.fullName) &&
                 Objects.equals(this.compatibility, that.compatibility) &&
+                Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
                 Objects.equals(this.deleted, that.deleted);
     }
@@ -109,6 +125,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
                 ", namespace: " + namespace +
                 ", fullName: " + fullName +
                 ", compatibility: " + compatibility +
+                ", mode: " + mode +
                 ", versionLatest: " + versionLatest +
                 ", deleted: " + deleted +
                 "}";
@@ -139,6 +156,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
         protected String namespace;
         protected String fullName;
         protected AvroCompatibilityLevel compatibility;
+        protected Mode mode;
         protected boolean versionLatest;
         protected boolean deleted;
 
@@ -156,6 +174,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
             this.namespace = origin.namespace;
             this.fullName = origin.fullName;
             this.compatibility = origin.compatibility;
+            this.mode = origin.mode;
             this.versionLatest = origin.versionLatest;
             this.deleted = origin.deleted;
         }
@@ -189,6 +208,15 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
             return (T)this;
         }
 
+        public T mode(String mode) {
+            return mode(Mode.valueOf(mode));
+        }
+
+        public T mode(Mode mode) {
+            this.mode = mode;
+            return (T)this;
+        }
+
         public T deleted(boolean deleted) {
             this.deleted = deleted;
             return (T)this;
@@ -204,6 +232,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
                     namespace,
                     fullName,
                     compatibility,
+                    mode,
                     versionLatest,
                     deleted);
         }

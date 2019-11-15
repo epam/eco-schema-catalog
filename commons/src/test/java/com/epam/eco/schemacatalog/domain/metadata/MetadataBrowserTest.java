@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
@@ -133,6 +134,7 @@ public class MetadataBrowserTest {
                 subject("subject").
                 version(1).
                 compatibilityLevel(AvroCompatibilityLevel.FULL).
+                mode(Mode.READWRITE).
                 deleted(false).
                 versionLatest(false).
                 schemaRegistryId(1).

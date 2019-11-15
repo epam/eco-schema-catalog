@@ -25,6 +25,7 @@ import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.IdentitySchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.LiteSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
@@ -120,6 +121,7 @@ public class SchemaTestData {
                 namespace(UUID.randomUUID().toString()).
                 fullName(UUID.randomUUID().toString()).
                 compatibility(AvroCompatibilityLevel.FULL).
+                mode(Mode.READONLY).
                 build();
     }
 
@@ -138,6 +140,7 @@ public class SchemaTestData {
                 schemaRegistryId(new Random().nextInt(1000)).
                 schemaJson(SchemaTestData.SCHEMA1_JSON).
                 compatibilityLevel(AvroCompatibilityLevel.BACKWARD).
+                mode(Mode.READWRITE).
                 deleted(false).
                 versionLatest(true).
                 appendMetadata(MetadataTestData.randomKey(), MetadataTestData.randomValue()).

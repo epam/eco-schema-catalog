@@ -34,6 +34,7 @@ public final class SearchParams extends AbstractPagedQuery {
     private List<Integer> versionTerm;
     private List<Integer> versionLatestTerm;
     private List<String> compatibilityTerm;
+    private List<String> modeTerm;
     private List<String> namespaceTerm;
     private List<String> metadataUpdatedByTerm;
 
@@ -48,6 +49,7 @@ public final class SearchParams extends AbstractPagedQuery {
     private Float versionBoost;
     private Float versionLatestBoost;
     private Float compatibilityBoost;
+    private Float modeBoost;
     private Float nameBoost;
     private Float namespaceBoost;
     private Float fullnameBoost;
@@ -63,6 +65,7 @@ public final class SearchParams extends AbstractPagedQuery {
     private AggregationParams versionLatestAggregation;
     private AggregationParams deletedAggregation;
     private AggregationParams compatibilityAggregation;
+    private AggregationParams modeAggregation;
     private AggregationParams namespaceAggregation;
     private AggregationParams metadataUpdatedByAggregation;
 
@@ -117,6 +120,12 @@ public final class SearchParams extends AbstractPagedQuery {
     }
     public void setCompatibilityTerm(List<String> compatibilityTerm) {
         this.compatibilityTerm = compatibilityTerm;
+    }
+    public List<String> getModeTerm() {
+        return modeTerm;
+    }
+    public void setModeTerm(List<String> modeTerm) {
+        this.modeTerm = modeTerm;
     }
     public List<String> getNamespaceTerm() {
         return namespaceTerm;
@@ -196,6 +205,12 @@ public final class SearchParams extends AbstractPagedQuery {
     public void setCompatibilityBoost(Float compatibilityBoost) {
         this.compatibilityBoost = compatibilityBoost;
     }
+    public Float getModeBoost() {
+        return modeBoost;
+    }
+    public void setModeBoost(Float modeBoost) {
+        this.modeBoost = modeBoost;
+    }
     public Float getNameBoost() {
         return nameBoost;
     }
@@ -274,6 +289,12 @@ public final class SearchParams extends AbstractPagedQuery {
     public void setCompatibilityAggregation(AggregationParams compatibilityAggregation) {
         this.compatibilityAggregation = compatibilityAggregation;
     }
+    public AggregationParams getModeAggregation() {
+        return modeAggregation;
+    }
+    public void setModeAggregation(AggregationParams modeAggregation) {
+        this.modeAggregation = modeAggregation;
+    }
     public AggregationParams getNamespaceAggregation() {
         return namespaceAggregation;
     }
@@ -304,6 +325,9 @@ public final class SearchParams extends AbstractPagedQuery {
         if (compatibilityAggregation != null) {
             aggregations.add(compatibilityAggregation);
         }
+        if (modeAggregation != null) {
+            aggregations.add(modeAggregation);
+        }
         if (namespaceAggregation != null) {
             aggregations.add(namespaceAggregation);
         }
@@ -321,6 +345,7 @@ public final class SearchParams extends AbstractPagedQuery {
         versionLatestAggregation = FtsConstants.defaultVersionLatestAggregation();
         deletedAggregation = FtsConstants.defaultDeletedAggregation();
         compatibilityAggregation = FtsConstants.defaultCompatibilityAggregation();
+        modeAggregation = FtsConstants.defaultModeAggregation();
         namespaceAggregation = FtsConstants.defaultNamespaceAggregation();
         metadataUpdatedByAggregation = FtsConstants.defaultMetadataUpdatedByAggregation();
     }
@@ -330,6 +355,7 @@ public final class SearchParams extends AbstractPagedQuery {
         versionLatestAggregation = null;
         deletedAggregation = null;
         compatibilityAggregation = null;
+        modeAggregation = null;
         namespaceAggregation = null;
         metadataUpdatedByAggregation = null;
     }
@@ -353,6 +379,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 Objects.equals(this.versionTerm, that.versionTerm) &&
                 Objects.equals(this.versionLatestTerm, that.versionLatestTerm) &&
                 Objects.equals(this.compatibilityTerm, that.compatibilityTerm) &&
+                Objects.equals(this.modeTerm, that.modeTerm) &&
                 Objects.equals(this.namespaceTerm, that.namespaceTerm) &&
                 Objects.equals(this.metadataUpdatedByTerm, that.metadataUpdatedByTerm) &&
 
@@ -367,6 +394,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 Objects.equals(this.versionBoost, that.versionBoost) &&
                 Objects.equals(this.versionLatestBoost, that.versionLatestBoost) &&
                 Objects.equals(this.compatibilityBoost, that.compatibilityBoost) &&
+                Objects.equals(this.modeBoost, that.modeBoost) &&
                 Objects.equals(this.nameBoost, that.nameBoost) &&
                 Objects.equals(this.namespaceBoost, that.namespaceBoost) &&
                 Objects.equals(this.fullnameBoost, that.fullnameBoost) &&
@@ -382,6 +410,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 Objects.equals(this.versionLatestAggregation, that.versionLatestAggregation) &&
                 Objects.equals(this.deletedAggregation, that.deletedAggregation) &&
                 Objects.equals(this.compatibilityAggregation, that.compatibilityAggregation) &&
+                Objects.equals(this.modeAggregation, that.modeAggregation) &&
                 Objects.equals(this.namespaceAggregation, that.namespaceAggregation) &&
                 Objects.equals(this.metadataUpdatedByAggregation, that.metadataUpdatedByAggregation) &&
 
@@ -401,6 +430,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 versionTerm,
                 versionLatestTerm,
                 compatibilityTerm,
+                modeTerm,
                 namespaceTerm,
                 metadataUpdatedByTerm,
 
@@ -415,6 +445,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 versionBoost,
                 versionLatestBoost,
                 compatibilityBoost,
+                modeBoost,
                 nameBoost,
                 namespaceBoost,
                 fullnameBoost,
@@ -430,6 +461,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 versionLatestAggregation,
                 deletedAggregation,
                 compatibilityAggregation,
+                modeAggregation,
                 namespaceAggregation,
                 metadataUpdatedByAggregation,
 
@@ -448,6 +480,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 ", versionTerm: " + versionTerm +
                 ", versionLatestTerm: " + versionLatestTerm +
                 ", compatibilityTerm: " + compatibilityTerm +
+                ", modeTerm: " + modeTerm +
                 ", namespaceTerm: " + namespaceTerm +
                 ", metadataUpdatedByTerm: " + metadataUpdatedByTerm +
 
@@ -462,6 +495,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 ", versionBoost: " + versionBoost +
                 ", versionLatestBoost: " + versionLatestBoost +
                 ", compatibilityBoost: " + compatibilityBoost +
+                ", modeBoost: " + modeBoost +
                 ", nameBoost: " + nameBoost +
                 ", namespaceBoost: " + namespaceBoost +
                 ", fullnameBoost: " + fullnameBoost +
@@ -477,6 +511,7 @@ public final class SearchParams extends AbstractPagedQuery {
                 ", versionLatestAggregation: " + versionLatestAggregation +
                 ", deletedAggregation: " + deletedAggregation +
                 ", compatibilityAggregation: " + compatibilityAggregation +
+                ", modeAggregation: " + modeAggregation +
                 ", namespaceAggregation: " + namespaceAggregation +
                 ", metadataUpdatedByAggregation: " + metadataUpdatedByAggregation +
 

@@ -15,6 +15,10 @@
  */
 package com.epam.eco.schemacatalog.fts;
 
+import com.epam.eco.schemacatalog.domain.schema.Mode;
+
+import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+
 /**
  * @author Andrei_Tytsik
  */
@@ -26,6 +30,7 @@ public abstract class FtsConstants {
     public static final String FIELD_VERSION = "version";
     public static final String FIELD_VERSION_LATEST = "versionLatest";
     public static final String FIELD_COMPATIBILITY = "compatibility";
+    public static final String FIELD_MODE = "mode";
     public static final String FIELD_ROOT_NAME = "rootName";
     public static final String FIELD_ROOT_NAMESPACE = "rootNamespace";
     public static final String FIELD_ROOT_FULLNAME = "rootFullname";
@@ -47,7 +52,8 @@ public abstract class FtsConstants {
 
     public static final int DEFAULT_VERSION_AGGREGATION_SIZE = 100;
     public static final int DEFAULT_VERSION_LATEST_AGGREGATION_SIZE = 2;
-    public static final int DEFAULT_COMPATIBILITY_AGGREGATION_SIZE = 4;
+    public static final int DEFAULT_COMPATIBILITY_AGGREGATION_SIZE = AvroCompatibilityLevel.values().length;
+    public static final int DEFAULT_MODE_AGGREGATION_SIZE = Mode.values().length;
     public static final int DEFAULT_NAMESPACE_AGGREGATION_SIZE = 1000;
     public static final int DEFAULT_DELETED_AGGREGATION_SIZE = 10000;
     public static final int DEFAULT_METADATA_UPDATED_BY_AGGREGATION_SIZE = 10000;
@@ -71,6 +77,10 @@ public abstract class FtsConstants {
             FIELD_COMPATIBILITY,
             FIELD_COMPATIBILITY,
             DEFAULT_COMPATIBILITY_AGGREGATION_SIZE);
+    private static AggregationParams DEFAULT_MODE_AGGREGATION = new AggregationParams(
+            FIELD_MODE,
+            FIELD_MODE,
+            DEFAULT_MODE_AGGREGATION_SIZE);
     private static AggregationParams DEFAULT_NAMESPANCE_AGGREGATION = new AggregationParams(
             FIELD_ROOT_NAMESPACE,
             FIELD_ROOT_NAMESPACE,
@@ -91,6 +101,9 @@ public abstract class FtsConstants {
     }
     public static AggregationParams defaultCompatibilityAggregation() {
         return DEFAULT_COMPATIBILITY_AGGREGATION.copyOf();
+    }
+    public static AggregationParams defaultModeAggregation() {
+        return DEFAULT_MODE_AGGREGATION.copyOf();
     }
     public static AggregationParams defaultNamespaceAggregation() {
         return DEFAULT_NAMESPANCE_AGGREGATION.copyOf();
