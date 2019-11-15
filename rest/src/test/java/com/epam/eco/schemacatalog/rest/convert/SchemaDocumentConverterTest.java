@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.LiteSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.fts.MetadataDocument;
 import com.epam.eco.schemacatalog.fts.SchemaDocument;
 import com.epam.eco.schemacatalog.utils.EcoIdUtils;
@@ -39,6 +40,7 @@ public class SchemaDocumentConverterTest {
         doc.setVersion(2);
         doc.setVersionLatest(true);
         doc.setCompatibility("BACKWARD_TRANSITIVE");
+        doc.setMode("IMPORT");
         doc.setRootName("rootName");
         doc.setRootNamespace("rootNamespace");
         doc.setRootFullname("rootFullname");
@@ -78,6 +80,7 @@ public class SchemaDocumentConverterTest {
         Assert.assertEquals("rootName", schemaInfo.getName());
         Assert.assertEquals("rootNamespace", schemaInfo.getNamespace());
         Assert.assertEquals(AvroCompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
+        Assert.assertEquals(Mode.IMPORT, schemaInfo.getMode());
         Assert.assertTrue(schemaInfo.isVersionLatest());
         Assert.assertFalse(schemaInfo.isDeleted());
     }

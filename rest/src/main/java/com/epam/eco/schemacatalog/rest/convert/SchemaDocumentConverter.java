@@ -36,6 +36,7 @@ public abstract class SchemaDocumentConverter {
                 .namespace(source.getRootNamespace())
                 .fullName(source.getRootFullname())
                 .compatibility(source.getCompatibility())
+                .mode(source.getMode())
                 .versionLatest(source.getVersionLatest())
                 .deleted(source.getDeleted())
                 .build();

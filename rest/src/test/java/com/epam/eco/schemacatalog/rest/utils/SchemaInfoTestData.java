@@ -32,6 +32,7 @@ import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
 import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
@@ -102,6 +103,7 @@ public class SchemaInfoTestData {
     public static final String SUBJECT = "my-own-super-subject";
     public static final int VERSION = 1;
     public static final AvroCompatibilityLevel AVRO_COMPATIBILITY_LEVEL = AvroCompatibilityLevel.BACKWARD;
+    public static final Mode MODE = Mode.READWRITE;
     public static final boolean DELETED = false;
     public static final boolean VERSION_LATEST = true;
     public static final int SCHEMA_REGISTRY_ID = 1243534266;
@@ -110,6 +112,7 @@ public class SchemaInfoTestData {
         return FullSchemaInfo.builder()
                 .subject(SUBJECT)
                 .compatibilityLevel(AVRO_COMPATIBILITY_LEVEL)
+                .mode(MODE)
                 .deleted(DELETED)
                 .versionLatest(VERSION_LATEST)
                 .metadata(getFieldMetadata(now))
