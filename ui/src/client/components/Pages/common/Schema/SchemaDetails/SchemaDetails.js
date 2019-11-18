@@ -18,7 +18,7 @@
 /* eslint-disable import/extensions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactJson from 'react-json-view';
+import JSONTree from 'react-json-tree';
 import ReactTooltip from 'react-tooltip';
 import { saveAs } from 'file-saver';
 import { Loader, IconButton } from 'react-eco-ui';
@@ -54,6 +54,27 @@ class Details extends Component {
       return (<Loader type="spinner" color="lime-green" />);
     }
 
+    const theme = {
+      scheme: 'bright',
+      author: 'chris kempson',
+      base00: '#000000',
+      base01: '#303030',
+      base02: '#505050',
+      base03: '#b0b0b0',
+      base04: '#d0d0d0',
+      base05: '#e0e0e0',
+      base06: '#f5f5f5',
+      base07: '#ffffff',
+      base08: '#fb0120',
+      base09: '#fc6d24',
+      base0A: '#fda331',
+      base0B: '#a1c659',
+      base0C: '#76c7b7',
+      base0D: '#6fb3d2',
+      base0E: '#d381c3',
+      base0F: '#be643c',
+    };
+
     return (
       <div className="schema-details">
         <div className="schema-details-actions">
@@ -69,13 +90,13 @@ class Details extends Component {
             </IconButton>
           </div>
         </div>
-        <ReactJson
-          src={{ details }}
-          theme="shapeshifter:inverted"
-          collapsed={1}
-          displayDataTypes={false}
-          enableClipboard={false}
+
+        <JSONTree
+          data={details}
+          theme={theme}
+          invertTheme
         />
+
         <ReactTooltip id="schema-details" place="left" />
       </div>
     );
