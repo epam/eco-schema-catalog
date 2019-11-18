@@ -30,6 +30,7 @@ import com.epam.eco.schemacatalog.domain.metadata.FieldMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
 import com.epam.eco.schemacatalog.domain.metadata.format.HtmlPartFormatter;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.rest.view.FormattedMetadata;
 import com.epam.eco.schemacatalog.rest.view.NamedSchemaFieldType;
 import com.epam.eco.schemacatalog.rest.view.ParameterizedSchemaFieldType;
@@ -241,6 +242,7 @@ public class SchemaProfileCreatorTest {
                 .versionLatest(SchemaInfoTestData.VERSION_LATEST)
                 .schemaRegistryId(SchemaInfoTestData.SCHEMA_REGISTRY_ID)
                 .compatibilityLevel(SchemaInfoTestData.AVRO_COMPATIBILITY_LEVEL)
+                .mode(Mode.READWRITE)
                 .schemaMetadata(FormattedMetadata.with(SchemaInfoTestData.getSchemaMetadata(now), HtmlPartFormatter.INSTANCE))
                 .schemas(schemaEntities)
                 .deleted(false)

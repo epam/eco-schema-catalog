@@ -63,6 +63,7 @@ public class SchemaProfileCreator {
                 .version(schemaInfo.getVersion())
                 .schemaRegistryId(schemaInfo.getSchemaRegistryId())
                 .compatibilityLevel(schemaInfo.getCompatibilityLevel())
+                .mode(schemaInfo.getMode())
                 .versionLatest(schemaInfo.isVersionLatest())
                 .schemaMetadata(schemaMetadata.map(meta -> FormattedMetadata.with(meta, metadataDocFormatter))
                         .orElse(null))

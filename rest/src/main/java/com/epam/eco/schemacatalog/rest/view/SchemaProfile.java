@@ -24,6 +24,8 @@ import org.apache.commons.lang3.Validate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.epam.eco.schemacatalog.domain.schema.Mode;
+
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
 /**
@@ -35,6 +37,7 @@ public final class SchemaProfile {
     private final int version;
     private final int schemaRegistryId;
     private final AvroCompatibilityLevel compatibilityLevel;
+    private final Mode mode;
     private final boolean versionLatest;
     private final boolean deleted;
     private final FormattedMetadata schemaMetadata;
@@ -45,6 +48,7 @@ public final class SchemaProfile {
             @JsonProperty("version") int version,
             @JsonProperty("schemaRegistryId") int schemaRegistryId,
             @JsonProperty("compatibilityLevel") AvroCompatibilityLevel compatibilityLevel,
+            @JsonProperty("mode") Mode mode,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("schemaMetadata") FormattedMetadata schemaMetadata,
             @JsonProperty("schemas") Set<SchemaEntity> schemas,
@@ -53,6 +57,7 @@ public final class SchemaProfile {
         Validate.isTrue(version >= 0, "Version is invalid");
         Validate.isTrue(schemaRegistryId >= 0, "SchemaRegistry id is invalid");
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
+        Validate.notNull(mode, "Mode is null");
         if (schemas != null) {
             Validate.noNullElements(schemas, "Schemas can't contain null element");
         }
@@ -61,6 +66,7 @@ public final class SchemaProfile {
         this.version = version;
         this.schemaRegistryId = schemaRegistryId;
         this.compatibilityLevel = compatibilityLevel;
+        this.mode = mode;
         this.versionLatest = versionLatest;
         this.deleted = deleted;
         this.schemaMetadata = schemaMetadata;
@@ -81,6 +87,10 @@ public final class SchemaProfile {
 
     public AvroCompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 
     public boolean isVersionLatest() {
@@ -110,6 +120,7 @@ public final class SchemaProfile {
                 deleted == that.deleted &&
                 Objects.equals(subject, that.subject) &&
                 compatibilityLevel == that.compatibilityLevel &&
+                mode == that.mode &&
                 Objects.equals(schemaMetadata, that.schemaMetadata) &&
                 Objects.equals(schemas, that.schemas);
     }
@@ -117,7 +128,7 @@ public final class SchemaProfile {
     @Override
     public int hashCode() {
         return Objects.hash(subject, version, schemaRegistryId,
-                compatibilityLevel, versionLatest, deleted, schemaMetadata, schemas);
+                compatibilityLevel, mode, versionLatest, deleted, schemaMetadata, schemas);
     }
 
     @Override
@@ -127,6 +138,7 @@ public final class SchemaProfile {
                 ", version=" + version +
                 ", schemaRegistryId=" + schemaRegistryId +
                 ", compatibilityLevel=" + compatibilityLevel +
+                ", mode=" + mode +
                 ", versionLatest=" + versionLatest +
                 ", deleted=" + deleted +
                 ", schemaMetadata=" + schemaMetadata +
@@ -152,6 +164,7 @@ public final class SchemaProfile {
         private int version;
         private int schemaRegistryId;
         private AvroCompatibilityLevel compatibilityLevel;
+        private Mode mode;
         private boolean versionLatest;
         private boolean deleted;
         private FormattedMetadata schemaMetadata;
@@ -166,6 +179,7 @@ public final class SchemaProfile {
             this.version = profile.version;
             this.schemaRegistryId = profile.schemaRegistryId;
             this.compatibilityLevel = profile.compatibilityLevel;
+            this.mode = profile.mode;
             this.versionLatest = profile.versionLatest;
             this.deleted = profile.deleted;
             this.schemaMetadata = profile.schemaMetadata;
@@ -189,6 +203,11 @@ public final class SchemaProfile {
 
         public Builder compatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
+            return this;
+        }
+
+        public Builder mode(Mode mode) {
+            this.mode = mode;
             return this;
         }
 
@@ -230,7 +249,8 @@ public final class SchemaProfile {
         }
 
         public SchemaProfile build() {
-            return new SchemaProfile(subject, version, schemaRegistryId, compatibilityLevel, versionLatest, schemaMetadata, schemas, deleted);
+            return new SchemaProfile(subject, version, schemaRegistryId, compatibilityLevel, mode,
+                    versionLatest, schemaMetadata, schemas, deleted);
         }
     }
 }

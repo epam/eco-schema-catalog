@@ -27,6 +27,7 @@ import org.junit.Test;
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.format.ToStringPartFormatter;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
@@ -116,6 +117,7 @@ public class SchemaProfileTest {
                 .subject("subject")
                 .version(1)
                 .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .mode(Mode.READWRITE)
                 .schemaRegistryId(1)
                 .versionLatest(true)
                 .schemas(schemas)
