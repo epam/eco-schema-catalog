@@ -39,6 +39,7 @@ class Schema extends PureComponent {
     view: PropTypes.string,
     subject: PropTypes.string,
     version: PropTypes.number,
+    mode: PropTypes.string,
     isDeleted: PropTypes.bool,
     updatedAt: PropTypes.string,
     originMetadataVersion: PropTypes.number,
@@ -62,6 +63,7 @@ class Schema extends PureComponent {
       subject,
       version,
       isDeleted,
+      mode,
       deleteSchema,
       deleteSchemas,
       updatedAt,
@@ -121,6 +123,13 @@ class Schema extends PureComponent {
                 </React.Fragment>
               )
             }
+          </div>
+        </div>
+
+        <div className="schema-row">
+          <p>Mode: </p>
+          <div className="actions">
+            <span className="mode">{mode}</span>
           </div>
         </div>
 

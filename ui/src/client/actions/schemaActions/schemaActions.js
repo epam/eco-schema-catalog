@@ -62,12 +62,13 @@ import {
 
 export const gotSchema = (response) => {
   const {
-    schemas, schemaMetadata, deleted, versionLatest, compatibilityLevel,
+    schemas, schemaMetadata, deleted, versionLatest, compatibilityLevel, mode,
   } = response;
   return {
     type: GOT_SCHEMA,
     schemas,
     deleted,
+    mode,
     schemaMetadata,
     versionLatest,
     compatibilityLevel,

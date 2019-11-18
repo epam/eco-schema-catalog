@@ -23,6 +23,7 @@ import Schema from './Schema';
 const mapStateToProps = state => ({
   view: state.schemaReducer.view,
   subject: state.schemaReducer.subject,
+  mode: state.schemaReducer.mode,
   version: state.schemaReducer.version,
   isDeleted: state.schemaReducer.deleted,
   versionLatest: state.schemaReducer.versionLatest,

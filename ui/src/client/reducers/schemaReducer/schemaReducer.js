@@ -77,6 +77,7 @@ const schemaReducer = (state = initialState, action) => {
     version,
     schemas,
     deleted,
+    mode,
     schemaMetadata,
     versionLatest,
     compatibilityLevel,
@@ -124,6 +125,7 @@ const schemaReducer = (state = initialState, action) => {
         deleted,
         schemaMetadata,
         versionLatest,
+        mode,
         isSchemaMetadataSaved: true,
         aggregations: aggr,
       };
