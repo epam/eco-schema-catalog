@@ -87,6 +87,10 @@ class SchemaTable extends PureComponent {
       return (<Loader type="spinner" color="lime-green" />);
     }
 
+    if (rows.length === 0) {
+      return (<div className="schema-table">no table data</div>);
+    }
+
     return (
       <div className="schema-table">
         <ReactTooltip id="schema-table-tooltip" place="top" />

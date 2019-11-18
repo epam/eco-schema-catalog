@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import React, { Component } from 'react';
@@ -29,7 +30,7 @@ class Details extends Component {
     subject: PropTypes.string,
     version: PropTypes.number,
     getDetails: PropTypes.func,
-    details: PropTypes.object,
+    details: PropTypes.any,
     isLoading: PropTypes.bool,
   }
 
@@ -48,9 +49,11 @@ class Details extends Component {
 
   render() {
     const { details, isLoading } = this.props;
-    if (isLoading || !Object.keys(details).length) {
+
+    if (isLoading) {
       return (<Loader type="spinner" color="lime-green" />);
     }
+
     return (
       <div className="schema-details">
         <div className="schema-details-actions">
@@ -67,7 +70,7 @@ class Details extends Component {
           </div>
         </div>
         <ReactJson
-          src={details}
+          src={{ details }}
           theme="shapeshifter:inverted"
           collapsed={1}
           displayDataTypes={false}

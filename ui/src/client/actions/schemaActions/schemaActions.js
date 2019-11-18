@@ -170,8 +170,7 @@ export const getDetailsAsync = (subject, version) => (dispatch) => {
       return res;
     })
     .catch((error) => {
-      const { statusText } = error.response;
-      dispatch(gotErrorMessage({ message: statusText }));
+      dispatch(gotErrorMessage({ message: error.toString() }));
       return error;
     })
     .finally(() => {
