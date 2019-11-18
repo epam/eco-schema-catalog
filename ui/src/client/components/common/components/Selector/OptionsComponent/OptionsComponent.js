@@ -13,26 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../../Checkbox/Checkbox';
 import './OptionsComponent.scss';
 
 class OptionsComponent extends Component {
-  static propTypes = {
-    options: PropTypes.array.isRequired,
-    handleSelectOption: PropTypes.func.isRequired,
-    selectedOption: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-    valueType: PropTypes.string,
-    buttonHeight: PropTypes.number,
-    buttonOffsetTop: PropTypes.number,
-    optionHeigth: PropTypes.number,
-    offsetOptions: PropTypes.number,
-    numOfRows: PropTypes.number,
-  }
-
-  static defaultNumberOfRows = 8;
-
   static calcTransformOptionsHeight = (...args) => {
     const [
       clientHeight,
@@ -52,6 +39,18 @@ class OptionsComponent extends Component {
       return (clientHeight < (transformHeight + buttonOffsetTop)) ? transformHeight : 0;
     }
     return 0;
+  }
+
+  static propTypes = {
+    options: PropTypes.array.isRequired,
+    handleSelectOption: PropTypes.func.isRequired,
+    selectedOption: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+    valueType: PropTypes.string,
+    buttonHeight: PropTypes.number,
+    buttonOffsetTop: PropTypes.number,
+    optionHeigth: PropTypes.number,
+    offsetOptions: PropTypes.number,
+    numOfRows: PropTypes.number,
   }
 
   constructor(props) {
@@ -110,6 +109,8 @@ class OptionsComponent extends Component {
     }
     return null;
   }
+
+  static defaultNumberOfRows = 8;
 
   render() {
     const { transformHeight } = this.state;

@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import qs from 'qs';
 import { replace } from 'connected-react-router';
 import {
@@ -37,6 +38,7 @@ const mergeParams = (state, newParams) => {
     compatibilityTerm,
     metadataUpdatedByTerm,
     namespaceTerm,
+    modeTerm,
     deletedTerm,
     versionTerm,
     versionLatestTerm,
@@ -49,6 +51,7 @@ const mergeParams = (state, newParams) => {
     compatibilityTerm,
     metadataUpdatedByTerm,
     namespaceTerm,
+    modeTerm,
     deletedTerm,
     versionTerm,
     versionLatestTerm,

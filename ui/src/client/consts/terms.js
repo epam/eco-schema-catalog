@@ -13,8 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 export const COMPATIBILITY_TERM = 'compatibilityTerm';
 export const DELETED_TERM = 'deletedTerm';
 export const NAMESPACE_TERM = 'namespaceTerm';
 export const VERSION_TERM = 'versionTerm';
 export const VERSION_LATEST_TERM = 'versionLatestTerm';
+export const MODE_TERM = 'modeTerm';

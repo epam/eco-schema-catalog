@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import { connect } from 'react-redux';
 import toggleArrayItem from '../../../../utils/toggleArrayItem/toggleArrayItem';
 import {
@@ -32,18 +33,21 @@ import {
   getDeletedTerm,
   getVersionLatestTerm,
   getVersionTerm,
+  getModeTerm,
 } from '../../../../selectors/advancedSearchSelectors/advancedSearchSelectors';
 import AdvancedSearch from './AdvancedSearch';
 
 const mapStateToProps = state => ({
   rootNamespace: getSortedRootNamspace(state),
   compatibility: state.aggregationsSchemasReducer.compatibility,
+  mode: state.aggregationsSchemasReducer.mode,
   deleted: state.aggregationsSchemasReducer.deleted,
   version: state.aggregationsSchemasReducer.version,
   versionLatest: state.aggregationsSchemasReducer.versionLatest,
 
-  compatibilityTerm: getCompatibilityTerm(state),
   namespaceTerm: getNamespaceTerm(state),
+  compatibilityTerm: getCompatibilityTerm(state),
+  modeTerm: getModeTerm(state),
   deletedTerm: getDeletedTerm(state),
   versionTerm: getVersionTerm(state),
   versionLatestTerm: getVersionLatestTerm(state),

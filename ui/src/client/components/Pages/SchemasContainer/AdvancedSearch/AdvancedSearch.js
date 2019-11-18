@@ -25,6 +25,7 @@ import {
   DELETED_TERM,
   VERSION_TERM,
   VERSION_LATEST_TERM,
+  MODE_TERM,
 } from '../../../../consts/terms';
 import SelectorArrow from '../../common/SelectorArrow/SelectorArrow';
 import CommonOptions from './CommonOptions/CommonOptions';
@@ -34,30 +35,33 @@ import YesNoOptions from './YesNoOptions/YesNoOptions';
 import './AdvancedSearch.scss';
 
 class AdvancedSearch extends Component {
+  optionsMap = {
+    [NAMESPACE_TERM]: NamespaceOptions,
+    [COMPATIBILITY_TERM]: CommonOptions,
+    [MODE_TERM]: CommonOptions,
+    [VERSION_TERM]: CommonOptions,
+    [DELETED_TERM]: YesNoOptions,
+    [VERSION_LATEST_TERM]: YesNoOptions,
+  }
+
   static propTypes = {
     compatibility: PropTypes.object,
     rootNamespace: PropTypes.object,
     deleted: PropTypes.object,
     version: PropTypes.object,
     versionLatest: PropTypes.object,
+    mode: PropTypes.object,
 
     compatibilityTerm: PropTypes.array,
     namespaceTerm: PropTypes.array,
     deletedTerm: PropTypes.array,
     versionTerm: PropTypes.array,
     versionLatestTerm: PropTypes.array,
+    modeTerm: PropTypes.array,
 
     isClearAll: PropTypes.bool,
     applyMultipleAggregation: PropTypes.func,
     clearAllTerms: PropTypes.func,
-  }
-
-  optionsMap = {
-    [NAMESPACE_TERM]: NamespaceOptions,
-    [COMPATIBILITY_TERM]: CommonOptions,
-    [VERSION_TERM]: CommonOptions,
-    [DELETED_TERM]: YesNoOptions,
-    [VERSION_LATEST_TERM]: YesNoOptions,
   }
 
   getSelector = (appliedTerms, allTerms, termName, placeholder) => {
@@ -93,12 +97,14 @@ class AdvancedSearch extends Component {
     const {
       rootNamespace,
       compatibility,
+      mode,
       deleted,
       version,
       versionLatest,
 
       namespaceTerm,
       compatibilityTerm,
+      modeTerm,
       deletedTerm,
       versionTerm,
       versionLatestTerm,
@@ -109,6 +115,7 @@ class AdvancedSearch extends Component {
       <div className="advanced-search">
         {this.getSelector(namespaceTerm, rootNamespace, NAMESPACE_TERM, 'Namespace')}
         {this.getSelector(compatibilityTerm, compatibility, COMPATIBILITY_TERM, 'Compatibility')}
+        {this.getSelector(modeTerm, mode, MODE_TERM, 'Mode')}
         {this.getSelector(versionTerm, version, VERSION_TERM, 'Version')}
         {this.getSelector(deletedTerm, deleted, DELETED_TERM, 'Show deleted schemas')}
         {this.getSelector(versionLatestTerm, versionLatest, VERSION_LATEST_TERM, 'Show latest version')}

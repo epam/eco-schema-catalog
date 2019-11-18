@@ -13,12 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 import { createSelector } from 'reselect';
 
 export const getRootNamspace = state => state.aggregationsSchemasReducer.rootNamespace;
 
 export const getNamespaceTerm = state => state.aggregationsSchemasReducer.namespaceTerm;
 export const getCompatibilityTerm = state => state.aggregationsSchemasReducer.compatibilityTerm;
+export const getModeTerm = state => state.aggregationsSchemasReducer.modeTerm;
 export const getDeletedTerm = state => state.aggregationsSchemasReducer.deletedTerm;
 export const getVersionTerm = state => state.aggregationsSchemasReducer.versionTerm;
 export const getVersionLatestTerm = state => state.aggregationsSchemasReducer.versionLatestTerm;
@@ -54,6 +56,7 @@ export const getIsClearAll = createSelector(
   [
     getCompatibilityTerm,
     getNamespaceTerm,
+    getModeTerm,
     getDeletedTerm,
     getVersionTerm,
     getVersionLatestTerm,

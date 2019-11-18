@@ -27,6 +27,7 @@ import {
   DELETED_TERM,
   VERSION_LATEST_TERM,
   VERSION_TERM,
+  MODE_TERM,
 } from '../../consts/terms';
 
 const initialState = {
@@ -36,6 +37,7 @@ const initialState = {
   rootNamespace: {},
   version: {},
   versionLatest: {},
+  mode: {},
 
   /* applied Terms */
   [COMPATIBILITY_TERM]: [],
@@ -43,6 +45,7 @@ const initialState = {
   [NAMESPACE_TERM]: [],
   [VERSION_TERM]: [],
   [VERSION_LATEST_TERM]: [],
+  [MODE_TERM]: [],
 };
 
 const aggregationsSchemasReducer = (state = initialState, action) => {
@@ -61,6 +64,7 @@ const aggregationsSchemasReducer = (state = initialState, action) => {
         version,
         deleted,
         versionLatest,
+        mode,
       } = aggregations;
       return Object.assign(
         {},
@@ -69,6 +73,7 @@ const aggregationsSchemasReducer = (state = initialState, action) => {
           compatibility,
           rootNamespace,
           version,
+          mode,
           deleted: { 1: deleted.true, 0: deleted.false },
           versionLatest: { 1: versionLatest.true, 0: versionLatest.false },
         },

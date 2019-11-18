@@ -61,6 +61,9 @@ class VersionSelector extends PureComponent {
     const { getSchemaIdentity, subject, version } = this.props;
     this.setState({ isLoading: true });
     try {
+
+      console.log(' getAvailbleVersion ');
+
       const identity = await getSchemaIdentity(subject);
       const versions = identity.schemas.map(schema => schema.version);
       const isVersionDeleted = !versions.includes(version);
