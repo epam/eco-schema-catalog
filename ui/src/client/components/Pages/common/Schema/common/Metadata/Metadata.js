@@ -36,7 +36,7 @@ class Metadata extends Component {
       value: PropTypes.shape({
         doc: PropTypes.string,
         formattedDoc: PropTypes.string,
-        updatedAt: PropTypes.number,
+        updatedAt: PropTypes.string,
       }),
     }),
     isSaved: PropTypes.bool.isRequired,

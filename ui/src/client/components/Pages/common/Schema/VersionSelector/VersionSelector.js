@@ -35,7 +35,7 @@ class VersionSelector extends PureComponent {
     super(props);
     this.state = {
       isLoading: false,
-      versions: null,
+      versions: [],
       isVersionDeleted: false,
     };
   }
@@ -46,14 +46,10 @@ class VersionSelector extends PureComponent {
 
   componentDidUpdate() {
     const { version } = this.props;
-    const { versions, isVersionDeleted } = this.state;
-    if (versions === null) {
+    const { versions, isVersionDeleted, isLoading } = this.state;
+
+    if (!versions.includes(version) && !isVersionDeleted && !isLoading) {
       this.getAvailbleVersion();
-      return;
-    }
-    if (!versions.includes(version) && !isVersionDeleted) {
-      this.getAvailbleVersion();
-      return;
     }
   }
 
@@ -61,9 +57,6 @@ class VersionSelector extends PureComponent {
     const { getSchemaIdentity, subject, version } = this.props;
     this.setState({ isLoading: true });
     try {
-
-      console.log(' getAvailbleVersion ');
-
       const identity = await getSchemaIdentity(subject);
       const versions = identity.schemas.map(schema => schema.version);
       const isVersionDeleted = !versions.includes(version);
