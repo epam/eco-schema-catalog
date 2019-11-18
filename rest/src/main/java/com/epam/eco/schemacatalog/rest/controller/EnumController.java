@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.eco.schemacatalog.domain.metadata.format.TagType;
+import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.rest.convert.TagTypeConverter;
 
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
@@ -49,6 +50,11 @@ public class EnumController {
     @GetMapping("/avro-compatibility-levels")
     public AvroCompatibilityLevel[] getAvroCompatibilityLevel() {
         return AvroCompatibilityLevel.values();
+    }
+
+    @GetMapping("/schema-modes")
+    public Mode[] getSchemaModes() {
+        return Mode.values();
     }
 
 }
