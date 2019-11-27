@@ -8,7 +8,7 @@ With Eco Schema Catalog you can use:
 * Various services to work with schemas.
 * Utilities, helpers, and other classes that extend and augment the Schema Registry library.
 
-The currently supported version of Confluent is [5.2.3](https://docs.confluent.io/5.2.3/schema-registry/index.html)
+The currently supported version of Confluent is [5.3.1](https://docs.confluent.io/5.3.1/schema-registry/index.html)
 
 ## Project structure
 
@@ -100,6 +100,7 @@ docker-compose -f docker/docker-compose-all.yaml down
 
 Eco Schema Catalog | Confluent Platform | Kafka
 ---  | --- | ---
+1.3.x | 5.3.x | 2.3.x
 1.2.x | 5.2.x | 2.2.x
 1.1.x | 5.1.x | 2.1.x
 1.0.x | 5.0.x | 2.0.x
