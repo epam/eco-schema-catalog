@@ -23,12 +23,13 @@ import org.springframework.context.annotation.Bean;
 import com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.store.autoconfigure.SchemaCatalogStoreProperties;
+import com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
 
 /**
  * @author Andrei_Tytsik
  */
-@EnableConfigurationProperties(KafkaSchemaRegistryStoreProperties.class)
+@EnableConfigurationProperties(KafkaStoreProperties.class)
 public class KafkaSchemaRegistryStoreConfiguration {
 
     @Autowired

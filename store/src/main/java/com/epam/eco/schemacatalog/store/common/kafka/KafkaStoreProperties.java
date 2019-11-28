@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.epam.eco.schemacatalog.store.schema.kafka;
+package com.epam.eco.schemacatalog.store.common.kafka;
 
 import java.util.Map;
 
@@ -22,12 +22,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Andrei_Tytsik
  */
-@ConfigurationProperties(prefix = "eco.schemacatalog.store.schema.kafka")
-public class KafkaSchemaRegistryStoreProperties {
+@ConfigurationProperties(prefix = "eco.schemacatalog.store.kafka")
+public class KafkaStoreProperties {
 
     private String bootstrapServers;
-    private Map<String, Object> consumerConfig;
-    private long bootstrapTimeoutInMs;
+    private Map<String, Object> clientConfig;
+    private long bootstrapTimeoutInMs = 60000;
 
     public String getBootstrapServers() {
         return bootstrapServers;
@@ -35,11 +35,11 @@ public class KafkaSchemaRegistryStoreProperties {
     public void setBootstrapServers(String bootstrapServers) {
         this.bootstrapServers = bootstrapServers;
     }
-    public Map<String, Object> getConsumerConfig() {
-        return consumerConfig;
+    public Map<String, Object> getClientConfig() {
+        return clientConfig;
     }
-    public void setConsumerConfig(Map<String, Object> consumerConfig) {
-        this.consumerConfig = consumerConfig;
+    public void setClientConfig(Map<String, Object> clientConfig) {
+        this.clientConfig = clientConfig;
     }
     public long getBootstrapTimeoutInMs() {
         return bootstrapTimeoutInMs;
