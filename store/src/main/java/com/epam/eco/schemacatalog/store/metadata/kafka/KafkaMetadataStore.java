@@ -39,6 +39,7 @@ import com.epam.eco.commons.kafka.serde.JsonDeserializer;
 import com.epam.eco.commons.kafka.serde.JsonSerializer;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
+import com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties;
 import com.epam.eco.schemacatalog.store.metadata.MetadataContainer;
 import com.epam.eco.schemacatalog.store.metadata.MetadataContainerFactory;
 import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
@@ -54,7 +55,7 @@ public class KafkaMetadataStore implements MetadataStore, CacheListener<Metadata
     private static final String TOPIC_NAME = "__schemas_metadata";
 
     @Autowired
-    private KafkaMetadataStoreProperties properties;
+    private KafkaStoreProperties properties;
 
     private final List<MetadataStoreUpdateListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -356,7 +357,7 @@ public class KafkaMetadataStore implements MetadataStore, CacheListener<Metadata
                 .topicName(TOPIC_NAME)
                 .bootstrapTimeoutInMs(properties.getBootstrapTimeoutInMs())
                 .consumerConfigBuilder(
-                        ConsumerConfigBuilder.with(properties.getConsumerConfig()).
+                        ConsumerConfigBuilder.with(properties.getClientConfig()).
                             keyDeserializer(JsonDeserializer.class).
                             property(JsonDeserializer.KEY_TYPE, MetadataKey.class).
                             valueDeserializer(JsonDeserializer.class).
@@ -366,7 +367,7 @@ public class KafkaMetadataStore implements MetadataStore, CacheListener<Metadata
                 .listener(this)
                 .storeData(false)
                 .producerConfigBuilder(
-                        ProducerConfigBuilder.with(properties.getProducerConfig())
+                        ProducerConfigBuilder.with(properties.getClientConfig())
                             .keySerializer(JsonSerializer.class)
                             .valueSerializer(JsonSerializer.class))
                 .build();

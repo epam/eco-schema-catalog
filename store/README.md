@@ -26,8 +26,7 @@ private SchemaCatalogStore schemaCatalogStore;
 **application.properties**
 ```
 eco.schemacatalog.store.schemaRegistryUrl=http://schema-registry:8081
-eco.schemacatalog.store.schema.kafka.bootstrapServers=kafka:9092
-eco.schemacatalog.store.metadata.kafka.bootstrapServers=kafka:9092
+eco.schemacatalog.store.kafka.bootstrapServers=kafka:9092
 ```
 
 or **application.yml**
@@ -36,12 +35,8 @@ eco:
     schemacatalog:
         store:
             schemaRegistryUrl: http://schema-registry:8081
-            schema:
-                kafka:
-                    bootstrapServers: kafka:9092
-            metadata:
-                kafka:
-                    bootstrapServers: kafka:9092
+            kafka:
+                bootstrapServers: kafka:9092
 ```
 
 ## License
