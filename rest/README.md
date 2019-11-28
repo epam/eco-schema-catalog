@@ -89,7 +89,7 @@ Name | Description | Default
 `eco.schemacatalog.store.schemaRegistryUrl` | URL to the Schema Registry REST API. | `http://localhost:8081`
 `eco.schemacatalog.store.kafka.bootstrapServers` | A comma-separated list of Kafka brokers used by the Schema Registry to store schemas. | `localhost:9092`
 `eco.schemacatalog.store.kafka.bootstrapTimeoutInMs` | Max duration in milliseconds for bootstrapping data from the Schema Registry storage. If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | `60000`
-`eco.schemacatalog.store.kafka.clientConfig[property]` | Common Kafka [client properties](https://kafka.apache.org/10/documentation.html#adminclientconfigs), used to connect to the Schema Registry schema storage (topic). |
+`eco.schemacatalog.store.kafka.clientConfig[property]` | Common Kafka [client properties](https://kafka.apache.org/23/documentation.html#adminclientconfigs), used to connect to the Schema Registry schema storage (topic). |
 
 ## License
 
