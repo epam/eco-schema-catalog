@@ -18,6 +18,7 @@ package com.epam.eco.schemacatalog.store.metadata.kafka;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+import com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties;
 import com.epam.eco.schemacatalog.store.metadata.InheritingMetadataContainerFactory;
 import com.epam.eco.schemacatalog.store.metadata.MetadataContainerFactory;
 import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
@@ -25,7 +26,7 @@ import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
 /**
  * @author Andrei_Tytsik
  */
-@EnableConfigurationProperties(KafkaMetadataStoreProperties.class)
+@EnableConfigurationProperties(KafkaStoreProperties.class)
 public class KafkaMetadataStoreConfiguration {
 
     @Bean

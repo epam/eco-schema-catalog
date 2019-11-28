@@ -48,6 +48,7 @@ import com.epam.eco.commons.kafka.cache.KafkaCache;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.exception.NotFoundException;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
+import com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties;
 import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStoreUpdateListener;
@@ -67,7 +68,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
             Collections.unmodifiableNavigableMap(new TreeMap<>());
 
     @Autowired
-    private KafkaSchemaRegistryStoreProperties properties;
+    private KafkaStoreProperties properties;
 
     @Autowired
     private ExtendedSchemaRegistryClient schemaRegistryClient;
@@ -159,7 +160,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                 bootstrapServers(properties.getBootstrapServers()).
                 topicName(TOPIC).
                 bootstrapTimeoutInMs(properties.getBootstrapTimeoutInMs()).
-                consumerConfig(properties.getConsumerConfig()).
+                consumerConfig(properties.getClientConfig()).
                 keyValueDecoder(new SchemaRegistryDecoder()).
                 readOnly(true).
                 storeData(false).
