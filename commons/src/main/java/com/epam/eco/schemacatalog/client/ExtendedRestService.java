@@ -16,9 +16,8 @@
 package com.epam.eco.schemacatalog.client;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +59,7 @@ public class ExtendedRestService extends RestService {
         return super.lookUpSubjectVersion(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ExtendedRestService extends RestService {
         return super.lookUpSubjectVersion(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 lookupDeletedSchema);
     }
 
@@ -84,7 +83,7 @@ public class ExtendedRestService extends RestService {
         return super.registerSchema(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -96,7 +95,7 @@ public class ExtendedRestService extends RestService {
         return super.testCompatibility(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
@@ -108,7 +107,7 @@ public class ExtendedRestService extends RestService {
         return super.updateConfig(
                 requestProperties,
                 configUpdateRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -117,7 +116,7 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getConfig(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -127,7 +126,7 @@ public class ExtendedRestService extends RestService {
             int version) throws IOException, RestClientException {
         return super.getVersion(
                 requestProperties,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
@@ -137,7 +136,7 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getLatestVersion(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -146,7 +145,7 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getAllVersions(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -154,20 +153,27 @@ public class ExtendedRestService extends RestService {
             String subject,
             String version) throws IOException, RestClientException {
         return super.deleteSchemaVersion(
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
     @Override
     public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
-        return super.deleteSubject(encodeSubject(subject));
+        return super.deleteSubject(encodeSubjectAsPathSegment(subject));
     }
 
-    private static String encodeSubject(String subject) throws UnsupportedEncodingException {
-        if (subject == null) {
-            return subject;
+    /**
+     * Workaround: encode subject to be used by {@link RestService} as path segment when building request URL.
+     *
+     * {@link RestService} simply concatenates subject (path segment) and other url parts w/o encoding, thus
+     * any illegal character might cause request to fail with some misleading errors...
+     */
+    private static String encodeSubjectAsPathSegment(String subject) {
+        try {
+            return new URI(null, null, subject, null).toASCIIString();
+        } catch (URISyntaxException use) {
+            throw new RuntimeException(use);
         }
-        return URLEncoder.encode(subject, StandardCharsets.UTF_8.name());
     }
 
 }
