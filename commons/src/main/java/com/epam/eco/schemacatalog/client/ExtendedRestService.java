@@ -16,8 +16,8 @@
 package com.epam.eco.schemacatalog.client;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -169,11 +169,31 @@ public class ExtendedRestService extends RestService {
      * any illegal character might cause request to fail with some misleading errors...
      */
     private static String encodeSubjectAsPathSegment(String subject) {
-        try {
-            return new URI(null, null, subject, null).toASCIIString();
-        } catch (URISyntaxException use) {
-            throw new RuntimeException(use);
+        StringBuilder result = new StringBuilder();
+        ByteBuffer bytes = StandardCharsets.UTF_8.encode(subject);
+        while (bytes.hasRemaining()) {
+            int ch = bytes.get() & 0xff;
+            if (isPchar(ch)) {
+                result.append((char)ch);
+            }
+            else {
+                result.append('%');
+                char hex1 = Character.toUpperCase(Character.forDigit((ch >> 4) & 0xF, 16));
+                char hex2 = Character.toUpperCase(Character.forDigit(ch & 0xF, 16));
+                result.append(hex1);
+                result.append(hex2);
+            }
         }
+        return result.toString();
+    }
+
+    private static boolean isPchar(int ch) {
+        return
+                ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' ||
+                ch >= '0' && ch <= '9' ||
+                ch == '-' || ch == '.' || ch == '_' || ch == '~' ||
+                ch == '!' || ch == '$' || ch == '&' || ch == '\'' || ch == '(' || ch == ')' || ch == '*' || ch == '+' || ch == ',' || ch == ';' || ch == '=' ||
+                ch == ':' || ch == '@';
     }
 
 }
