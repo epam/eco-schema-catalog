@@ -93,10 +93,5 @@
         <Class name="com.epam.eco.schemacatalog.client.ReadOnlySchemaRegistryClient" />
         <Bug pattern="BED_BOGUS_EXCEPTION_DECLARATION" />
     </Match>
-    <Match>
-        <Class name="com.epam.eco.schemacatalog.client.ExtendedRestService" />
-        <Method name="encodeSubjectAsPathSegment" />
-        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
-    </Match>
   
 </FindBugsFilter>
