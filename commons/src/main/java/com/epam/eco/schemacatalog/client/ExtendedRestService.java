@@ -16,8 +16,7 @@
 package com.epam.eco.schemacatalog.client;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,7 @@ public class ExtendedRestService extends RestService {
         return super.lookUpSubjectVersion(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ExtendedRestService extends RestService {
         return super.lookUpSubjectVersion(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 lookupDeletedSchema);
     }
 
@@ -84,7 +83,7 @@ public class ExtendedRestService extends RestService {
         return super.registerSchema(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -96,7 +95,7 @@ public class ExtendedRestService extends RestService {
         return super.testCompatibility(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
@@ -108,7 +107,7 @@ public class ExtendedRestService extends RestService {
         return super.updateConfig(
                 requestProperties,
                 configUpdateRequest,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -117,7 +116,7 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getConfig(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -127,7 +126,7 @@ public class ExtendedRestService extends RestService {
             int version) throws IOException, RestClientException {
         return super.getVersion(
                 requestProperties,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
@@ -137,19 +136,19 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getLatestVersion(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
     public String getVersionSchemaOnly(
             String subject,
             int version) throws IOException, RestClientException {
-        return super.getVersionSchemaOnly(encodeSubject(subject), version);
+        return super.getVersionSchemaOnly(encodeSubjectAsPathSegment(subject), version);
     }
 
     @Override
     public String getLatestVersionSchemaOnly(String subject) throws IOException, RestClientException {
-        return super.getLatestVersionSchemaOnly(encodeSubject(subject));
+        return super.getLatestVersionSchemaOnly(encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -158,7 +157,7 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.getAllVersions(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
     @Override
@@ -168,7 +167,7 @@ public class ExtendedRestService extends RestService {
             String version) throws IOException, RestClientException {
         return super.deleteSchemaVersion(
                 requestProperties,
-                encodeSubject(subject),
+                encodeSubjectAsPathSegment(subject),
                 version);
     }
 
@@ -178,14 +177,41 @@ public class ExtendedRestService extends RestService {
             String subject) throws IOException, RestClientException {
         return super.deleteSubject(
                 requestProperties,
-                encodeSubject(subject));
+                encodeSubjectAsPathSegment(subject));
     }
 
-    private static String encodeSubject(String subject) throws UnsupportedEncodingException {
-        if (subject == null) {
-            return subject;
+    /**
+     * Workaround: encode subject to be used by {@link RestService} as path segment when building request URL.
+     *
+     * {@link RestService} simply concatenates subject (path segment) and other url parts w/o encoding, thus
+     * any illegal character might cause request to fail with some misleading errors...
+     */
+    private static String encodeSubjectAsPathSegment(String subject) {
+        StringBuilder result = new StringBuilder();
+        ByteBuffer bytes = StandardCharsets.UTF_8.encode(subject);
+        while (bytes.hasRemaining()) {
+            int ch = bytes.get() & 0xff;
+            if (isPchar(ch)) {
+                result.append((char)ch);
+            }
+            else {
+                result.append('%');
+                char hex1 = Character.toUpperCase(Character.forDigit((ch >> 4) & 0xF, 16));
+                char hex2 = Character.toUpperCase(Character.forDigit(ch & 0xF, 16));
+                result.append(hex1);
+                result.append(hex2);
+            }
         }
-        return URLEncoder.encode(subject, StandardCharsets.UTF_8.name());
+        return result.toString();
+    }
+
+    private static boolean isPchar(int ch) {
+        return
+                ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' ||
+                ch >= '0' && ch <= '9' ||
+                ch == '-' || ch == '.' || ch == '_' || ch == '~' ||
+                ch == '!' || ch == '$' || ch == '&' || ch == '\'' || ch == '(' || ch == ')' || ch == '*' || ch == '+' || ch == ',' || ch == ';' || ch == '=' ||
+                ch == ':' || ch == '@';
     }
 
 }
