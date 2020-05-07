@@ -89,10 +89,5 @@
         <Method name='&lt;clinit&gt;'/>
         <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
     </Match>
-    <Match>
-        <Class name="com.epam.eco.schemacatalog.client.ExtendedRestService" />
-        <Method name="encodeSubjectAsPathSegment" />
-        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
-    </Match>
 
 </FindBugsFilter>
