@@ -169,6 +169,9 @@ public class ExtendedRestService extends RestService {
      * any illegal character might cause request to fail with some misleading errors...
      */
     private static String encodeSubjectAsPathSegment(String subject) {
+        if (subject == null) {
+            return null;
+        }
         StringBuilder result = new StringBuilder();
         ByteBuffer bytes = StandardCharsets.UTF_8.encode(subject);
         while (bytes.hasRemaining()) {
