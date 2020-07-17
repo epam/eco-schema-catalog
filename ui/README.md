@@ -60,13 +60,26 @@ To run Eco Schema Catalog UI from source in development mode:
 3. Run build of development version: <br />  `npm run build:dev` <br />  or in watching mode: <br /> `npm run build:watch`.
 4. Run new console instance and start serving built files with: <br /> `npm run start:dev`
 
-### Running with docker
+### Running in docker
 
-To run Eco Schema Catalog UI with Docker:
+The prerequisite includes [Docker](https://www.docker.com/get-started).
 
-1. Modify .env file before building with your own values.
-2. Build docker image: <br /> `docker build -t epam/schema-catalog-ui:latest .`
-3. Run the created docker image: <br /> `docker run  --name schema-catalog-ui --rm -p 8282:8282 epam/schema-catalog-ui:latest`
+To build the image, run the following command sequence:
+```
+git clone git@github.com:epam/eco-schema-catalog.git
+cd /eco-schema-catalog/ui
+docker build -t epam/schema-catalog-ui:latest .
+```
+
+Run the container:
+```
+docker run --name schema-catalog-ui \
+ --rm \
+ -p 8282:8282 \
+ -e PORT=8282 \
+ -e TARGET_API=http://schema-catalog-rest:8082 \ 
+ epam/schema-catalog-ui:latest
+```
 
 ## Configuration
 
