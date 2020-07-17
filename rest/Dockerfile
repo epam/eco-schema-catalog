@@ -32,6 +32,8 @@ VOLUME /config
 
 COPY --from=build /app/rest/target/schema-catalog-rest-*.jar /app/schema-catalog-rest.jar
 
-HEALTHCHECK --interval=5s --timeout=1s --retries=20 CMD wget --quiet --tries=1 --spider http://localhost:8082/actuator/health || exit 1
+ENV SERVER_PORT=${SERVER_PORT:-8082}
+
+HEALTHCHECK --interval=5s --timeout=1s --retries=20 CMD wget --quiet --tries=1 --spider http://localhost:$SERVER_PORT/actuator/health || exit 1
 
 ENTRYPOINT exec java $JAVA_OPTS -jar schema-catalog-rest.jar
