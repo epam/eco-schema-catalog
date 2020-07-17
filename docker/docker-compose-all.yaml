@@ -71,8 +71,6 @@ services:
     environment:
       - 'KAFKA_SERVERS_URL=kafka:29092'
       - 'SCHEMA_REGISTRY_URL=http://schema-registry:8081'
-    volumes:
-      - './schema-catalog-rest.properties:/app/config/application.properties'
     ports:
       - '8082:8082'
     restart: 'on-failure'

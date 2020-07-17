@@ -11,8 +11,6 @@ services:
       - 'KAFKA_SERVERS_URL=${KAFKA_SERVERS_URL:-}'
       - 'SCHEMA_REGISTRY_URL=${SCHEMA_REGISTRY_URL:-}'
       - 'JAVA_OPTS=${JAVA_OPTS:-}'
-    volumes:
-      - './schema-catalog-rest.properties:/app/config/application.properties'
     ports:
       - '8082:8082'
     restart: 'on-failure'
