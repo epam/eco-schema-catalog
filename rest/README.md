@@ -105,7 +105,7 @@ docker run --name schema-catalog-rest \
 
 ## Configuration properties
 
-Name | Envoronment Variable | Description | Default
+Name | Environment Variable | Description | Default
 ---  | ---                  | ---         | --- 
 `sever.port` | SERVER_PORT | Server HTTP port. | 8082
 `eco.schemacatalog.store.schemaRegistryUrl` | SCHEMA_REGISTRY_URL | URL to the Schema Registry REST API. | `http://localhost:8081`
