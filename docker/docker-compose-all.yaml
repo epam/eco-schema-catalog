@@ -64,7 +64,7 @@ services:
     build:
       context: '../'
       dockerfile: './rest/Dockerfile'
-    image: 'epam/schema-catalog-rest:latest'
+    image: 'epam/eco-schema-catalog-rest:latest'
     hostname: 'schema-catalog-rest'
     depends_on:
       - 'schema-registry'
@@ -77,7 +77,7 @@ services:
 
   schema-catalog-ui:
     build: '../ui'
-    image: 'epam/schema-catalog-ui:latest'
+    image: 'epam/eco-schema-catalog-ui:latest'
     hostname: 'schema-catalog-ui'
     depends_on:
       - 'schema-catalog-rest'
