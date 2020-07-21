@@ -51,37 +51,37 @@ To build the image, run the following command sequence:
 ```
 git clone git@github.com:epam/eco-schema-catalog.git
 cd /eco-schema-catalog/rest
-docker build -f ./Dockerfile -t epam/schema-catalog-rest:latest ./../
+docker build -f ./Dockerfile -t epam/eco-schema-catalog-rest:latest ./../
 ```
 
 Run the container:
 ```
-docker run --name schema-catalog-rest \
+docker run --name eco-schema-catalog-rest \
  --rm \
  -p 8082:8082 \
  -v <path-to-config-file>:/app/config/application.properties \
- epam/schema-catalog-rest:latest
+ epam/eco-schema-catalog-rest:latest
 ```
 
 or using environment variables:
 ```
-docker run --name schema-catalog-rest \
+docker run --name eco-schema-catalog-rest \
  --rm \
  -p 8085:8085 \
  -e SERVER_PORT=8085 \
  -e SCHEMA_REGISTRY_URL=http://schema-registry \
  -e KAFKA_SERVERS_URL=kafka:9092 \
  -e BOOTSTRAP_TIMEOUT_MS=60000 \
- epam/schema-catalog-rest:latest
+ epam/eco-schema-catalog-rest:latest
 ```
 
 or using inline JSON configuration:
 ```
-docker run --name schema-catalog-rest \
+docker run --name eco-schema-catalog-rest \
  --rm \
  -p 8082:8082 \
  -e SPRING_APPLICATION_JSON='{"eco":{"schemacatalog":{"store":{"schemaRegistryUrl":"http://schema-registry"}}}}' \
- epam/schema-catalog-rest:latest
+ epam/eco-schema-catalog-rest:latest
 ```
 
 To open Schema Catalog REST API (swagger), go to [http://localhost:8082/swagger-ui.html#](http://localhost:8082/swagger-ui.html#)
@@ -93,14 +93,14 @@ To reference files from the config file, it is possible to mount them with the
 To tune JVM, use `-e 'JAVA_OPTS=<some JVM options>'`.
 For example:
 ```
-docker run --name schema-catalog-rest \
+docker run --name eco-schema-catalog-rest \
  --rm \
  -p 8082:8082 \
  -v <path-to-config-file>:/app/config/application.properties \
  -v <host-path-to-file-referenced-from-config>:<docker-path-to-file-referenced-from-config> \
  -m 3g \
  -e 'JAVA_OPTS=-Xms1g -Xmx1g' \
- epam/schema-catalog-rest:latest
+ epam/eco-schema-catalog-rest:latest
 ```
 
 ## Configuration properties
