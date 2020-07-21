@@ -79,7 +79,7 @@ or using inline JSON configuration:
 ```
 docker run --name schema-catalog-rest \
  --rm \
- -p 8085:8085 \
+ -p 8082:8082 \
  -e SPRING_APPLICATION_JSON='{"eco":{"schemacatalog":{"store":{"schemaRegistryUrl":"http://schema-registry"}}}}' \
  epam/schema-catalog-rest:latest
 ```
