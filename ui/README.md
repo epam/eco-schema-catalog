@@ -81,6 +81,10 @@ docker run --name eco-schema-catalog-ui \
  epam/eco-schema-catalog-ui:latest
 ```
 
+#### Dockerhub repo
+
+[https://hub.docker.com/r/epam/eco-schema-catalog-ui/tags](https://hub.docker.com/r/epam/eco-schema-catalog-ui/tags)
+
 ## Configuration
 
 Name | Description | Default
