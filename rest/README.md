@@ -86,7 +86,7 @@ docker run --name eco-schema-catalog-rest \
 
 To open Schema Catalog REST API (swagger), go to [http://localhost:8082/swagger-ui.html#](http://localhost:8082/swagger-ui.html#)
 
-### Note:
+#### Note:
 
 To reference files from the config file, it is possible to mount them with the
 `-v` option. <br />
@@ -102,7 +102,7 @@ docker run --name eco-schema-catalog-rest \
  -e 'JAVA_OPTS=-Xms1g -Xmx1g' \
  epam/eco-schema-catalog-rest:latest
 ```
-### Dockerhub repo
+#### Dockerhub repo
 
 [https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags](https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags)
 
