@@ -68,17 +68,17 @@ To build the image, run the following command sequence:
 ```
 git clone git@github.com:epam/eco-schema-catalog.git
 cd /eco-schema-catalog/ui
-docker build -t epam/schema-catalog-ui:latest .
+docker build -t epam/eco-schema-catalog-ui:latest .
 ```
 
 Run the container:
 ```
-docker run --name schema-catalog-ui \
+docker run --name eco-schema-catalog-ui \
  --rm \
  -p 8282:8282 \
  -e PORT=8282 \
  -e TARGET_API=http://schema-catalog-rest:8082 \ 
- epam/schema-catalog-ui:latest
+ epam/eco-schema-catalog-ui:latest
 ```
 
 ## Configuration
