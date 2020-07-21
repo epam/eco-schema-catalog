@@ -102,6 +102,9 @@ docker run --name eco-schema-catalog-rest \
  -e 'JAVA_OPTS=-Xms1g -Xmx1g' \
  epam/eco-schema-catalog-rest:latest
 ```
+### Dockerhub repo
+
+[https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags](https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags)
 
 ## Configuration properties
 
