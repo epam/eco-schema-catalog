@@ -59,12 +59,11 @@ const base = {
       favicon: './src/client/assets/logo/data_hub_logo.png',
       inject: true,
     }),
-    new CopyWebpackPlugin([
-      {
-        from: 'src/server/',
-        to: '../',
-      },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'src/server/', to: '../' },
+      ],
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
