@@ -19,7 +19,7 @@ const express = require('express');
 const compression = require('compression');
 const path = require('path');
 const https = require('https');
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const helmet = require('helmet');
 
 dotenv.config();
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
   apiConfig.agent = httpsAgent;
 }
 
-const proxySchemaCatalog = proxy(apiConfig);
+const proxySchemaCatalog = createProxyMiddleware(apiConfig);
 
 app.get('*/info', (req, res) => {
   res.status(200).end();
