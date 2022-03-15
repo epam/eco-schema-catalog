@@ -28,7 +28,7 @@
     "helmet": "^3.21.2",
     "history": "^4.10.1",
     "jsonlint-mod": "^1.7.4",
-    "lodash-es": "^4.17.11",
+    "lodash-es": "^4.17.21",
     "nanoid": "^2.1.7",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
