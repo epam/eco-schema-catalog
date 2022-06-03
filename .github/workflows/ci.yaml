@@ -1,0 +1,23 @@
+name: Java CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: git checkout HEAD
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+       - name: test compile
+         run: mvn test-compile -pl store -am
+       - name: run the test
+         run: mvn -pl store test -Dtest=com.epam.eco.schemacatalog.store.metadata.InheritingMetadataContainerTest#testRemove2
+       - name: run the nondex
+         run: mvn -pl store edu.illinois:nondex-maven-plugin:1.1.2:debug -Dtest=com.epam.eco.schemacatalog.store.metadata.InheritingMetadataContainerTest#testRemove2
