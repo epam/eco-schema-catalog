@@ -77,7 +77,7 @@ docker run --name eco-schema-catalog-ui \
  --rm \
  -p 8282:8282 \
  -e PORT=8282 \
- -e TARGET_API=http://schema-catalog-rest:8082 \
+ -e TARGET_API=http://schema-catalog-rest:8082 \ 
  epam/eco-schema-catalog-ui:latest
 ```
 
