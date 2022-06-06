@@ -26,7 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -156,7 +155,7 @@ public final class SearchResult<T> implements Iterable<T> {
     }
 
     @Override
-    public @NotNull Iterator<T> iterator() {
+    public Iterator<T> iterator() {
         return content.iterator();
     }
 
