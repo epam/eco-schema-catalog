@@ -522,9 +522,9 @@ public class SchemaDocumentRepositoryIT {
     @SuppressWarnings("unused")
     private Iterator<FtsTestCase> searchByNotAnalyzedFieldsNegativeDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
+        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        List<FtsTestCase> ftsTestCases = new ArrayList<>(
-                FtsTestCaseGenerator.getNegativeTestCasesForNotAnalyzedFields(schemaInfo));
+        ftsTestCases.addAll(FtsTestCaseGenerator.getNegativeTestCasesForNotAnalyzedFields(schemaInfo));
 
         return ftsTestCases.iterator();
     }
@@ -532,9 +532,9 @@ public class SchemaDocumentRepositoryIT {
     @SuppressWarnings("unused")
     private Iterator<FtsTestCase> searchByAnalyzedFieldsDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
+        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        List<FtsTestCase> ftsTestCases = new ArrayList<>(
-                FtsTestCaseGenerator.getTestCasesForAnalyzedFields(schemaInfo));
+        ftsTestCases.addAll(FtsTestCaseGenerator.getTestCasesForAnalyzedFields(schemaInfo));
 
         return ftsTestCases.iterator();
     }

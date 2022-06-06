@@ -38,7 +38,7 @@ public class SchemaRegistryClientIT {
 
     private static final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"%s\", \"type\": \"string\"}]}";
 
-    private static final SchemaRegistryClient CLIENT = buildEcoCachedClient();
+    private static SchemaRegistryClient CLIENT = buildEcoCachedClient();
 
     private static SchemaRegistryClient buildEcoCachedClient() {
         try {

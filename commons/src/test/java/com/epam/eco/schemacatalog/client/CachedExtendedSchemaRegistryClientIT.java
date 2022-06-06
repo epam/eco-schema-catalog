@@ -62,7 +62,7 @@ public class CachedExtendedSchemaRegistryClientIT {
         return new CachedExtendedSchemaRegistryClient(schemaRegistryUrl, 1_000);
     }
 
-    private final ExtendedSchemaRegistryClient client;
+    private ExtendedSchemaRegistryClient client;
 
     public CachedExtendedSchemaRegistryClientIT(ExtendedSchemaRegistryClient client) {
         this.client = client;

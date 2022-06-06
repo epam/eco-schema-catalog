@@ -86,8 +86,8 @@ public class BySchemaFieldsVerifierTest {
             fieldsBuilder.append(String.format("{\"name\":\"%s\",\"type\":\"int\"}", field));
         }
         return String.format(
-                "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
-                fieldsBuilder.toString());
+                        "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
+                        fieldsBuilder.toString());
     }
 
     @Test

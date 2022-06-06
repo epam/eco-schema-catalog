@@ -573,7 +573,7 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
             String subject,
             Integer version) throws IOException, RestClientException {
         if (version != null) {
-            return getSchemaMetadata(subject, version);
+            return getSchemaMetadata(subject, version.intValue());
         } else {
             return getLatestSchemaMetadata(subject);
         }

@@ -455,7 +455,7 @@ public final class MockExtendedSchemaRegistryClient
 
         return (int) callClientMethod(
                 "getIdFromRegistry",
-                new Class[]{String.class, Schema.class, boolean.class},
+                new Class[] {String.class, Schema.class, boolean.class},
                 subject, schema, Boolean.TRUE);
     }
 

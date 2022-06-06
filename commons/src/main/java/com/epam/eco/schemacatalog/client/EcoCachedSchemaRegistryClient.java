@@ -58,7 +58,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES;
     static {
-        Map<String, String> requestProps = new HashMap<>();
+        Map<String, String> requestProps = new HashMap<String, String>();
         requestProps.put("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
         DEFAULT_REQUEST_PROPERTIES = Collections.unmodifiableMap(requestProps);
     }
