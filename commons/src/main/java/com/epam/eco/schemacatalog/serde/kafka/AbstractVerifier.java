@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
@@ -50,6 +52,10 @@ public abstract class AbstractVerifier<T extends GenericContainer> implements Ve
     }
 
     protected int getSchemaVersion(Schema schema) {
+        return getSchemaVersion(new AvroSchema(schema));
+    }
+
+    protected int getSchemaVersion(ParsedSchema schema) {
         try {
             return schemaRegistryClient.getVersion(subject, schema);
         } catch (IOException | RestClientException ex) {

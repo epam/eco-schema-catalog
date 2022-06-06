@@ -17,21 +17,17 @@ package com.epam.eco.schemacatalog.serde.kafka;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.errors.SerializationException;
 
-import com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 /**
@@ -72,19 +68,6 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
     }
 
     @Override
-    protected void configureClientProperties(AbstractKafkaAvroSerDeConfig config) {
-        try {
-            List<String> urls = config.getSchemaRegistryUrls();
-            int maxSchemaObject = config.getMaxSchemasPerSubject();
-            if (null == schemaRegistry) {
-                schemaRegistry = new CachedExtendedSchemaRegistryClient(urls, maxSchemaObject);
-            }
-        } catch (io.confluent.common.config.ConfigException e) {
-            throw new ConfigException(e.getMessage());
-        }
-    }
-
-    @Override
     public Object deserialize(String topic, byte[] bytes) {
         initVerifierIfNeeded(topic);
 
@@ -100,7 +83,7 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
 
         try {
             int schemaId = getSchemaId(payload);
-            return schemaRegistry.getById(schemaId);
+            return (Schema) schemaRegistry.getSchemaById(schemaId).rawSchema();
         } catch (IOException | RestClientException ex) {
             throw new RuntimeException("Failed to get schema", ex);
         }
@@ -111,7 +94,7 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
         return buffer.getInt();
     }
 
-    private ByteBuffer getByteBuffer(byte[] payload) {
+    protected ByteBuffer getByteBuffer(byte[] payload) {
         ByteBuffer buffer = ByteBuffer.wrap(payload);
         if (buffer.get() != MAGIC_BYTE) {
           throw new SerializationException("Unknown magic byte!");

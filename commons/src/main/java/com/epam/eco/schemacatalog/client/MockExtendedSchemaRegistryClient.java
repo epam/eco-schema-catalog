@@ -36,7 +36,10 @@ import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
@@ -56,40 +59,61 @@ public final class MockExtendedSchemaRegistryClient
         return SchemaRegistryServiceInfo.with("fake-url.com");
     }
 
-    @Override
+    @Deprecated
     public Schema getBySubjectAndVersion(String subject, int version) {
         return getSchemaInfo(subject, version).getSchemaAvro();
     }
 
     @Override
+    public ParsedSchema getSchemaBySubjectAndVersion(String subject, int version) {
+        return getSchemaInfo(subject, version).getParsedSchema();
+    }
+
+    @Deprecated
     public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
+        return AvroCompatibilityLevel.forName(getGlobalLevelOfCompatibility().name());
+    }
+
+    @Override
+    public CompatibilityLevel getGlobalLevelOfCompatibility() {
         return retrieveCompatibility(null);
     }
 
-    @Override
+    @Deprecated
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        return Optional.ofNullable(retrieveCompatibility(subject));
+        Optional<CompatibilityLevel> optional = getLevelOfCompatibility(subject);
+        return optional.map(compatibilityLevel -> AvroCompatibilityLevel.forName(compatibilityLevel.name()));
     }
 
     @Override
+    public Optional<CompatibilityLevel> getLevelOfCompatibility(String subject) {
+        return Optional.ofNullable(retrieveCompatibility(subject));
+    }
+
+    @Deprecated
     public AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
+        return AvroCompatibilityLevel.forName(getEffectiveLevelOfCompatibility(subject).name());
+    }
+
+    @Override
+    public CompatibilityLevel getEffectiveLevelOfCompatibility(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        AvroCompatibilityLevel compatilityLevel = retrieveCompatibility(subject);
-        if (compatilityLevel == null) {
-            compatilityLevel = retrieveCompatibility(null);
+        CompatibilityLevel compatibilityLevel = retrieveCompatibility(subject);
+        if (compatibilityLevel == null) {
+            compatibilityLevel = retrieveCompatibility(null); // global
         }
 
-        if (compatilityLevel == null) {
+        if (compatibilityLevel == null) {
             throw new RuntimeException(
                     String.format(
                             "Can't determine effective compatibility level for subject '%s'",
                             subject));
         }
 
-        return compatilityLevel;
+        return compatibilityLevel;
     }
 
     @Override
@@ -136,7 +160,12 @@ public final class MockExtendedSchemaRegistryClient
 
         List<BasicSchemaInfo> schemaInfos = new ArrayList<>();
 
-        List<Integer> versions = getAllVersions(subject);
+        List<Integer> versions;
+        try {
+            versions = getAllVersions(subject);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         versions.forEach(version -> schemaInfos.add(getCachedSchemaInfoOrRetrieve(subject, version, null)));
 
         return SubjectSchemas.with(schemaInfos);
@@ -203,8 +232,15 @@ public final class MockExtendedSchemaRegistryClient
                 schemaInfo -> replicateCompatibilityIfNeeded(sourceSubject, destinationSubject));
     }
 
-    @Override
+    @Deprecated
     public void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(compatibilityLevel, "Compatibility level is null");
+        updateCompatibility(subject, CompatibilityLevel.forName(compatibilityLevel.name));
+    }
+
+    @Override
+    public void updateCompatibility(String subject, CompatibilityLevel compatibilityLevel) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
 
@@ -236,12 +272,17 @@ public final class MockExtendedSchemaRegistryClient
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    @Deprecated
     public int getVersionUnchecked(String subject, Schema schema) {
-        Map<Schema, Integer> versionCache;
+        return getVersionUnchecked(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int getVersionUnchecked(String subject, ParsedSchema schema) {
+        Map<ParsedSchema, Integer> versionCache;
         if (getVersionsCache().containsKey(subject)) {
             versionCache = getVersionsCache().get(subject);
-            for (Map.Entry<Schema, Integer> entry : versionCache.entrySet()) {
+            for (Map.Entry<ParsedSchema, Integer> entry : versionCache.entrySet()) {
                 if (entry.getKey().toString().equals(schema.toString())) {
                     return entry.getValue();
                 }
@@ -250,7 +291,7 @@ public final class MockExtendedSchemaRegistryClient
         throw new RuntimeException("Cannot get version from schema registry!");
     }
 
-    @Override
+    @Deprecated
     public boolean testCompatibilityUnchecked(String subject, Schema schema) {
         try {
             return testCompatibility(subject, schema);
@@ -260,8 +301,22 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @Override
+    public boolean testCompatibilityUnchecked(String subject, ParsedSchema schema) {
+        try {
+            return testCompatibility(subject, schema);
+        } catch (IOException | RestClientException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Deprecated
     public int registerUnchecked(String subject, Schema schema) {
-        Map<Schema, Integer> schemaIdMap;
+        return registerUnchecked(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int registerUnchecked(String subject, ParsedSchema schema) {
+        Map<ParsedSchema, Integer> schemaIdMap;
         if (getSchemaCache().containsKey(subject)) {
             schemaIdMap = getSchemaCache().get(subject);
         } else {
@@ -292,8 +347,13 @@ public final class MockExtendedSchemaRegistryClient
         return new ArrayList<>(getVersionsCache().getOrDefault(subject, emptyMap()).values());
     }
 
-    @Override
+    @Deprecated
     public boolean checkSchemaWritable(String subject, Schema schema) {
+        return true;
+    }
+
+    @Override
+    public boolean checkSchemaWritable(String subject, ParsedSchema schema) {
         return true;
     }
 
@@ -308,13 +368,13 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
-        AvroCompatibilityLevel sourceCompatibilityLevel =
+        CompatibilityLevel sourceCompatibilityLevel =
                 retrieveCompatibility(sourceSubject);
         if (sourceCompatibilityLevel == null) {
             return;
         }
 
-        AvroCompatibilityLevel destinationCompatibilityLevel =
+        CompatibilityLevel destinationCompatibilityLevel =
                 retrieveCompatibility(destinationSubject);
         if (destinationCompatibilityLevel != null) {
             return;
@@ -342,7 +402,11 @@ public final class MockExtendedSchemaRegistryClient
                 throw new RuntimeException(e);
             }
         } else {
-            schemaMetadata = super.getSchemaMetadata(subject, version);
+            try {
+                schemaMetadata = super.getSchemaMetadata(subject, version);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         BasicSchemaInfo schemaInfo = toSchemaInfo(subject, schemaMetadata);
         if (initConsumer != null) {
@@ -360,10 +424,10 @@ public final class MockExtendedSchemaRegistryClient
         }
     }
 
-    private AvroCompatibilityLevel retrieveCompatibility(String subject) {
+    private CompatibilityLevel retrieveCompatibility(String subject) {
         try {
             String compatibility = super.getCompatibility(subject);
-            return compatibility != null ? AvroCompatibilityLevel.valueOf(compatibility) : null;
+            return compatibility != null ? CompatibilityLevel.forName(compatibility) : null;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -378,11 +442,11 @@ public final class MockExtendedSchemaRegistryClient
         }
     }
 
-    private int getIdFromRegistry(String subject, Schema schema) {
-        Map<Integer, Schema> idSchemaMap;
+    private int getIdFromRegistry(String subject, ParsedSchema schema) {
+        Map<Integer, ParsedSchema> idSchemaMap;
         if (getIdCache().containsKey(subject)) {
             idSchemaMap = getIdCache().get(subject);
-            for (Map.Entry<Integer, Schema> entry : idSchemaMap.entrySet()) {
+            for (Map.Entry<Integer, ParsedSchema> entry : idSchemaMap.entrySet()) {
                 if (entry.getValue().toString().equals(schema.toString())) {
                     return entry.getKey();
                 }
@@ -391,11 +455,11 @@ public final class MockExtendedSchemaRegistryClient
 
         return (int) callClientMethod(
                 "getIdFromRegistry",
-                new Class[] {String.class, Schema.class, boolean.class},
+                new Class[]{String.class, Schema.class, boolean.class},
                 subject, schema, Boolean.TRUE);
     }
 
-    private void updateCompatibilityUnchecked(String subject, AvroCompatibilityLevel compatibilityLevel) {
+    private void updateCompatibilityUnchecked(String subject, CompatibilityLevel compatibilityLevel) {
         try {
             updateCompatibility(subject, compatibilityLevel.name());
         } catch (IOException | RestClientException ex) {
@@ -423,23 +487,22 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     @SuppressWarnings("unused")
-    private AvroCompatibilityLevel toCompatibilityLevel(
-            Config configEntity) {
-        return AvroCompatibilityLevel.forName(configEntity.getCompatibilityLevel());
+    private CompatibilityLevel toCompatibilityLevel(Config configEntity) {
+        return CompatibilityLevel.forName(configEntity.getCompatibilityLevel());
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<Schema, Integer>> getVersionsCache() {
+    private Map<String, Map<ParsedSchema, Integer>> getVersionsCache() {
         return getClientPrivateMap("versionCache");
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<Schema, Integer>> getSchemaCache() {
+    private Map<String, Map<ParsedSchema, Integer>> getSchemaCache() {
         return getClientPrivateMap("schemaCache");
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<Integer, Schema>> getIdCache() {
+    private Map<String, Map<Integer, ParsedSchema>> getIdCache() {
         return getClientPrivateMap("idCache");
     }
 

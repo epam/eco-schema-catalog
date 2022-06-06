@@ -52,7 +52,7 @@ import com.epam.eco.schemacatalog.store.utils.SecurityUtils;
 import com.epam.eco.schemacatalog.utils.DetailedAvroCompatibilityChecker;
 import com.epam.eco.schemacatalog.utils.MetadataDocAttributeExtractor;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -119,14 +119,14 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
         Validate.notNull(params, "Schema Register params object is null");
 
         return schemaRegistryStore.testSchemaCompatible(
-                params.getSubject(), params.getSchemaAvro());
+                params.getSubject(), params.getParsedSchema());
     }
 
     @Override
     public SchemaCompatibilityCheckResult testSchemaCompatibleDetailed(SchemaRegisterParams params) {
         Validate.notNull(params, "Schema Register params object is null");
 
-        AvroCompatibilityLevel compatibilityLevel =
+        CompatibilityLevel compatibilityLevel =
                 schemaRegistryStore.getSubjectCompatibility(params.getSubject());
 
         List<Schema> schemas = schemaRegistryStore.getSchemas(params.getSubject()).stream().
@@ -136,7 +136,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
         try {
             DetailedAvroCompatibilityChecker.forLevel(compatibilityLevel).testCompatibility(
-                    params.getSchemaAvro(),
+                    params.getParsedSchema(),
                     schemas);
             return new SchemaCompatibilityCheckResult(params.getSubject());
         } catch (DetailedSchemaValidationException sve) {
@@ -152,7 +152,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
         Validate.notNull(params, "Schema Register params object is null");
 
         return toFullSchemaInfo(
-                schemaRegistryStore.registerSchema(params.getSubject(), params.getSchemaAvro()));
+                schemaRegistryStore.registerSchema(params.getSubject(), params.getParsedSchema()));
     }
 
     @Override

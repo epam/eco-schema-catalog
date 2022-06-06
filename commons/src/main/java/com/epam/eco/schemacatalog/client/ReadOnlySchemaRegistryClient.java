@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.avro.Schema;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
@@ -33,13 +34,23 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
         super(schemaRegistryClient);
     }
 
-    @Override
+    @Deprecated
     public final int register(String subject, Schema schema) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    public int register(String subject, ParsedSchema parsedSchema) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
     public int register(String subject, Schema schema, int version, int id) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int register(String subject, ParsedSchema parsedSchema, int i, int i1) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -49,22 +60,47 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
     }
 
     @Override
+    public void deleteCompatibility(String subject) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
+        return this.deleteSubject(subject, false);
+    }
+
+    @Override
+    public List<Integer> deleteSubject(String subject, boolean isPermanent) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public List<Integer> deleteSubject(Map<String, String> requestProperties, String subject) throws IOException, RestClientException {
+        return this.deleteSubject(requestProperties, subject, false);
+    }
+
+    @Override
+    public List<Integer> deleteSubject(Map<String, String> requestProperties, String subject, boolean isPermanent) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer deleteSchemaVersion(String subject, String version) throws IOException, RestClientException {
+        return this.deleteSchemaVersion(subject, version, false);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(String subject, String version, boolean isPermanent) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version) throws IOException, RestClientException {
+        return this.deleteSchemaVersion(requestProperties, subject, version, false);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(Map<String, String> requestProperties, String subject, String version, boolean isPermanent) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -75,6 +111,11 @@ public class ReadOnlySchemaRegistryClient extends AbstractSchemaRegistryClientDe
 
     @Override
     public String setMode(String mode, String subject) throws IOException, RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteMode(String subject) throws IOException, RestClientException {
         throw new UnsupportedOperationException();
     }
 

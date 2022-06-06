@@ -34,6 +34,8 @@ import com.epam.eco.schemacatalog.domain.metadata.MetadataBatchUpdateParams;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataUpdateParams;
 import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
+
 /**
  * @author Raman_Babich
  */
@@ -63,7 +65,8 @@ public class DemoInitializer implements CommandLineRunner {
             String subject = subjects.getKey();
             for (Map.Entry<Integer, File> schema : subjects.getValue().entrySet()) {
                 Schema.Parser schemaParser = new Schema.Parser();
-                schemaRegistryClient.register(subject, schemaParser.parse(schema.getValue()));
+                Schema parsed = schemaParser.parse(schema.getValue());
+                schemaRegistryClient.register(subject, new AvroSchema(parsed));
             }
         }
         schemaRegistryClient.deleteSubject("order-item-history");

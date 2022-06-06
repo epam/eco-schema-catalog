@@ -22,7 +22,7 @@ import org.apache.avro.Schema;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -122,7 +122,7 @@ public class SchemaInfoGenerator {
                 .schemaJson(SCHEMA)
                 .version(Math.max(1, new Random().nextInt(latestSchemaVersion)))
                 .schemaRegistryId(new Random().nextInt(100))
-                .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .compatibilityLevel(CompatibilityLevel.BACKWARD)
                 .mode(Mode.READWRITE)
                 .deleted(new Random().nextBoolean())
                 .build();

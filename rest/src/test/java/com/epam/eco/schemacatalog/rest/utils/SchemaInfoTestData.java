@@ -34,7 +34,7 @@ import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
@@ -51,7 +51,7 @@ public class SchemaInfoTestData {
                     "{\"type\": \"array\", \"items\": " +
                     "{\"name\": \"TestHobby\", \"type\": \"record\", \"fields\":[" +
                     "{\"name\": \"kind\", \"type\": \"string\"}," +
-                    "{\"name\": \"description\", \"type\": \"string\", \"default\":null}" +
+                    "{\"name\": \"description\", \"type\": \"string\", \"default\":\"\"}" +
                     "]}" +
                     "}" +
                     "]}," +
@@ -102,7 +102,7 @@ public class SchemaInfoTestData {
 
     public static final String SUBJECT = "my-own-super-subject";
     public static final int VERSION = 1;
-    public static final AvroCompatibilityLevel AVRO_COMPATIBILITY_LEVEL = AvroCompatibilityLevel.BACKWARD;
+    public static final CompatibilityLevel AVRO_COMPATIBILITY_LEVEL = CompatibilityLevel.BACKWARD;
     public static final Mode MODE = Mode.READWRITE;
     public static final boolean DELETED = false;
     public static final boolean VERSION_LATEST = true;

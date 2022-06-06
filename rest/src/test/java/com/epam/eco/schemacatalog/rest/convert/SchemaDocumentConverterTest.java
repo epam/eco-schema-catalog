@@ -24,7 +24,7 @@ import com.epam.eco.schemacatalog.fts.MetadataDocument;
 import com.epam.eco.schemacatalog.fts.SchemaDocument;
 import com.epam.eco.schemacatalog.utils.EcoIdUtils;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
@@ -79,7 +79,7 @@ public class SchemaDocumentConverterTest {
         Assert.assertEquals("rootFullname", schemaInfo.getFullName());
         Assert.assertEquals("rootName", schemaInfo.getName());
         Assert.assertEquals("rootNamespace", schemaInfo.getNamespace());
-        Assert.assertEquals(AvroCompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
+        Assert.assertEquals(CompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
         Assert.assertEquals(Mode.IMPORT, schemaInfo.getMode());
         Assert.assertTrue(schemaInfo.isVersionLatest());
         Assert.assertFalse(schemaInfo.isDeleted());

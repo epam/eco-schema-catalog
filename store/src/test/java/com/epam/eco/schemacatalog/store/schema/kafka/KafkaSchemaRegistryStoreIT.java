@@ -34,7 +34,7 @@ import com.epam.eco.commons.avro.AvroUtils;
 import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -148,8 +148,8 @@ public class KafkaSchemaRegistryStoreIT {
     @Test
     public void testSubjectCompatibilityUpdated() throws Exception {
         String subject = "test_update_subject_compatibility_" + System.currentTimeMillis();
-        AvroCompatibilityLevel compatibilityLevel =
-                AvroCompatibilityLevel.values()[new Random().nextInt(AvroCompatibilityLevel.values().length)];
+        CompatibilityLevel compatibilityLevel =
+                CompatibilityLevel.values()[new Random().nextInt(CompatibilityLevel.values().length)];
 
         schemaRegistryStore.updateSubjectCompatibility(subject, compatibilityLevel);
 

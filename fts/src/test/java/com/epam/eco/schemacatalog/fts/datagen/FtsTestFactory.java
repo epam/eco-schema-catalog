@@ -45,7 +45,7 @@ import com.epam.eco.schemacatalog.fts.entity.TestSchemaEntity;
 import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 import com.epam.eco.schemacatalog.utils.MetadataDocAttributeExtractor;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.github.benas.randombeans.api.EnhancedRandom;
 import io.github.benas.randombeans.randomizers.net.UrlRandomizer;
 
@@ -57,9 +57,8 @@ public class FtsTestFactory {
     private static EnhancedRandom enhancedRandom;
 
     private static TestSchemaEntity entity;
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
-    private static Set<Integer> uniqueNumbers;
     private static Iterator<Integer> iterator;
 
     @Autowired
@@ -103,7 +102,7 @@ public class FtsTestFactory {
 
         return FullSchemaInfo.builder()
                 .subject(entity.getSubject())
-                .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .compatibilityLevel(CompatibilityLevel.BACKWARD)
                 .mode(Mode.READONLY)
                 .deleted(false)
                 .versionLatest(true)
@@ -206,7 +205,7 @@ public class FtsTestFactory {
     }
 
     private static void generateUniqueNumbers(Integer max) {
-        uniqueNumbers = IntStream.range(0, max).boxed().collect(Collectors.toCollection(HashSet::new));
+        Set<Integer> uniqueNumbers = IntStream.range(0, max).boxed().collect(Collectors.toCollection(HashSet::new));
         iterator = uniqueNumbers.iterator();
     }
 

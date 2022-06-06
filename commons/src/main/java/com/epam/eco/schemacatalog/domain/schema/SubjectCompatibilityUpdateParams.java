@@ -21,7 +21,7 @@ import org.apache.commons.lang3.Validate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -29,11 +29,11 @@ import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 public final class SubjectCompatibilityUpdateParams {
 
     private final String subject;
-    private final AvroCompatibilityLevel compatibilityLevel;
+    private final CompatibilityLevel compatibilityLevel;
 
     public SubjectCompatibilityUpdateParams(
             @JsonProperty("subject") String subject,
-            @JsonProperty("compatibilityLevel") AvroCompatibilityLevel compatibilityLevel) {
+            @JsonProperty("compatibilityLevel") CompatibilityLevel compatibilityLevel) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
 
@@ -44,7 +44,7 @@ public final class SubjectCompatibilityUpdateParams {
     public String getSubject() {
         return subject;
     }
-    public AvroCompatibilityLevel getCompatibilityLevel() {
+    public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
 
@@ -90,7 +90,7 @@ public final class SubjectCompatibilityUpdateParams {
     public static final class Builder {
 
         private String subject;
-        private AvroCompatibilityLevel compatibilityLevel;
+        private CompatibilityLevel compatibilityLevel;
 
         private Builder() {
             this(null);
@@ -111,10 +111,10 @@ public final class SubjectCompatibilityUpdateParams {
         }
 
         public Builder compatibilityLevel(String compatibilityLevel) {
-            return compatibilityLevel(AvroCompatibilityLevel.valueOf(compatibilityLevel));
+            return compatibilityLevel(CompatibilityLevel.valueOf(compatibilityLevel));
         }
 
-        public Builder compatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
+        public Builder compatibilityLevel(CompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
             return this;
         }

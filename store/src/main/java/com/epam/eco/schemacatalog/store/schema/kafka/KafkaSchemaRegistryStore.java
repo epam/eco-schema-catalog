@@ -54,7 +54,10 @@ import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
 import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStoreUpdateListener;
 
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 
 /**
  * @author Andrei_Tytsik
@@ -146,8 +149,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
     private void readGlobalConfig() throws Exception {
         // retry at start-up only
-        AvroCompatibilityLevel globalCompatibilityLevel = retryTemplate.
-                execute(context -> schemaRegistryClient.getGlobalCompatibilityLevel());
+        CompatibilityLevel globalCompatibilityLevel = retryTemplate.
+                execute(context -> schemaRegistryClient.getGlobalLevelOfCompatibility());
 
         if (globalCompatibilityLevel == null) {
             throw new RuntimeException("Global compatibility level is null");
@@ -271,7 +274,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
-    public AvroCompatibilityLevel getSubjectCompatibility(String subject) {
+    public CompatibilityLevel getSubjectCompatibility(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
         lock.readLock().lock();
@@ -316,7 +319,16 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
+    @Deprecated
     public void updateSubjectCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(compatibilityLevel, "Compatibility Level is null");
+
+        updateSubjectCompatibility(subject, CompatibilityLevel.forName(compatibilityLevel.name()));
+    }
+
+    @Override
+    public void updateSubjectCompatibility(String subject, CompatibilityLevel compatibilityLevel) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(compatibilityLevel, "Compatibility Level is null");
 
@@ -328,7 +340,16 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
+    @Deprecated
     public boolean testSchemaCompatible(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return testSchemaCompatible(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public boolean testSchemaCompatible(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -336,7 +357,16 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
+    @Deprecated
     public SchemaEntity registerSchema(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return registerSchema(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public SchemaEntity registerSchema(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -570,7 +600,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     private Set<SubjectAndVersion> applySchemaUpdateAndGetAffected(SchemaKey key, SchemaValue value) {
         NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseCreate(key.getSubject());
 
-        SchemaValue oldValue = null;
+        SchemaValue oldValue;
         if (value != null) {
             oldValue = subjectSchemas.put(key.getVersion(), value);
         } else {

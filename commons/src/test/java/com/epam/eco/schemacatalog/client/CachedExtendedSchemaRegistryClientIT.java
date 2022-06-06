@@ -31,6 +31,9 @@ import com.epam.eco.commons.avro.modification.SetSchemaProperties;
 import com.epam.eco.commons.avro.modification.SortSchemaFields;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
+
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -59,7 +62,7 @@ public class CachedExtendedSchemaRegistryClientIT {
         return new CachedExtendedSchemaRegistryClient(schemaRegistryUrl, 1_000);
     }
 
-    private ExtendedSchemaRegistryClient client;
+    private final ExtendedSchemaRegistryClient client;
 
     public CachedExtendedSchemaRegistryClientIT(ExtendedSchemaRegistryClient client) {
         this.client = client;
@@ -69,8 +72,8 @@ public class CachedExtendedSchemaRegistryClientIT {
     public void testSchemaIsResolvedBySubjectAndVersion() throws Exception {
         String subject = "getBySubjectAndVersionTest-subj";
 
-        Schema schemaExpected = registerSchema(subject, TEST_SCHEMA_JSON1);
-        Schema schemaResult = client.getBySubjectAndVersion(subject, 1);
+        ParsedSchema schemaExpected = registerSchema(subject, TEST_SCHEMA_JSON1);
+        ParsedSchema schemaResult = client.getSchemaBySubjectAndVersion(subject, 1);
 
         assertNotNull(schemaResult);
         assertEquals(schemaExpected, schemaResult);
@@ -78,19 +81,19 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @Test(expected = RuntimeException.class)
     public void getBySubjectAndNullVersionNegative() {
-        client.getBySubjectAndVersion("getBySubjectAndNullVersionNegative-subj", 0);
+        client.getSchemaBySubjectAndVersion("getBySubjectAndNullVersionNegative-subj", 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getByBlankSubjectAndVersionNegative() {
-        client.getBySubjectAndVersion(" ", 1);
+        client.getSchemaBySubjectAndVersion(" ", 1);
     }
 
     @Test
     public void testSchemaInfoIsResolvedBySubjectAndVersion() throws Exception {
         String subject = "getSchemaInfoTest-subj";
 
-        Schema schema = registerSchema(subject, TEST_SCHEMA_JSON1);
+        ParsedSchema schema = registerSchema(subject, TEST_SCHEMA_JSON1);
         BasicSchemaInfo info = client.getSchemaInfo(subject, 1);
 
         assertNotNull(info);
@@ -101,7 +104,7 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertTrue(info.getSchemaRegistryId() > 0);
 
         assertEquals(1, info.getVersion());
-        assertEquals(schema, info.getSchemaAvro());
+        assertEquals(schema, info.getParsedSchema());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,7 +122,7 @@ public class CachedExtendedSchemaRegistryClientIT {
         String subject = "getSchemaInfoLatestTest-subj";
 
         registerSchema(subject, TEST_SCHEMA_JSON1);
-        Schema schemaExpected = registerSchema(subject, TEST_SCHEMA_JSON2);
+        ParsedSchema schemaExpected = registerSchema(subject, TEST_SCHEMA_JSON2);
         BasicSchemaInfo info = client.getLatestSchemaInfo(subject);
 
         assertNotNull(info);
@@ -130,7 +133,7 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertTrue(info.getSchemaRegistryId() > 0);
 
         assertEquals(2, info.getVersion());
-        assertEquals(schemaExpected, info.getSchemaAvro());
+        assertEquals(schemaExpected, info.getParsedSchema());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -285,8 +288,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    private Schema registerSchema(String subject, String schemaJson) throws Exception {
-        Schema schema = new Schema.Parser().parse(schemaJson);
+    private ParsedSchema registerSchema(String subject, String schemaJson) throws Exception {
+        ParsedSchema schema = new AvroSchema(schemaJson);
         client.register(subject, schema);
         return schema;
     }

@@ -22,11 +22,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 
@@ -37,7 +38,7 @@ public class SchemaRegistryClientIT {
 
     private static final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"%s\", \"type\": \"string\"}]}";
 
-    private static SchemaRegistryClient CLIENT = buildEcoCachedClient();
+    private static final SchemaRegistryClient CLIENT = buildEcoCachedClient();
 
     private static SchemaRegistryClient buildEcoCachedClient() {
         try {
@@ -54,15 +55,15 @@ public class SchemaRegistryClientIT {
     @Test
     public void testSchemaRegisteredAndGotById() throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         int id = CLIENT.register(subject, schema);
         Assert.assertTrue(id >= 0);
 
-        Schema schemaActual = CLIENT.getBySubjectAndId(subject, id);
+        ParsedSchema schemaActual = CLIENT.getSchemaBySubjectAndId(subject, id);
         Assert.assertEquals(schema, schemaActual);
 
-        schemaActual = CLIENT.getById(id);
+        schemaActual = CLIENT.getSchemaById(id);
         Assert.assertEquals(schema, schemaActual);
     }
 
@@ -70,11 +71,11 @@ public class SchemaRegistryClientIT {
     public void testLatestSchemaMetadataGot()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.NONE.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
 
-        Schema schema1 = randomSchema();
-        Schema schema2 = randomSchema();
-        Schema schema3 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
+        ParsedSchema schema3 = randomSchema();
 
         CLIENT.register(subject, schema1);
         CLIENT.register(subject, schema2);
@@ -88,11 +89,11 @@ public class SchemaRegistryClientIT {
     public void testSchemaMetadataGot()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.NONE.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
 
-        Schema schema1 = randomSchema();
-        Schema schema2 = randomSchema();
-        Schema schema3 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
+        ParsedSchema schema3 = randomSchema();
 
         CLIENT.register(subject, schema1);
         int id2 = CLIENT.register(subject, schema2);
@@ -106,11 +107,11 @@ public class SchemaRegistryClientIT {
     public void testVersionGot()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.NONE.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
 
-        Schema schema1 = randomSchema();
-        Schema schema2 = randomSchema();
-        Schema schema3 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
+        ParsedSchema schema3 = randomSchema();
 
         CLIENT.register(subject, schema1);
         int version = CLIENT.getVersion(subject, schema1);
@@ -129,11 +130,11 @@ public class SchemaRegistryClientIT {
     public void testAllVersionsGot()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.NONE.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
 
-        Schema schema1 = randomSchema();
-        Schema schema2 = randomSchema();
-        Schema schema3 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
+        ParsedSchema schema3 = randomSchema();
 
         CLIENT.register(subject, schema1);
         CLIENT.register(subject, schema2);
@@ -148,13 +149,13 @@ public class SchemaRegistryClientIT {
     public void testCompatibilityTested()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.FULL.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
 
-        Schema schema1 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
         CLIENT.register(subject, schema1);
         Assert.assertTrue(CLIENT.testCompatibility(subject, schema1));
 
-        Schema schema2 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
         Assert.assertFalse(CLIENT.testCompatibility(subject, schema2));
     }
 
@@ -162,27 +163,27 @@ public class SchemaRegistryClientIT {
     public void testCompatibilityUpdated()  throws Exception {
         String subject = randomSubject();
 
-        String compatibility = CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.FULL.name);
-        Assert.assertEquals(AvroCompatibilityLevel.FULL.name, compatibility);
+        String compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
+        Assert.assertEquals(CompatibilityLevel.FULL.name, compatibility);
 
-        compatibility = CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.FORWARD_TRANSITIVE.name);
-        Assert.assertEquals(AvroCompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
+        compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FORWARD_TRANSITIVE.name);
+        Assert.assertEquals(CompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
     }
 
     @Test
     public void testCompatibilityGot()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.FULL.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
 
         String compatibility = CLIENT.getCompatibility(subject);
-        Assert.assertEquals(AvroCompatibilityLevel.FULL.name, compatibility);
+        Assert.assertEquals(CompatibilityLevel.FULL.name, compatibility);
     }
 
     @Test
     public void testAllSubjectsGot()  throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         CLIENT.register(subject, schema);
 
@@ -193,7 +194,7 @@ public class SchemaRegistryClientIT {
     @Test
     public void testIdGot()  throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         int id = CLIENT.register(subject, schema);
 
@@ -204,7 +205,7 @@ public class SchemaRegistryClientIT {
     @Test
     public void testSubjectDeleted()  throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         CLIENT.register(subject, schema);
 
@@ -218,11 +219,11 @@ public class SchemaRegistryClientIT {
     public void testSchemaVersionDeleted()  throws Exception {
         String subject = randomSubject();
 
-        CLIENT.updateCompatibility(subject, AvroCompatibilityLevel.NONE.name);
+        CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
 
-        Schema schema1 = randomSchema();
-        Schema schema2 = randomSchema();
-        Schema schema3 = randomSchema();
+        ParsedSchema schema1 = randomSchema();
+        ParsedSchema schema2 = randomSchema();
+        ParsedSchema schema3 = randomSchema();
 
         CLIENT.register(subject, schema1);
         CLIENT.register(subject, schema2);
@@ -237,7 +238,7 @@ public class SchemaRegistryClientIT {
     @Test
     public void testSameSchemaRegisteredMultipleTimes() throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         Assert.assertEquals(
                 CLIENT.register(subject, schema),
@@ -247,7 +248,7 @@ public class SchemaRegistryClientIT {
     @Test
     public void testSameSchemaRegisteredThenDeletedThenRegistered() throws Exception {
         String subject = randomSubject();
-        Schema schema = randomSchema();
+        ParsedSchema schema = randomSchema();
 
         CLIENT.register(subject, schema);
         int version1 = CLIENT.getVersion(subject, schema);
@@ -268,10 +269,10 @@ public class SchemaRegistryClientIT {
         return "field_" + randomString();
     }
 
-    private Schema randomSchema() {
+    private ParsedSchema randomSchema() {
         String randomFieldName = randomFieldName();
         String schemaJson = String.format(SCHEMA_JSON, randomFieldName);
-        return new Schema.Parser().parse(schemaJson);
+        return new AvroSchema(schemaJson);
     }
 
     private String randomString() {

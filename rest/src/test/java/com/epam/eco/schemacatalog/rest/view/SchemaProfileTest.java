@@ -29,7 +29,7 @@ import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.format.ToStringPartFormatter;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
@@ -116,7 +116,7 @@ public class SchemaProfileTest {
         SchemaProfile origin = SchemaProfile.builder()
                 .subject("subject")
                 .version(1)
-                .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .compatibilityLevel(CompatibilityLevel.BACKWARD)
                 .mode(Mode.READWRITE)
                 .schemaRegistryId(1)
                 .versionLatest(true)

@@ -21,11 +21,14 @@ import org.apache.avro.Schema;
 
 import com.epam.eco.commons.avro.FieldInfo;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+
 /**
  * @author Andrei_Tytsik
  */
 public interface Schemafull {
     String getSchemaJson();
     Schema getSchemaAvro();
+    ParsedSchema getParsedSchema();
     List<FieldInfo> getSchemaFieldInfosAsList();
 }

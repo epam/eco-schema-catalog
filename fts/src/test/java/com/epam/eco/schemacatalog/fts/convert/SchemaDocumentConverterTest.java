@@ -26,7 +26,7 @@ import com.epam.eco.schemacatalog.fts.KeyValue;
 import com.epam.eco.schemacatalog.fts.SchemaDocument;
 import com.epam.eco.schemacatalog.fts.datagen.SchemaInfoGenerator;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +54,7 @@ public class SchemaDocumentConverterTest {
 
         softly.assertThat(schemaInfo.isVersionLatest()).isEqualTo(schemaDocument.getVersionLatest());
 
-        softly.assertThat(schemaDocument.getCompatibility()).isEqualTo(AvroCompatibilityLevel.BACKWARD.name());
+        softly.assertThat(schemaDocument.getCompatibility()).isEqualTo(CompatibilityLevel.BACKWARD.name());
 
         softly.assertThat(schemaDocument).isNotNull();
         softly.assertThat(schemaDocument.getPath().size()).isEqualTo(SchemaInfoGenerator.PATHS.length);

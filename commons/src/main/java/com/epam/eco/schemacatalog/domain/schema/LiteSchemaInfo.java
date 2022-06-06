@@ -22,7 +22,7 @@ import org.apache.commons.lang3.Validate;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
@@ -32,7 +32,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
     private final String name;
     private final String namespace;
     private final String fullName;
-    private final AvroCompatibilityLevel compatibility;
+    private final CompatibilityLevel compatibility;
     private final Mode mode;
     private final boolean versionLatest;
     private final boolean deleted;
@@ -45,7 +45,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
             @JsonProperty("name") String name,
             @JsonProperty("namespace") String namespace,
             @JsonProperty("fullName") String fullName,
-            @JsonProperty("compatibility") AvroCompatibilityLevel compatibility,
+            @JsonProperty("compatibility") CompatibilityLevel compatibility,
             @JsonProperty("mode") Mode mode,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("deleted") boolean deleted) {
@@ -72,7 +72,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
     public String getFullName() {
         return fullName;
     }
-    public AvroCompatibilityLevel getCompatibility() {
+    public CompatibilityLevel getCompatibility() {
         return compatibility;
     }
     public Mode getMode() {
@@ -155,7 +155,7 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
         protected String name;
         protected String namespace;
         protected String fullName;
-        protected AvroCompatibilityLevel compatibility;
+        protected CompatibilityLevel compatibility;
         protected Mode mode;
         protected boolean versionLatest;
         protected boolean deleted;
@@ -200,10 +200,10 @@ public class LiteSchemaInfo extends IdentitySchemaInfo {
         }
 
         public T compatibility(String compatibility) {
-            return compatibility(AvroCompatibilityLevel.valueOf(compatibility));
+            return compatibility(CompatibilityLevel.valueOf(compatibility));
         }
 
-        public T compatibility(AvroCompatibilityLevel compatibility) {
+        public T compatibility(CompatibilityLevel compatibility) {
             this.compatibility = compatibility;
             return (T)this;
         }

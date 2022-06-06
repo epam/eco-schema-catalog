@@ -38,9 +38,9 @@ eco:
 
 ## Configuration properties
 
-Name | Description | Default
----  | ---         | --- 
-`eco.schemacatalog.client.schemaCatalogUrl` | Eco Schema Catalog REST Url | 
+| Name                                        | Description                 | Default |
+|---------------------------------------------|-----------------------------|---------|
+| `eco.schemacatalog.client.schemaCatalogUrl` | Eco Schema Catalog REST Url |         |
 
 ## License
 

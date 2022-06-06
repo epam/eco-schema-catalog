@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -95,7 +96,7 @@ public final class SearchResult<T> implements Iterable<T> {
         Validate.isTrue(totalElements >= 0, "Number of Total Elements is invalid");
         Validate.isTrue(maxResultWindow > 0, "Max Result Window is invalid");
         Validate.isTrue(
-                pageNumber * pageSize + content.size() <= maxResultWindow,
+                (long) pageNumber * pageSize + content.size() <= maxResultWindow,
                 "Result window is too large");
 
         this.content = Collections.unmodifiableList(new ArrayList<>(content));
@@ -155,7 +156,7 @@ public final class SearchResult<T> implements Iterable<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public @NotNull Iterator<T> iterator() {
         return content.iterator();
     }
 

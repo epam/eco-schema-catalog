@@ -38,7 +38,10 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 import com.epam.eco.schemacatalog.utils.UrlListExtractor;
 
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -111,40 +114,61 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
-    @Override
+    @Deprecated
     public Schema getBySubjectAndVersion(String subject, int version) {
         return getSchemaInfo(subject, version).getSchemaAvro();
     }
 
     @Override
+    public ParsedSchema getSchemaBySubjectAndVersion(String subject, int version) {
+        return getSchemaInfo(subject, version).getParsedSchema();
+    }
+
+    @Deprecated
     public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
+        return AvroCompatibilityLevel.forName(getGlobalLevelOfCompatibility().name());
+    }
+
+    @Override
+    public CompatibilityLevel getGlobalLevelOfCompatibility() {
         return getCompatibilityLevelOrNullIfNotFound(null);
     }
 
-    @Override
+    @Deprecated
     public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        return Optional.ofNullable(getCompatibilityLevelOrNullIfNotFound(subject));
+        Optional<CompatibilityLevel> optional = getLevelOfCompatibility(subject);
+        return optional.map(compatibilityLevel -> AvroCompatibilityLevel.forName(compatibilityLevel.name()));
     }
 
     @Override
+    public Optional<CompatibilityLevel> getLevelOfCompatibility(String subject) {
+        return Optional.ofNullable(getCompatibilityLevelOrNullIfNotFound(subject));
+    }
+
+    @Deprecated
     public AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
+        return AvroCompatibilityLevel.forName(getEffectiveLevelOfCompatibility(subject).name());
+    }
+
+    @Override
+    public CompatibilityLevel getEffectiveLevelOfCompatibility(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
-        AvroCompatibilityLevel compatilityLevel = getCompatibilityLevelOrNullIfNotFound(subject);
-        if (compatilityLevel == null) {
-            compatilityLevel = getCompatibilityLevelOrNullIfNotFound(null); // global
+        CompatibilityLevel compatibilityLevel = getCompatibilityLevelOrNullIfNotFound(subject);
+        if (compatibilityLevel == null) {
+            compatibilityLevel = getCompatibilityLevelOrNullIfNotFound(null); // global
         }
 
-        if (compatilityLevel == null) {
+        if (compatibilityLevel == null) {
             throw new RuntimeException(
                     String.format(
                             "Can't determine effective compatibility level for subject '%s'",
                             subject));
         }
 
-        return compatilityLevel;
+        return compatibilityLevel;
     }
 
     @Override
@@ -263,8 +287,13 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
                 schemaInfo -> replicateCompatibilityIfNeeded(sourceSubject, destinationSubject));
     }
 
-    @Override
+    @Deprecated
     public void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel) {
+        updateCompatibility(subject, CompatibilityLevel.forName(compatibilityLevel.name));
+    }
+
+    @Override
+    public void updateCompatibility(String subject, CompatibilityLevel compatibilityLevel) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(compatibilityLevel, "Compatibility level is null");
 
@@ -339,7 +368,7 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
             String subject,
             String version) throws IOException, RestClientException {
         Integer versionInt = Integer.valueOf(version);
-        Schema schema = getBySubjectAndVersion(subject, versionInt);
+        ParsedSchema schema = getSchemaBySubjectAndVersion(subject, versionInt);
 
         Integer deleted = super.deleteSchemaVersion(requestProperties, subject, version);
 
@@ -350,8 +379,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         return deleted;
     }
 
-    @Override
+    @Deprecated
     public boolean testCompatibilityUnchecked(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return testCompatibilityUnchecked(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public boolean testCompatibilityUnchecked(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -362,8 +399,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
-    @Override
+    @Deprecated
     public int registerUnchecked(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return registerUnchecked(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int registerUnchecked(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -374,8 +419,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
-    @Override
+    @Deprecated
     public int getVersionUnchecked(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return getVersionUnchecked(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int getVersionUnchecked(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -386,8 +439,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
-    @Override
+    @Deprecated
     public boolean checkSchemaWritable(String subject, Schema schema) {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return checkSchemaWritable(subject, new AvroSchema(schema));
+    }
+
+    @Deprecated
+    public boolean checkSchemaWritable(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -413,7 +474,7 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         return checkSchemaExists(subject, (Integer)null);
     }
 
-    private boolean checkSchemaExists(String subject, Schema schema) {
+    private boolean checkSchemaExists(String subject, ParsedSchema schema) {
         try {
             getId(subject, schema);
             return true;
@@ -455,13 +516,13 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     }
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
-        AvroCompatibilityLevel sourceCompatibilityLevel =
+        CompatibilityLevel sourceCompatibilityLevel =
                 getCompatibilityLevelOrNullIfNotFound(sourceSubject);
         if (sourceCompatibilityLevel == null) {
             return;
         }
 
-        AvroCompatibilityLevel destinationCompatibilityLevel =
+        CompatibilityLevel destinationCompatibilityLevel =
                 getCompatibilityLevelOrNullIfNotFound(destinationSubject);
         if (destinationCompatibilityLevel != null) {
             return;
@@ -512,16 +573,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
             String subject,
             Integer version) throws IOException, RestClientException {
         if (version != null) {
-            return getSchemaMetadata(subject, version.intValue());
+            return getSchemaMetadata(subject, version);
         } else {
             return getLatestSchemaMetadata(subject);
         }
     }
 
-    private AvroCompatibilityLevel getCompatibilityLevelOrNullIfNotFound(String subject) {
-        AvroCompatibilityLevel compatibilityLevel = null;
+    private CompatibilityLevel getCompatibilityLevelOrNullIfNotFound(String subject) {
+        CompatibilityLevel compatibilityLevel = null;
         try {
-            compatibilityLevel = AvroCompatibilityLevel.forName(getCompatibility(subject));
+            compatibilityLevel = CompatibilityLevel.forName(getCompatibility(subject));
         } catch (RestClientException rce) {
             if (subject == null || !isNotFoundError(rce)) {
                 throw new RuntimeException(rce);
@@ -575,7 +636,7 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
-    private void removeFromWritableSchemaCache(String subject, Schema schema) {
+    private void removeFromWritableSchemaCache(String subject, ParsedSchema schema) {
         if (schema == null) {
             writableSchemaCache.keySet().removeIf(sas -> sas.getSubject().equals(subject));
         } else {

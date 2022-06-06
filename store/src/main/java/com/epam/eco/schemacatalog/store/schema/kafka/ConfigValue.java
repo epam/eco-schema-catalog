@@ -17,28 +17,28 @@ package com.epam.eco.schemacatalog.store.schema.kafka;
 
 import java.util.Objects;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
  */
 public class ConfigValue extends Value {
 
-    private AvroCompatibilityLevel compatibilityLevel;
+    private CompatibilityLevel compatibilityLevel;
 
     public ConfigValue() {
         this(null);
     }
 
-    public ConfigValue(AvroCompatibilityLevel compatibilityLevel) {
+    public ConfigValue(CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
     }
 
-    public AvroCompatibilityLevel getCompatibilityLevel() {
+    public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
 
-    public void setCompatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
+    public void setCompatibilityLevel(CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
     }
 

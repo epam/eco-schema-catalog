@@ -51,7 +51,7 @@ public class FtsTestCaseGenerator {
     private static final String PROXIMITY_QUERY = "\"%s %s\"~%d";
     private static final String BOOLEAN_OPERATORS_QUERY = "(+\"%s\" -\"testWord\")";
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static List<FtsTestCase> getRegExpTestCases(FullSchemaInfo schemaInfo) {
         List<FtsTestCase> ftsTestCases = new ArrayList<>();

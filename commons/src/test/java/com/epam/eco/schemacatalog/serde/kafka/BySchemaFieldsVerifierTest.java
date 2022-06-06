@@ -30,6 +30,8 @@ import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+
 /**
  * @author Andrei_Tytsik
  */
@@ -85,7 +87,7 @@ public class BySchemaFieldsVerifierTest {
         }
         return String.format(
                         "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
-                        fieldsBuilder.toString());
+                fieldsBuilder);
     }
 
     @Test
@@ -102,7 +104,7 @@ public class BySchemaFieldsVerifierTest {
 
         ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
         Mockito.
-            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(Schema.class))).
+            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(ParsedSchema.class))).
             thenReturn(1,2,3,4,5,6,7);
         Mockito.
             when(schemaRegistryClient.getSubjectSchemaInfos(Mockito.anyString())).
@@ -115,7 +117,7 @@ public class BySchemaFieldsVerifierTest {
         try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
 
-            VerificationResult result = null;
+            VerificationResult result;
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(1).getSchemaAvro());
             Assert.assertNotNull(result);

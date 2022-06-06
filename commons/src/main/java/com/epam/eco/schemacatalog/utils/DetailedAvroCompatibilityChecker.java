@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaValidationException;
@@ -32,60 +33,61 @@ import com.epam.eco.commons.avro.validation.DetailedValidateCanBeRead;
 import com.epam.eco.commons.avro.validation.DetailedValidateCanRead;
 import com.epam.eco.commons.avro.validation.DetailedValidateMutualRead;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityChecker;
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityChecker;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 
 /**
- * Uses "detailed" validators instead of binary ones. See {@link AvroCompatibilityChecker}
+ * Uses "detailed" validators instead of binary ones. See {@link CompatibilityChecker}
  * for original implementation.
  *
  * @author Andrei_Tytsik
  */
 public final class DetailedAvroCompatibilityChecker {
 
-    private static SchemaValidator BACKWARD_VALIDATOR =
+    private static final SchemaValidator BACKWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateLatest();
 
-    private static SchemaValidator FORWARD_VALIDATOR =
+    private static final SchemaValidator FORWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateLatest();
 
-    private static SchemaValidator FULL_VALIDATOR =
+    private static final SchemaValidator FULL_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateLatest();
 
-    private static SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateAll();
 
-    private static SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateAll();
 
-    private static SchemaValidator FULL_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator FULL_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateAll();
 
-    private static SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
+    private static final SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
 
-    private static final Map<AvroCompatibilityLevel, DetailedAvroCompatibilityChecker> MAPPING =
-            new EnumMap<>(AvroCompatibilityLevel.class);
+    private static final Map<CompatibilityLevel, DetailedAvroCompatibilityChecker> MAPPING =
+            new EnumMap<>(CompatibilityLevel.class);
     static {
         MAPPING.put(
-                AvroCompatibilityLevel.NONE,
+                CompatibilityLevel.NONE,
                 new DetailedAvroCompatibilityChecker(NO_OP_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.BACKWARD,
+                CompatibilityLevel.BACKWARD,
                 new DetailedAvroCompatibilityChecker(BACKWARD_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.BACKWARD_TRANSITIVE,
+                CompatibilityLevel.BACKWARD_TRANSITIVE,
                 new DetailedAvroCompatibilityChecker(BACKWARD_TRANSITIVE_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.FORWARD,
+                CompatibilityLevel.FORWARD,
                 new DetailedAvroCompatibilityChecker(FORWARD_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.FORWARD_TRANSITIVE,
+                CompatibilityLevel.FORWARD_TRANSITIVE,
                 new DetailedAvroCompatibilityChecker(FORWARD_TRANSITIVE_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.FULL,
+                CompatibilityLevel.FULL,
                 new DetailedAvroCompatibilityChecker(FULL_VALIDATOR));
         MAPPING.put(
-                AvroCompatibilityLevel.FULL_TRANSITIVE,
+                CompatibilityLevel.FULL_TRANSITIVE,
                 new DetailedAvroCompatibilityChecker(FULL_TRANSITIVE_VALIDATOR));
     }
 
@@ -95,10 +97,35 @@ public final class DetailedAvroCompatibilityChecker {
         this.validator = validator;
     }
 
+    @Deprecated
     public void testCompatibility(
             Schema newSchema,
             Schema latestSchema) throws DetailedSchemaValidationException {
         testCompatibility(newSchema, Collections.singletonList(latestSchema));
+    }
+
+    public void testCompatibility(
+            Schema newSchema,
+            ParsedSchema latestSchema) throws DetailedSchemaValidationException {
+        testCompatibility(
+                newSchema,
+                Collections.singletonList((Schema)latestSchema.rawSchema()));
+    }
+
+    public void testCompatibility(
+            ParsedSchema newSchema,
+            Schema latestSchema) throws DetailedSchemaValidationException {
+        testCompatibility(
+                (Schema) newSchema.rawSchema(),
+                Collections.singletonList(latestSchema));
+    }
+
+    public void testCompatibility(
+            ParsedSchema newSchema,
+            ParsedSchema latestSchema) throws DetailedSchemaValidationException {
+        testCompatibility(
+                (Schema) newSchema.rawSchema(),
+                Collections.singletonList((Schema)latestSchema.rawSchema()));
     }
 
     public void testCompatibility(
@@ -118,7 +145,35 @@ public final class DetailedAvroCompatibilityChecker {
         }
     }
 
-    public static DetailedAvroCompatibilityChecker forLevel(AvroCompatibilityLevel compatibilityLevel) {
+    public void testCompatibility(
+            ParsedSchema newSchema,
+            List<?> previousSchemas) throws DetailedSchemaValidationException {
+        Validate.notNull(newSchema, "New Schema is null");
+        Validate.notNull(previousSchemas, "Collection of Previous Schemas is null");
+
+        Schema rawNewSchema = (Schema) newSchema.rawSchema();
+
+        if (!previousSchemas.isEmpty()) {
+            Object o = previousSchemas.get(0);
+            if (o instanceof ParsedSchema) {
+                List<Schema> parsedSchemas = previousSchemas.stream()
+                        .map(ps -> (ParsedSchema)ps)
+                        .map(ParsedSchema::rawSchema)
+                        .map(s -> (Schema)s)
+                        .collect(Collectors.toList());
+
+                testCompatibility(rawNewSchema, parsedSchemas);
+            }
+            if (o instanceof Schema) {
+                List<Schema> parsedSchemas = previousSchemas.stream()
+                        .map(s -> (Schema)s)
+                        .collect(Collectors.toList());
+                testCompatibility(rawNewSchema, parsedSchemas);
+            }
+        }
+    }
+
+    public static DetailedAvroCompatibilityChecker forLevel(CompatibilityLevel compatibilityLevel) {
         Validate.notNull(compatibilityLevel, "Compatibility Level is null");
 
         DetailedAvroCompatibilityChecker checker = MAPPING.get(compatibilityLevel);

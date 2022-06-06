@@ -27,6 +27,7 @@ import com.epam.eco.schemacatalog.domain.metadata.format.TagType;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.rest.convert.TagTypeConverter;
 
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
 /**
@@ -48,8 +49,14 @@ public class EnumController {
     }
 
     @GetMapping("/avro-compatibility-levels")
+    @Deprecated
     public AvroCompatibilityLevel[] getAvroCompatibilityLevel() {
         return AvroCompatibilityLevel.values();
+    }
+
+    @GetMapping("/compatibility-levels")
+    public CompatibilityLevel[] getCompatibilityLevel() {
+        return CompatibilityLevel.values();
     }
 
     @GetMapping("/schema-modes")
