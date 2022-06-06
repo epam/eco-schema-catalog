@@ -95,7 +95,7 @@ public final class SearchResult<T> implements Iterable<T> {
         Validate.isTrue(totalElements >= 0, "Number of Total Elements is invalid");
         Validate.isTrue(maxResultWindow > 0, "Max Result Window is invalid");
         Validate.isTrue(
-                (long) pageNumber * pageSize + content.size() <= maxResultWindow,
+                pageNumber * pageSize + content.size() <= maxResultWindow,
                 "Result window is too large");
 
         this.content = Collections.unmodifiableList(new ArrayList<>(content));

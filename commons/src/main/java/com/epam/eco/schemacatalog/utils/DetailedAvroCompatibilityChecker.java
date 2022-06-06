@@ -45,25 +45,25 @@ import io.confluent.kafka.schemaregistry.ParsedSchema;
  */
 public final class DetailedAvroCompatibilityChecker {
 
-    private static final SchemaValidator BACKWARD_VALIDATOR =
+    private static SchemaValidator BACKWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateLatest();
 
-    private static final SchemaValidator FORWARD_VALIDATOR =
+    private static SchemaValidator FORWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateLatest();
 
-    private static final SchemaValidator FULL_VALIDATOR =
+    private static SchemaValidator FULL_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateLatest();
 
-    private static final SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
+    private static SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateAll();
 
-    private static final SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
+    private static SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateAll();
 
-    private static final SchemaValidator FULL_TRANSITIVE_VALIDATOR =
+    private static SchemaValidator FULL_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateAll();
 
-    private static final SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
+    private static SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
 
     private static final Map<CompatibilityLevel, DetailedAvroCompatibilityChecker> MAPPING =
             new EnumMap<>(CompatibilityLevel.class);

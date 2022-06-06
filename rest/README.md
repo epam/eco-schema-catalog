@@ -108,14 +108,14 @@ docker run --name eco-schema-catalog-rest \
 
 ## Configuration properties
 
-| Name                                                   | Environment Variable    | Description                                                                                                                                                                                                                              | Default                 |
-|--------------------------------------------------------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| `sever.port`                                           | SERVER_PORT             | Server HTTP port.                                                                                                                                                                                                                        | 8082                    |
-| `eco.schemacatalog.store.schemaRegistryUrl`            | SCHEMA_REGISTRY_URL     | URL to the Schema Registry REST API.                                                                                                                                                                                                     | `http://localhost:8081` |
-| `eco.schemacatalog.store.kafka.bootstrapServers`       | KAFKA_SERVERS_URL       | A comma-separated list of Kafka brokers used by the Schema Registry to store schemas.                                                                                                                                                    | `localhost:9092`        |
-| `eco.schemacatalog.store.kafka.bootstrapTimeoutInMs`   | BOOTSTRAP_TIMEOUT_MS    | Max duration in milliseconds for bootstrapping data from the Schema Registry storage. If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started.                | `60000`                 |
-| `eco.schemacatalog.store.kafka.clientConfig[property]` |                         | Common Kafka [client properties](https://kafka.apache.org/23/documentation.html#adminclientconfigs), used to connect to the Schema Registry schema storage (topic).                                                                      |                         |
-| `n/a`                                                  | SPRING_APPLICATION_JSON | Flexible way to provide a set of configuration properties using inline JSON. For example, `eco.schemacatalog.store.schemaRegistryUrl` can be set as `{"eco":{"schemacatalog":{"store":{"schemaRegistryUrl":"http://schema-registry"}}}}` |                         |
+Name | Environment Variable | Description | Default
+---  | ---                  | ---         | --- 
+`sever.port` | SERVER_PORT | Server HTTP port. | 8082
+`eco.schemacatalog.store.schemaRegistryUrl` | SCHEMA_REGISTRY_URL | URL to the Schema Registry REST API. | `http://localhost:8081`
+`eco.schemacatalog.store.kafka.bootstrapServers` | KAFKA_SERVERS_URL | A comma-separated list of Kafka brokers used by the Schema Registry to store schemas. | `localhost:9092`
+`eco.schemacatalog.store.kafka.bootstrapTimeoutInMs` | BOOTSTRAP_TIMEOUT_MS | Max duration in milliseconds for bootstrapping data from the Schema Registry storage. If the timeout is too small, you may observe stale data for some time (it gets consistent eventually) after the service is started. | `60000`
+`eco.schemacatalog.store.kafka.clientConfig[property]` | | Common Kafka [client properties](https://kafka.apache.org/23/documentation.html#adminclientconfigs), used to connect to the Schema Registry schema storage (topic). |
+`n/a` | SPRING_APPLICATION_JSON | Flexible way to provide a set of configuration properties using inline JSON. For example, `eco.schemacatalog.store.schemaRegistryUrl` can be set as `{"eco":{"schemacatalog":{"store":{"schemaRegistryUrl":"http://schema-registry"}}}}` |
 
 ## License
 

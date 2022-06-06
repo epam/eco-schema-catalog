@@ -86,8 +86,8 @@ public class BySchemaFieldsVerifierTest {
             fieldsBuilder.append(String.format("{\"name\":\"%s\",\"type\":\"int\"}", field));
         }
         return String.format(
-                        "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
-                fieldsBuilder);
+                "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
+                fieldsBuilder.toString());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class BySchemaFieldsVerifierTest {
         try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
 
-            VerificationResult result;
+            VerificationResult result = null;
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(1).getSchemaAvro());
             Assert.assertNotNull(result);

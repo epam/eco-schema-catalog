@@ -53,7 +53,7 @@ public class BySchemaVersionVerifierTest {
         try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
 
-            VerificationResult result;
+            VerificationResult result = null;
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
             Assert.assertNotNull(result);

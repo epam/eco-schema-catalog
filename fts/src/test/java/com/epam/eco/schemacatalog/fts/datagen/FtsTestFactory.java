@@ -57,7 +57,7 @@ public class FtsTestFactory {
     private static EnhancedRandom enhancedRandom;
 
     private static TestSchemaEntity entity;
-    private static final Random random = new Random();
+    private static Random random = new Random();
 
     private static Iterator<Integer> iterator;
 

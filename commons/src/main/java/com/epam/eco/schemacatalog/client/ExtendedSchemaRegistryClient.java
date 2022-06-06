@@ -55,7 +55,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     Mode getEffectiveModeValue(String subject);
     BasicSchemaInfo getSchemaInfo(String subject, int version);
     BasicSchemaInfo getLatestSchemaInfo(String subject);
-    SubjectSchemas<BasicSchemaInfo>     getSubjectSchemaInfos(String subject);
+    SubjectSchemas<BasicSchemaInfo> getSubjectSchemaInfos(String subject);
     BasicSchemaInfo modifyAndRegisterSchema(
             String sourceSubject,
             int sourceVersion,

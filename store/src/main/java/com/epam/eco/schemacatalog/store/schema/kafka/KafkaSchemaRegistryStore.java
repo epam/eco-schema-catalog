@@ -600,7 +600,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     private Set<SubjectAndVersion> applySchemaUpdateAndGetAffected(SchemaKey key, SchemaValue value) {
         NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseCreate(key.getSubject());
 
-        SchemaValue oldValue;
+        SchemaValue oldValue = null;
         if (value != null) {
             oldValue = subjectSchemas.put(key.getVersion(), value);
         } else {

@@ -61,31 +61,31 @@ public abstract class FtsConstants {
     private FtsConstants() {
     }
 
-    private static final AggregationParams DEFAULT_VERSION_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_VERSION_AGGREGATION = new AggregationParams(
             FIELD_VERSION,
             FIELD_VERSION,
             DEFAULT_VERSION_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_VERSION_LATEST_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_VERSION_LATEST_AGGREGATION = new AggregationParams(
             FIELD_VERSION_LATEST,
             FIELD_VERSION_LATEST,
             DEFAULT_VERSION_LATEST_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_DELETED_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_DELETED_AGGREGATION = new AggregationParams(
             FIELD_DELETED,
             FIELD_DELETED,
             DEFAULT_DELETED_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_COMPATIBILITY_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_COMPATIBILITY_AGGREGATION = new AggregationParams(
             FIELD_COMPATIBILITY,
             FIELD_COMPATIBILITY,
             DEFAULT_COMPATIBILITY_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_MODE_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_MODE_AGGREGATION = new AggregationParams(
             FIELD_MODE,
             FIELD_MODE,
             DEFAULT_MODE_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_NAMESPANCE_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_NAMESPANCE_AGGREGATION = new AggregationParams(
             FIELD_ROOT_NAMESPACE,
             FIELD_ROOT_NAMESPACE,
             DEFAULT_NAMESPACE_AGGREGATION_SIZE);
-    private static final AggregationParams DEFAULT_METADATA_UPDATED_BY_AGGREGATION = new AggregationParams(
+    private static AggregationParams DEFAULT_METADATA_UPDATED_BY_AGGREGATION = new AggregationParams(
             FIELD_METADATA_UPDATED_BY,
             FIELD_METADATA_UPDATED_BY,
             DEFAULT_METADATA_UPDATED_BY_AGGREGATION_SIZE);

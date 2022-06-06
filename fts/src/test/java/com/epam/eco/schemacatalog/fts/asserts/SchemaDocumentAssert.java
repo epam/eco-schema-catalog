@@ -108,7 +108,7 @@ public class SchemaDocumentAssert extends AbstractAssert<SchemaDocumentAssert, S
     }
 
     private String description(String text) {
-        return description() + text;
+        return new StringBuilder().append(description()).append(text).toString();
     }
 
 }

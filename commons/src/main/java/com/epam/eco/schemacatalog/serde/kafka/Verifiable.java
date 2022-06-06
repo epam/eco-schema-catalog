@@ -55,17 +55,15 @@ public final class Verifiable<T extends GenericContainer> {
 
     public void verifyAndAcceptIfPassed(Consumer<T> consumer) throws VerificationNotPassedException {
         VerificationResult result = verifyIfPresentAndGetResult();
-        switch (result.getStatus()) {
-            case SKIPPABLE:
-                break;
-            case PASSED:
-                consumer.accept(data);
-                break;
-            case NOT_PASSED:
-                throw new VerificationNotPassedException(data, result.getComment());
-            default:
-                throw new RuntimeException(
-                        String.format("Unknown verification status = %s", result.getStatus()));
+        if (result.getStatus() == Status.SKIPPABLE) {
+            return;
+        } else if (result.getStatus() == Status.PASSED) {
+            consumer.accept(data);
+        } else if (result.getStatus() == Status.NOT_PASSED) {
+            throw new VerificationNotPassedException(data, result.getComment());
+        } else {
+            throw new RuntimeException(
+                    String.format("Unknown verification status = %s", result.getStatus()));
         }
     }
 
