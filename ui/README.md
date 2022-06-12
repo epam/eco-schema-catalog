@@ -20,8 +20,8 @@ Eco Schema Catalog UI is a UI web part of the Schema Catalog application. It ena
 
 Software requirements include:
 
-* [Node.js](https://nodejs.org/en/) 10.16
-* [npm](https://www.npmjs.com/) 6.9
+* [Node.js](https://nodejs.org/en/) 14.18.1
+* [npm](https://www.npmjs.com/) 6.14.15
 * [Docker](https://www.docker.com/get-started) 19.03
 
 ## Technical stack
@@ -77,7 +77,7 @@ docker run --name eco-schema-catalog-ui \
  --rm \
  -p 8282:8282 \
  -e PORT=8282 \
- -e TARGET_API=http://schema-catalog-rest:8082 \ 
+ -e TARGET_API=http://schema-catalog-rest:8082 \
  epam/eco-schema-catalog-ui:latest
 ```
 
@@ -87,13 +87,13 @@ docker run --name eco-schema-catalog-ui \
 
 ## Configuration
 
-Name | Description | Default
----  | ---         | ---
-PORT | Port of UI app. | 8282
-BASE_HREF | Base URL of the app. No base URL by default. e.g. `/the/base`. | ''
-NODE_ENV | Node.js environment variable. Development version turns on logging in web console. Also, development version allows to run the application without using `https`. Values: `development`, `production` | development
-TARGET_API | Endpoint of schema-catalog REST API | http://schema-catalog-rest
-GA_UA | To apply a unique ID for global tag (gtag.js for google analytics). It is turned off by default. | ''
+| Name       | Description                                                                                                                                                                                           | Default                    |
+|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| PORT       | Port of UI app.                                                                                                                                                                                       | 8282                       |
+| BASE_HREF  | Base URL of the app. No base URL by default. e.g. `/the/base`.                                                                                                                                        | ''                         |
+| NODE_ENV   | Node.js environment variable. Development version turns on logging in web console. Also, development version allows to run the application without using `https`. Values: `development`, `production` | development                |
+| TARGET_API | Endpoint of schema-catalog REST API                                                                                                                                                                   | http://schema-catalog-rest |
+| GA_UA      | To apply a unique ID for global tag (gtag.js for google analytics). It is turned off by default.                                                                                                      | ''                         |
 
 ## All npm commands
 
