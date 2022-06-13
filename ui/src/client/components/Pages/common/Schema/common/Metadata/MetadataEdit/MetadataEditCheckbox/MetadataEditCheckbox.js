@@ -17,17 +17,17 @@
 /* eslint-disable import/no-unresolved */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { Checkbox } from 'react-eco-ui';
 import './MetadataEditCheckbox.scss';
 
 class MetadataEditCheckbox extends Component {
+  id = nanoid()
+
   static propTypes = {
     isChecked: PropTypes.bool,
     handleCheck: PropTypes.func,
   }
-
-  id = nanoid()
 
   render() {
     const { handleCheck, isChecked } = this.props;
