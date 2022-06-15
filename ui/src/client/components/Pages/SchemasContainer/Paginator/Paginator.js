@@ -17,7 +17,7 @@
 /* eslint-disable import/extensions */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { Paginator, Selector } from 'react-eco-ui';
 import './Paginator.scss';
 
