@@ -25,6 +25,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.epam.eco.commons.avro.AvroUtils;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
+
 /**
  * @author Andrei_Tytsik
  */
@@ -57,10 +60,14 @@ public final class SchemaRegisterParams {
         return schemaJson;
     }
     @JsonIgnore
+    @Deprecated
     public Schema getSchemaAvro() {
         return schemaAvro;
     }
-
+    @JsonIgnore
+    public ParsedSchema getParsedSchema() {
+        return new AvroSchema(schemaAvro);
+    }
     @Override
     public int hashCode() {
         return Objects.hash(subject, schemaJson);

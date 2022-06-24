@@ -26,7 +26,8 @@ import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 
 /**
@@ -36,10 +37,12 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     SchemaRegistryServiceInfo getServiceInfo();
     Collection<String> getAllSubjectsUnchecked();
     List<Integer> getAllVersionsUnchecked(String subject);
+    @Deprecated
     Schema getBySubjectAndVersion(String subject, int version);
-    AvroCompatibilityLevel getGlobalCompatibilityLevel();
-    Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject);
-    AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject);
+    ParsedSchema getSchemaBySubjectAndVersion(String subject, int version);
+    CompatibilityLevel getGlobalCompatibilityLevel();
+    Optional<CompatibilityLevel> getCompatibilityLevel(String subject);
+    CompatibilityLevel getEffectiveCompatibilityLevel(String subject);
     Mode getModeValue();
     Optional<Mode> getModeValue(String subject);
     Mode getEffectiveModeValue(String subject);
@@ -66,15 +69,23 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
             Schema sourceSchema,
             String destinationSubject,
             List<SchemaModification> modifications);
-    void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
+    void updateCompatibility(String subject, CompatibilityLevel compatibilityLevel);
     void updateMode(String subject, Mode mode);
     boolean subjectExists(String subject);
     List<Integer> deleteSubjectUnchecked(String subject);
     Integer deleteSchema(String subject, int version);
+    @Deprecated
     boolean testCompatibilityUnchecked(String subject, Schema schema);
+    boolean testCompatibilityUnchecked(String subject, ParsedSchema schema);
+    @Deprecated
     int registerUnchecked(String subject, Schema schema);
+    int registerUnchecked(String subject, ParsedSchema schema);
+    @Deprecated
     int getVersionUnchecked(String subject, Schema schema);
+    int getVersionUnchecked(String subject, ParsedSchema schema);
+    @Deprecated
     boolean checkSchemaWritable(String subject, Schema schema);
+    boolean checkSchemaWritable(String subject, ParsedSchema schema);
     boolean checkSchemaWritable(String subject, int version);
     boolean checkLatestSchemaWritable(String subject);
 }

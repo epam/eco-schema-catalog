@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -29,7 +29,7 @@ public final class SchemaEntity {
     private int id;
     private String subject;
     private int version;
-    private AvroCompatibilityLevel compatibilityLevel;
+    private CompatibilityLevel compatibilityLevel;
     private Mode mode;
     private String schema;
     private boolean versionLatest;
@@ -53,10 +53,10 @@ public final class SchemaEntity {
     public void setVersion(int version) {
         this.version = version;
     }
-    public AvroCompatibilityLevel getCompatibilityLevel() {
+    public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
-    public void setCompatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
+    public void setCompatibilityLevel(CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
     }
     public Mode getMode() {

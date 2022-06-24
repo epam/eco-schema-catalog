@@ -17,7 +17,7 @@ package com.epam.eco.schemacatalog.fts;
 
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -52,7 +52,7 @@ public abstract class FtsConstants {
 
     public static final int DEFAULT_VERSION_AGGREGATION_SIZE = 100;
     public static final int DEFAULT_VERSION_LATEST_AGGREGATION_SIZE = 2;
-    public static final int DEFAULT_COMPATIBILITY_AGGREGATION_SIZE = AvroCompatibilityLevel.values().length;
+    public static final int DEFAULT_COMPATIBILITY_AGGREGATION_SIZE = CompatibilityLevel.values().length;
     public static final int DEFAULT_MODE_AGGREGATION_SIZE = Mode.values().length;
     public static final int DEFAULT_NAMESPACE_AGGREGATION_SIZE = 1000;
     public static final int DEFAULT_DELETED_AGGREGATION_SIZE = 10000;

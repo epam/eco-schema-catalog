@@ -33,7 +33,7 @@ You can run Eco Schema Catalog:
 The prerequisites include:
 * Java 8+
 * [Confluent Platform (Kafka)](https://www.confluent.io/)
-* [Schema Registry](https://www.confluent.io/confluent-schema-registry/)
+* [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html)
 
 Run the following command sequence:
 ```

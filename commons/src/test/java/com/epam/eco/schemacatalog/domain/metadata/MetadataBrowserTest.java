@@ -28,7 +28,7 @@ import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -133,7 +133,7 @@ public class MetadataBrowserTest {
         return FullSchemaInfo.builder().
                 subject("subject").
                 version(1).
-                compatibilityLevel(AvroCompatibilityLevel.FULL).
+                compatibilityLevel(CompatibilityLevel.FULL).
                 mode(Mode.READWRITE).
                 deleted(false).
                 versionLatest(false).

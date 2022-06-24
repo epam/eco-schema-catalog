@@ -19,21 +19,21 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
  */
 public final class SubjectRequest {
 
-    private final AvroCompatibilityLevel compatibilityLevel;
+    private final CompatibilityLevel compatibilityLevel;
 
     public SubjectRequest(
-            @JsonProperty("compatibilityLevel") AvroCompatibilityLevel compatibilityLevel) {
+            @JsonProperty("compatibilityLevel") CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
     }
 
-    public AvroCompatibilityLevel getCompatibilityLevel() {
+    public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
 

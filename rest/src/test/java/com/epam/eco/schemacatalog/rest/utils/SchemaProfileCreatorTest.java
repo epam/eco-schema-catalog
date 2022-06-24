@@ -143,7 +143,7 @@ public class SchemaProfileCreatorTest {
                         .type(PrimitiveSchemaFieldType.builder()
                                 .type(Schema.Type.STRING)
                                 .build())
-                        .defaultValue(null)
+                        .defaultValue("")
                         .defaultValuePresent(true)
                         .nativeDoc(null)
                         .metadata(formattedMetadata.get(FieldMetadataKey.with(

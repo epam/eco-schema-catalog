@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Raman_Babich
@@ -36,7 +36,7 @@ public final class SchemaProfile {
     private final String subject;
     private final int version;
     private final int schemaRegistryId;
-    private final AvroCompatibilityLevel compatibilityLevel;
+    private final CompatibilityLevel compatibilityLevel;
     private final Mode mode;
     private final boolean versionLatest;
     private final boolean deleted;
@@ -47,7 +47,7 @@ public final class SchemaProfile {
             @JsonProperty("subject") String subject,
             @JsonProperty("version") int version,
             @JsonProperty("schemaRegistryId") int schemaRegistryId,
-            @JsonProperty("compatibilityLevel") AvroCompatibilityLevel compatibilityLevel,
+            @JsonProperty("compatibilityLevel") CompatibilityLevel compatibilityLevel,
             @JsonProperty("mode") Mode mode,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("schemaMetadata") FormattedMetadata schemaMetadata,
@@ -85,7 +85,7 @@ public final class SchemaProfile {
         return schemaRegistryId;
     }
 
-    public AvroCompatibilityLevel getCompatibilityLevel() {
+    public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
 
@@ -163,7 +163,7 @@ public final class SchemaProfile {
         private String subject;
         private int version;
         private int schemaRegistryId;
-        private AvroCompatibilityLevel compatibilityLevel;
+        private CompatibilityLevel compatibilityLevel;
         private Mode mode;
         private boolean versionLatest;
         private boolean deleted;
@@ -201,7 +201,7 @@ public final class SchemaProfile {
             return this;
         }
 
-        public Builder compatibilityLevel(AvroCompatibilityLevel compatibilityLevel) {
+        public Builder compatibilityLevel(CompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
             return this;
         }

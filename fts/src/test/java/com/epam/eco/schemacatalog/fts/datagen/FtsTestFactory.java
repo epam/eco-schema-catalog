@@ -45,7 +45,7 @@ import com.epam.eco.schemacatalog.fts.entity.TestSchemaEntity;
 import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 import com.epam.eco.schemacatalog.utils.MetadataDocAttributeExtractor;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.github.benas.randombeans.api.EnhancedRandom;
 import io.github.benas.randombeans.randomizers.net.UrlRandomizer;
 
@@ -103,7 +103,7 @@ public class FtsTestFactory {
 
         return FullSchemaInfo.builder()
                 .subject(entity.getSubject())
-                .compatibilityLevel(AvroCompatibilityLevel.BACKWARD)
+                .compatibilityLevel(CompatibilityLevel.BACKWARD)
                 .mode(Mode.READONLY)
                 .deleted(false)
                 .versionLatest(true)

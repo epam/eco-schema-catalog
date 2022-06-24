@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
 /**
  * @author Andrei_Tytsik
@@ -31,7 +31,7 @@ public class SubjectUpdateCompatibilityParamsTest {
     public void testSerializedToJsonAndBack() throws Exception {
         SubjectCompatibilityUpdateParams origin = SubjectCompatibilityUpdateParams.builder().
                 subject("subject1").
-                compatibilityLevel(AvroCompatibilityLevel.BACKWARD).
+                compatibilityLevel(CompatibilityLevel.BACKWARD).
                 build();
 
         String json = JsonMapper.toJson(origin);

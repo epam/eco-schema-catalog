@@ -19,12 +19,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
+import io.confluent.kafka.schemaregistry.client.rest.entities.SubjectVersion;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
@@ -42,34 +46,78 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     }
 
     @Override
+    public Optional<ParsedSchema> parseSchema(String schemaType, String schemaString, List<SchemaReference> references) {
+        return decorated().parseSchema(schemaType, schemaString, references);
+    }
+
+    @Deprecated
     public int register(String subject, Schema schema) throws IOException, RestClientException {
         return decorated().register(subject, schema);
     }
 
-
     @Override
+    public int register(String subject, ParsedSchema schema) throws IOException, RestClientException {
+        return decorated().register(subject, schema);
+    }
+
+    @Deprecated
     public int register(String subject, Schema schema, int version, int id) throws IOException, RestClientException {
         return decorated().register(subject, schema, version, id);
     }
 
     @Override
+    public int register(String subject, ParsedSchema schema, int version, int id) throws IOException, RestClientException {
+        return decorated().register(subject, schema, version, id);
+    }
+
+    @Deprecated
     public Schema getByID(int id) throws IOException, RestClientException {
         return decorated().getByID(id);
     }
 
-    @Override
+    @Deprecated
     public Schema getById(int id) throws IOException, RestClientException {
         return decorated().getById(id);
     }
 
     @Override
+    public ParsedSchema getSchemaById(int id) throws IOException, RestClientException {
+        return decorated().getSchemaById(id);
+    }
+
+    @Deprecated
     public Schema getBySubjectAndID(String subject, int id) throws IOException, RestClientException {
         return decorated().getBySubjectAndID(subject, id);
     }
 
-    @Override
+    @Deprecated
     public Schema getBySubjectAndId(String subject, int id) throws IOException, RestClientException {
         return decorated().getBySubjectAndId(subject, id);
+    }
+
+    @Override
+    public ParsedSchema getSchemaBySubjectAndId(String subject, int id) throws IOException, RestClientException {
+        return decorated().getSchemaBySubjectAndId(subject, id);
+    }
+
+    @Override
+    public List<ParsedSchema> getSchemas(String subjectPrefix, boolean lookupDeletedSchema, boolean latestOnly) throws IOException, RestClientException {
+        return decorated().getSchemas(subjectPrefix, lookupDeletedSchema, latestOnly);
+    }
+
+    @Override
+    public Collection<String> getAllSubjectsById(int id) throws IOException, RestClientException {
+        return decorated().getAllSubjectsById(id);
+    }
+
+    @Override
+    public Collection<SubjectVersion> getAllVersionsById(int id) throws IOException, RestClientException {
+        return decorated().getAllVersionsById(id);
+    }
+
+    @Override
+    public Collection<String> getAllSubjectsByPrefix(String subjectPrefix) throws IOException, RestClientException {
+        return decorated().getAllSubjectsByPrefix(subjectPrefix);
     }
 
     @Override
@@ -82,8 +130,13 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
         return decorated().getSchemaMetadata(subject, version);
     }
 
-    @Override
+    @Deprecated
     public int getVersion(String subject, Schema schema) throws IOException, RestClientException {
+        return decorated().getVersion(subject, schema);
+    }
+
+    @Override
+    public int getVersion(String subject, ParsedSchema schema) throws IOException, RestClientException {
         return decorated().getVersion(subject, schema);
     }
 
@@ -92,9 +145,19 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
         return decorated().getAllVersions(subject);
     }
 
-    @Override
+    @Deprecated
     public boolean testCompatibility(String subject, Schema schema) throws IOException, RestClientException {
         return decorated().testCompatibility(subject, schema);
+    }
+
+    @Override
+    public boolean testCompatibility(String subject, ParsedSchema schema) throws IOException, RestClientException {
+        return decorated().testCompatibility(subject, schema);
+    }
+
+    @Override
+    public List<String> testCompatibilityVerbose(String subject, ParsedSchema schema) throws IOException, RestClientException {
+        return decorated().testCompatibilityVerbose(subject, schema);
     }
 
     @Override
@@ -108,12 +171,22 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     }
 
     @Override
+    public void deleteCompatibility(String subject) throws IOException, RestClientException {
+        decorated().deleteCompatibility(subject);
+    }
+
+    @Override
     public Collection<String> getAllSubjects() throws IOException, RestClientException {
         return decorated().getAllSubjects();
     }
 
-    @Override
+    @Deprecated
     public int getId(String subject, Schema schema) throws IOException, RestClientException {
+        return decorated().getId(subject, schema);
+    }
+
+    @Override
+    public int getId(String subject, ParsedSchema schema) throws IOException, RestClientException {
         return decorated().getId(subject, schema);
     }
 
@@ -155,6 +228,11 @@ public abstract class AbstractSchemaRegistryClientDecorator implements SchemaReg
     @Override
     public String getMode(String subject) throws IOException, RestClientException {
         return decorated().getMode(subject);
+    }
+
+    @Override
+    public void deleteMode(String subject) throws IOException, RestClientException {
+        decorated().deleteMode(subject);
     }
 
     @Override

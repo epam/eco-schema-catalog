@@ -26,6 +26,8 @@ import org.mockito.Mockito;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+
 
 /**
  * @author Andrei_Tytsik
@@ -45,7 +47,7 @@ public class BySchemaVersionVerifierTest {
 
         ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
         Mockito.
-            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(Schema.class))).
+            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(ParsedSchema.class))).
             thenReturn(1,2,3,4);
 
         try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {

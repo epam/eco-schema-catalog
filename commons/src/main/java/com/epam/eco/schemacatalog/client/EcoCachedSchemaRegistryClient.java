@@ -21,23 +21,31 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.SchemaProvider;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.Versions;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
+import io.confluent.kafka.schemaregistry.client.rest.entities.Mode;
+import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaString;
+import io.confluent.kafka.schemaregistry.client.rest.entities.SubjectVersion;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ConfigUpdateRequest;
-import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ModeGetResponse;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ModeUpdateRequest;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCredentialProvider;
@@ -55,34 +63,87 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         DEFAULT_REQUEST_PROPERTIES = Collections.unmodifiableMap(requestProps);
     }
 
-    private final Map<Integer, Schema> schemaCache = new ConcurrentHashMap<>();
+    private final Map<Integer, ParsedSchema> schemaCache = new ConcurrentHashMap<>();
     private final Map<String, SubjectCache> subjectCache = new ConcurrentHashMap<>();
 
     private final int maxSchemasPerSubject;
 
     private final RestService restService;
+    private final Map<String, SchemaProvider> providers = new HashMap<>();
 
     public EcoCachedSchemaRegistryClient(String baseUrl, int maxSchemasPerSubject) {
         this(new ExtendedRestService(baseUrl), maxSchemasPerSubject);
+    }
+
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            String baseUrl,
+            int maxSchemasPerSubject) {
+        this(providers, new ExtendedRestService(baseUrl), maxSchemasPerSubject);
     }
 
     public EcoCachedSchemaRegistryClient(List<String> baseUrls, int maxSchemasPerSubject) {
         this(new ExtendedRestService(baseUrls), maxSchemasPerSubject);
     }
 
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            List<String> baseUrls,
+            int maxSchemasPerSubject) {
+        this(providers, new ExtendedRestService(baseUrls), maxSchemasPerSubject, null);
+    }
+
     public EcoCachedSchemaRegistryClient(RestService restService, int maxSchemasPerSubject) {
         this(restService, maxSchemasPerSubject, null);
+    }
+
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            RestService restService,
+            int maxSchemasPerSubject) {
+        this(providers, restService, maxSchemasPerSubject, null);
     }
 
     public EcoCachedSchemaRegistryClient(String baseUrl, int maxSchemasPerSubject, Map<String, ?> configs) {
         this(new ExtendedRestService(baseUrl), maxSchemasPerSubject, configs);
     }
 
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            String baseUrl,
+            int maxSchemasPerSubject,
+            Map<String, ?> configs) {
+        this(providers, new ExtendedRestService(baseUrl), maxSchemasPerSubject, configs);
+    }
+
     public EcoCachedSchemaRegistryClient(List<String> baseUrls, int maxSchemasPerSubject, Map<String, ?> configs) {
         this(new ExtendedRestService(baseUrls), maxSchemasPerSubject, configs);
     }
 
-    public EcoCachedSchemaRegistryClient(RestService restService, int maxSchemasPerSubject, Map<String, ?> configs) {
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            List<String> baseUrls,
+            int maxSchemasPerSubject,
+            Map<String, ?> configs) {
+        this(providers, new ExtendedRestService(baseUrls), maxSchemasPerSubject, configs);
+    }
+
+    public EcoCachedSchemaRegistryClient(
+            RestService restService,
+            int maxSchemasPerSubject,
+            Map<String, ?> configs) {
+        this(
+                Collections.singletonMap("AVRO", new AvroSchemaProvider()),
+                restService,
+                maxSchemasPerSubject,
+                configs);
+    }
+
+    public EcoCachedSchemaRegistryClient(
+            Map<String, SchemaProvider> providers,
+            RestService restService,
+            int maxSchemasPerSubject,
+            Map<String, ?> configs) {
         Validate.notNull(restService, "RestService is null");
         Validate.isTrue(maxSchemasPerSubject > 0, "MaxSchemasPerSubject is negative or zero");
 
@@ -91,6 +152,8 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 restService instanceof ExtendedRestService ?
                 restService :
                 new ExtendedRestService(restService);
+
+        this.providers.putAll(providers);
 
         configureRestService(configs);
     }
@@ -108,7 +171,26 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
+    public Optional<ParsedSchema> parseSchema(String schemaType, String schemaString, List<SchemaReference> references) {
+        if (schemaType == null) {
+            schemaType = "AVRO";
+        }
+
+        SchemaProvider schemaProvider = this.providers.get(schemaType);
+        if (schemaProvider == null) {
+            return Optional.empty();
+        } else {
+            return schemaProvider.parseSchema(schemaString, references);
+        }
+    }
+
+    @Deprecated
     public int register(String subject, Schema schema) throws IOException, RestClientException {
+        return this.register(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int register(String subject, ParsedSchema schema) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -128,10 +210,19 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         }
     }
 
-    @Override
+    @Deprecated
     public int register(
             String subject,
             Schema schema,
+            int version,
+            int id) throws IOException, RestClientException {
+        return this.register(subject, new AvroSchema(schema), version, id);
+    }
+
+    @Override
+    public int register(
+            String subject,
+            ParsedSchema schema,
             int version,
             int id) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
@@ -160,23 +251,33 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         }
     }
 
-    @Override
+    @Deprecated
     public Schema getByID(int id) throws IOException, RestClientException {
         return getById(id);
     }
 
-    @Override
+    @Deprecated
     public Schema getById(int id) throws IOException, RestClientException {
-        return getBySubjectAndId(null, id);
+        return (Schema) getSchemaById(id).rawSchema();
     }
 
     @Override
+    public ParsedSchema getSchemaById(int id) throws IOException, RestClientException {
+        return getSchemaBySubjectAndId(null, id);
+    }
+
+    @Deprecated
     public Schema getBySubjectAndID(String subject, int id) throws IOException, RestClientException {
         return getBySubjectAndId(subject, id);
     }
 
-    @Override
+    @Deprecated
     public Schema getBySubjectAndId(String subject, int id) throws IOException, RestClientException {
+        return (Schema) getSchemaBySubjectAndId(subject, id).rawSchema();
+    }
+
+    @Override
+    public ParsedSchema getSchemaBySubjectAndId(String subject, int id) throws IOException, RestClientException {
         Validate.isTrue(id >= 0, "Id is negative");
 
         if (subject == null) { // global
@@ -186,7 +287,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         SubjectCache subjectCache = getSubjectCache(subject);
         subjectCache.lock();
         try {
-            Schema schema = subjectCache.getSchemaById(id);
+            ParsedSchema schema = subjectCache.getSchemaById(id);
             if (schema != null) {
                 return schema;
             }
@@ -197,6 +298,29 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         } finally {
             subjectCache.unlock();
         }
+    }
+
+    @Override
+    public List<ParsedSchema> getSchemas(
+            String subjectPrefix,
+            boolean lookupDeletedSchema,
+            boolean latestOnly) throws IOException, RestClientException {
+        return getSchemasFromRegistry(subjectPrefix, lookupDeletedSchema, latestOnly);
+    }
+
+    @Override
+    public Collection<String> getAllSubjectsById(int id) throws IOException, RestClientException {
+        return getAllSubjectsByIdFromRegistry(id);
+    }
+
+    @Override
+    public Collection<SubjectVersion> getAllVersionsById(int id) throws IOException, RestClientException {
+        return restService.getAllVersionsById(id);
+    }
+
+    @Override
+    public Collection<String> getAllSubjectsByPrefix(String subjectPrefix) throws IOException, RestClientException {
+        return restService.getAllSubjects(subjectPrefix, false);
     }
 
     @Override
@@ -216,8 +340,13 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         return getSchemaMetadataFromRegistry(subject, version);
     }
 
-    @Override
+    @Deprecated
     public int getVersion(String subject, Schema schema) throws IOException, RestClientException {
+        return getVersion(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int getVersion(String subject, ParsedSchema schema) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -244,23 +373,45 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         return restService.getAllVersions(subject);
     }
 
-    @Override
+    @Deprecated
     public boolean testCompatibility(
             String subject,
             Schema schema) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
-        return restService.testCompatibility(schema.toString(), subject, "latest");
+        return restService.testCompatibility(schema.toString(), subject, "latest").isEmpty();
+    }
+
+    @Override
+    public boolean testCompatibility(
+            String subject,
+            ParsedSchema schema) throws IOException, RestClientException {
+        Validate.notBlank(subject, "Subject is blank");
+        Validate.notNull(schema, "Schema is null");
+
+        return restService.testCompatibility(schema.toString(), subject, "latest").isEmpty();
+    }
+
+    @Override
+    public List<String> testCompatibilityVerbose(
+            String subject,
+            ParsedSchema schema) throws IOException, RestClientException {
+        return this.restService.testCompatibility(
+                schema.canonicalString(),
+                schema.schemaType(),
+                schema.references(),
+                subject,
+                "latest",
+                true);
     }
 
     @Override
     public String updateCompatibility(
             String subject,
             String compatibility) throws IOException, RestClientException {
-        Validate.notNull(
-                AvroCompatibilityLevel.forName(compatibility), "Compatibility %s is unknown", compatibility);
-
+        Validate.notNull(compatibility, "Null compatibility level.");
+        Validate.notNull(CompatibilityLevel.forName(compatibility), "Compatibility %s is unknown", compatibility);
         ConfigUpdateRequest response = restService.updateCompatibility(compatibility, subject);
         return response.getCompatibilityLevel();
     }
@@ -272,12 +423,22 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
+    public void deleteCompatibility(String subject) throws IOException, RestClientException {
+        restService.deleteSubjectConfig(subject);
+    }
+
+    @Override
     public Collection<String> getAllSubjects() throws IOException, RestClientException {
         return restService.getAllSubjects();
     }
 
-    @Override
+    @Deprecated
     public int getId(String subject, Schema schema) throws IOException, RestClientException {
+        return getId(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int getId(String subject, ParsedSchema schema) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -338,7 +499,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         SubjectCache subjectCache = getSubjectCache(subject);
         subjectCache.lock();
         try {
-            Schema schema = getSchemaByVersionFromRegistryQuietly(subject, versionInt);
+            ParsedSchema schema = getSchemaByVersionFromRegistryQuietly(subject, versionInt);
             subjectCache.removeSchema(schema);
             subjectCache.removeSchemaByVersion(versionInt);
             return restService.deleteSchemaVersion(requestProperties, subject, version);
@@ -361,14 +522,19 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     @Override
     public String getMode() throws IOException, RestClientException {
-        ModeGetResponse response = restService.getMode();
+        Mode response = restService.getMode();
         return response.getMode();
     }
 
     @Override
     public String getMode(String subject) throws IOException, RestClientException {
-        ModeGetResponse response = restService.getMode(subject);
+        Mode response = restService.getMode(subject);
         return response.getMode();
+    }
+
+    @Override
+    public void deleteMode(String subject) throws IOException, RestClientException {
+        restService.deleteSubjectMode(subject);
     }
 
     @Override
@@ -377,13 +543,28 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         subjectCache.clear();
     }
 
+    private List<String> getAllSubjectsByIdFromRegistry(int id) throws IOException, RestClientException {
+        return this.restService.getAllSubjectsById(id);
+    }
+
+    private List<ParsedSchema> getSchemasFromRegistry(
+            String subjectPrefix,
+            boolean lookupDeletedSchema,
+            boolean latestOnly) throws IOException, RestClientException {
+        return restService.getSchemas(subjectPrefix, lookupDeletedSchema, latestOnly).stream()
+                .map(schema -> parseSchema(schema.getSchemaType(), schema.getSchema(), schema.getReferences()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
     private SubjectCache getSubjectCache(String subject) {
         return subjectCache.computeIfAbsent(subject, key -> new SubjectCache(subject));
     }
 
     private int registerAndGetId(
             String subject,
-            Schema schema) throws IOException, RestClientException {
+            ParsedSchema schema) throws IOException, RestClientException {
         int id = restService.registerSchema(schema.toString(), subject);
         schemaCache.put(id, schema);
         return id;
@@ -391,29 +572,29 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private int registerAndGetId(
             String subject,
-            Schema schema,
+            ParsedSchema schema,
             int version,
             int id) throws IOException, RestClientException {
         return restService.registerSchema(schema.toString(), subject, version, id);
     }
 
-    private Schema getSchemaByIdFromRegistry(int id) throws IOException, RestClientException {
-        Schema schema = schemaCache.get(id);
+    private ParsedSchema getSchemaByIdFromRegistry(int id) throws IOException, RestClientException {
+        ParsedSchema schema = schemaCache.get(id);
         if (schema != null) {
             return schema;
         }
 
         SchemaString schemaString = restService.getId(id);
-        schema = new Schema.Parser().parse(schemaString.getSchemaString());
+        schema = new AvroSchema(schemaString.getSchemaString());
         schemaCache.put(id, schema);
         return schema;
     }
 
-    private Schema getSchemaByVersionFromRegistryQuietly(String subject, int version) {
+    private ParsedSchema getSchemaByVersionFromRegistryQuietly(String subject, int version) {
         try {
             io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                     restService.getVersion(subject, version);
-            Schema schema = new Schema.Parser().parse(response.getSchema());
+            ParsedSchema schema = new AvroSchema(response.getSchema());
             schemaCache.put(response.getId(), schema);
             return schema;
         } catch (IOException | RestClientException ex) {
@@ -423,7 +604,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private int getSchemaIdFromRegistry(
             String subject,
-            Schema schema) throws IOException, RestClientException {
+            ParsedSchema schema) throws IOException, RestClientException {
         io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                 restService.lookUpSubjectVersion(schema.toString(), subject, false);
         schemaCache.putIfAbsent(response.getId(), schema);
@@ -432,7 +613,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private int getSchemaVersionFromRegistry(
             String subject,
-            Schema schema) throws IOException, RestClientException {
+            ParsedSchema schema) throws IOException, RestClientException {
         io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
                 restService.lookUpSubjectVersion(schema.toString(), subject, true);
         schemaCache.putIfAbsent(response.getId(), schema);
@@ -454,13 +635,17 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         return new SchemaMetadata(id, versionActual, schema);
     }
 
+    private ParsedSchema convert(Schema schema) {
+        return new AvroSchema(schema);
+    }
+
     private class SubjectCache {
 
         private final String subject;
-        private final Map<Schema, Integer> schemaIds = new HashMap<>();
-        private final Map<Integer, Schema> idSchemas = new HashMap<>();
-        private final Map<Schema, Integer> schemaVersions = new HashMap<>();
-        private final Map<Integer, Schema> versionSchemas = new HashMap<>();
+        private final Map<ParsedSchema, Integer> schemaIds = new HashMap<>();
+        private final Map<Integer, ParsedSchema> idSchemas = new HashMap<>();
+        private final Map<ParsedSchema, Integer> schemaVersions = new HashMap<>();
+        private final Map<Integer, ParsedSchema> versionSchemas = new HashMap<>();
 
         private final Lock lock = new ReentrantLock();
 
@@ -476,19 +661,19 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             this.subject = subject;
         }
 
-        public Schema getSchemaById(int id) {
+        public ParsedSchema getSchemaById(int id) {
             return idSchemas.get(id);
         }
 
-        public Integer getIdBySchema(Schema schema) {
+        public Integer getIdBySchema(ParsedSchema schema) {
             return schemaIds.get(schema);
         }
 
-        public Integer getVersionBySchema(Schema schema) {
+        public Integer getVersionBySchema(ParsedSchema schema) {
             return schemaVersions.get(schema);
         }
 
-        public void addSchemaWithId(Schema schema, int id) {
+        public void addSchemaWithId(ParsedSchema schema, int id) {
             if (schemaIds.size() >= maxSchemasPerSubject) {
                 throw new IllegalStateException("Too many schema objects created for " + subject + "!");
             }
@@ -497,7 +682,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             idSchemas.put(id, schema);
         }
 
-        public void addSchemaWithVersion(Schema schema, int version) {
+        public void addSchemaWithVersion(ParsedSchema schema, int version) {
             if (schemaVersions.size() >= maxSchemasPerSubject) {
                 throw new IllegalStateException("Too many schema objects created for " + subject + "!");
             }
@@ -510,7 +695,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             removeSchema(versionSchemas.get(version));
         }
 
-        public void removeSchema(Schema schema) {
+        public void removeSchema(ParsedSchema schema) {
             if (schema == null) {
                 return;
             }

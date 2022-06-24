@@ -24,9 +24,11 @@ import org.apache.commons.lang3.Validate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.epam.eco.commons.avro.AvroUtils;
 import com.epam.eco.commons.avro.FieldExtractor;
 import com.epam.eco.commons.avro.FieldInfo;
+
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 
 /**
  * @author Andrei_Tytsik
@@ -34,7 +36,7 @@ import com.epam.eco.commons.avro.FieldInfo;
 public class BasicSchemaInfo extends IdentitySchemaInfo implements Schemafull {
 
     protected final String schemaJson;
-    protected final Schema schemaAvro;
+    protected final ParsedSchema schemaAvro;
 
     public BasicSchemaInfo(
             @JsonProperty("subject") String subject,
@@ -49,7 +51,7 @@ public class BasicSchemaInfo extends IdentitySchemaInfo implements Schemafull {
 
         //disabling cache as it eats too much memory and should be optimized...
         //schemaAvro = CachedSchemaParser.parse(schemaJson);
-        schemaAvro = AvroUtils.schemaFromJson(schemaJson);
+        this.schemaAvro = new AvroSchema(schemaJson);
     }
 
     @Override
@@ -60,6 +62,12 @@ public class BasicSchemaInfo extends IdentitySchemaInfo implements Schemafull {
     @JsonIgnore
     @Override
     public Schema getSchemaAvro() {
+        return (Schema) schemaAvro.rawSchema();
+    }
+
+    @JsonIgnore
+    @Override
+    public ParsedSchema getParsedSchema() {
         return schemaAvro;
     }
 
@@ -68,7 +76,7 @@ public class BasicSchemaInfo extends IdentitySchemaInfo implements Schemafull {
     public List<FieldInfo> getSchemaFieldInfosAsList() {
         //disabling cache as it eats too much memory and should be optimized...
         //return CachedFieldExtractor.fromSchema(schemaAvro);
-        return FieldExtractor.fromSchema(schemaAvro);
+        return FieldExtractor.fromSchema((Schema) schemaAvro.rawSchema());
     }
 
     @Override

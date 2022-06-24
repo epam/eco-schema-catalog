@@ -17,8 +17,9 @@ package com.epam.eco.schemacatalog.domain.schema;
 
 import java.util.Objects;
 
-import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
+
+import io.confluent.kafka.schemaregistry.ParsedSchema;
 
 /**
  * @author Andrei_Tytsik
@@ -26,9 +27,9 @@ import org.apache.commons.lang3.Validate;
 public final class SubjectAndSchema {
 
     private final String subject;
-    private final Schema schema;
+    private final ParsedSchema schema;
 
-    public SubjectAndSchema(String subject, Schema schema) {
+    public SubjectAndSchema(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -39,7 +40,7 @@ public final class SubjectAndSchema {
     public String getSubject() {
         return subject;
     }
-    public Schema getSchema() {
+    public ParsedSchema getSchema() {
         return schema;
     }
 
@@ -71,7 +72,7 @@ public final class SubjectAndSchema {
                 "}";
     }
 
-    public static SubjectAndSchema with(String subject, Schema schema) {
+    public static SubjectAndSchema with(String subject, ParsedSchema schema) {
         return new SubjectAndSchema(subject, schema);
     }
 

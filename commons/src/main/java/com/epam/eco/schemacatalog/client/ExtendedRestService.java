@@ -54,24 +54,15 @@ public class ExtendedRestService extends RestService {
     public Schema lookUpSubjectVersion(
             Map<String, String> requestProperties,
             RegisterSchemaRequest registerSchemaRequest,
-            String subject)
+            String subject,
+            boolean normalize,
+            boolean lookupDeletedSchema)
             throws IOException, RestClientException {
         return super.lookUpSubjectVersion(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubjectAsPathSegment(subject));
-    }
-
-    @Override
-    public Schema lookUpSubjectVersion(
-            Map<String, String> requestProperties,
-            RegisterSchemaRequest registerSchemaRequest,
-            String subject,
-            boolean lookupDeletedSchema) throws IOException, RestClientException {
-        return super.lookUpSubjectVersion(
-                requestProperties,
-                registerSchemaRequest,
                 encodeSubjectAsPathSegment(subject),
+                normalize,
                 lookupDeletedSchema);
     }
 
@@ -79,14 +70,16 @@ public class ExtendedRestService extends RestService {
     public int registerSchema(
             Map<String, String> requestProperties,
             RegisterSchemaRequest registerSchemaRequest,
-            String subject) throws IOException, RestClientException {
+            String subject,
+            boolean normalize) throws IOException, RestClientException {
         return super.registerSchema(
                 requestProperties,
                 registerSchemaRequest,
-                encodeSubjectAsPathSegment(subject));
+                encodeSubjectAsPathSegment(subject),
+                normalize);
     }
 
-    @Override
+    @Deprecated
     public boolean testCompatibility(
             Map<String, String> requestProperties,
             RegisterSchemaRequest registerSchemaRequest,
@@ -96,7 +89,22 @@ public class ExtendedRestService extends RestService {
                 requestProperties,
                 registerSchemaRequest,
                 encodeSubjectAsPathSegment(subject),
-                version);
+                version,
+                false).isEmpty();
+    }
+    @Override
+    public List<String> testCompatibility(
+            Map<String, String> requestProperties,
+            RegisterSchemaRequest registerSchemaRequest,
+            String subject,
+            String version,
+            boolean verbose) throws IOException, RestClientException {
+        return super.testCompatibility(
+                requestProperties,
+                registerSchemaRequest,
+                encodeSubjectAsPathSegment(subject),
+                version,
+                verbose);
     }
 
     @Override

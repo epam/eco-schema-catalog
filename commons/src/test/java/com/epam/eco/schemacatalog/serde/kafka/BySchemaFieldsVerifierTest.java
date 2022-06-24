@@ -30,6 +30,8 @@ import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
+import io.confluent.kafka.schemaregistry.ParsedSchema;
+
 /**
  * @author Andrei_Tytsik
  */
@@ -102,7 +104,7 @@ public class BySchemaFieldsVerifierTest {
 
         ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
         Mockito.
-            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(Schema.class))).
+            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(ParsedSchema.class))).
             thenReturn(1,2,3,4,5,6,7);
         Mockito.
             when(schemaRegistryClient.getSubjectSchemaInfos(Mockito.anyString())).

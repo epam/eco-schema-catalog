@@ -47,7 +47,8 @@ import com.epam.eco.schemacatalog.fts.entity.FtsTestCase;
 import com.epam.eco.schemacatalog.fts.repo.SchemaDocumentRepository;
 import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -409,7 +410,7 @@ public class SchemaDocumentRepositoryIT {
 
     @Test
     public void testCompatibilityTermFilter() throws Exception {
-        AvroCompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
+        CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
         searchParams.setQuery("*");
@@ -554,7 +555,7 @@ public class SchemaDocumentRepositoryIT {
 
     @SuppressWarnings("serial")
     private Map<Integer, Schema> registerSchema(String subject, Schema schema) throws Exception {
-        Integer schemaId = client.register(subject, schema);
+        Integer schemaId = client.register(subject, new AvroSchema(schema));
         return new HashMap<Integer, Schema>() {{
             put(schemaId, schema);
         }};
@@ -568,7 +569,7 @@ public class SchemaDocumentRepositoryIT {
                     new RenameSchema(FtsTestFactory.getRandomName(), null),
                     new SetSchemaProperties(property.getKey(), property.getValue())
             ).applyTo(schema);
-            Integer schemaId = client.register(subject, schemaModified);
+            Integer schemaId = client.register(subject, new AvroSchema(schemaModified));
             result.put(schemaId, schemaModified);
         }
         return result;

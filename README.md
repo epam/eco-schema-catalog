@@ -1,6 +1,6 @@
 # Eco Schema Catalog
 
-Eco Schema Catalog is a set of services, components, and utilities aimed at providing additional features on top of the [Schema Registry](https://www.confluent.io/confluent-schema-registry/).
+Eco Schema Catalog is a set of services, components, and utilities aimed at providing additional features on top of the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html).
 
 With Eco Schema Catalog you can use:
 
@@ -8,7 +8,7 @@ With Eco Schema Catalog you can use:
 * Various services to work with schemas.
 * Utilities, helpers, and other classes that extend and augment the Schema Registry library.
 
-The currently supported version of Confluent is [5.3.1](https://docs.confluent.io/5.3.1/schema-registry/index.html)
+The currently supported version of Confluent is [7.0.1](https://docs.confluent.io/platform/7.0.1/schema-registry/index.html)
 
 ## Project structure
 
@@ -17,7 +17,7 @@ The repository contains the following packages:
 * [rest](/rest) - RESTful interface (backend)
 * [ui](/ui) - web UI (frontend)
 * [commons](/commons) - common models, utilities, extensions, etc
-* [store](/store) - service to access data in the [Schema Registry](https://www.confluent.io/confluent-schema-registry/) store, manage metadata, etc
+* [store](/store) - service to access data in the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html) store, manage metadata, etc
 * [fts](/fts) - service that enables Full-Text Search (FTS) capabilities against the store
 * [client](/client) - REST client
 
@@ -100,6 +100,7 @@ docker-compose -f docker/docker-compose-all.yaml down
 
 Eco Schema Catalog | Confluent Platform | Kafka
 ---  | --- | ---
+2.0.x | 7.0.1 | 3.0.x
 1.3.x | 5.3.x | 2.3.x
 1.2.x | 5.2.x | 2.2.x
 1.1.x | 5.1.x | 2.1.x
