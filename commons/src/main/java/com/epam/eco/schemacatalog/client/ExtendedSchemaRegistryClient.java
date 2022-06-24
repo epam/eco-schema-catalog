@@ -28,7 +28,6 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 
 /**
@@ -41,15 +40,9 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     @Deprecated
     Schema getBySubjectAndVersion(String subject, int version);
     ParsedSchema getSchemaBySubjectAndVersion(String subject, int version);
-    @Deprecated
-    AvroCompatibilityLevel getGlobalCompatibilityLevel();
-    CompatibilityLevel getGlobalLevelOfCompatibility();
-    @Deprecated
-    Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject);
-    Optional<CompatibilityLevel> getLevelOfCompatibility(String subject);
-    @Deprecated
-    AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject);
-    CompatibilityLevel getEffectiveLevelOfCompatibility(String subject);
+    CompatibilityLevel getGlobalCompatibilityLevel();
+    Optional<CompatibilityLevel> getCompatibilityLevel(String subject);
+    CompatibilityLevel getEffectiveCompatibilityLevel(String subject);
     Mode getModeValue();
     Optional<Mode> getModeValue(String subject);
     Mode getEffectiveModeValue(String subject);
@@ -76,8 +69,6 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
             Schema sourceSchema,
             String destinationSubject,
             List<SchemaModification> modifications);
-    @Deprecated
-    void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
     void updateCompatibility(String subject, CompatibilityLevel compatibilityLevel);
     void updateMode(String subject, Mode mode);
     boolean subjectExists(String subject);

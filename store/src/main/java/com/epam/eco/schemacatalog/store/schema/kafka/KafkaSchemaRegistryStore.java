@@ -56,7 +56,6 @@ import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStoreUpdateListener
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 
 /**
@@ -150,7 +149,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     private void readGlobalConfig() throws Exception {
         // retry at start-up only
         CompatibilityLevel globalCompatibilityLevel = retryTemplate.
-                execute(context -> schemaRegistryClient.getGlobalLevelOfCompatibility());
+                execute(context -> schemaRegistryClient.getGlobalCompatibilityLevel());
 
         if (globalCompatibilityLevel == null) {
             throw new RuntimeException("Global compatibility level is null");
@@ -316,15 +315,6 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         } finally {
             lock.readLock().unlock();
         }
-    }
-
-    @Override
-    @Deprecated
-    public void updateSubjectCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel) {
-        Validate.notBlank(subject, "Subject is blank");
-        Validate.notNull(compatibilityLevel, "Compatibility Level is null");
-
-        updateSubjectCompatibility(subject, CompatibilityLevel.forName(compatibilityLevel.name()));
     }
 
     @Override

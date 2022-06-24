@@ -24,7 +24,6 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 
 
 /**
@@ -48,7 +47,6 @@ public interface SchemaRegistryStore {
     void deleteSubject(String subject);
     void deleteSchema(SubjectAndVersion subjectAndVersion);
     void deleteSchema(String subject, int version);
-    void updateSubjectCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel);
     void updateSubjectCompatibility(String subject, CompatibilityLevel compatibilityLevel);
     void registerListener(SchemaRegistryStoreUpdateListener listener);
 }

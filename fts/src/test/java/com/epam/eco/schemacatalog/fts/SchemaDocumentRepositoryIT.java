@@ -410,7 +410,7 @@ public class SchemaDocumentRepositoryIT {
 
     @Test
     public void testCompatibilityTermFilter() throws Exception {
-        CompatibilityLevel compatibility = client.getGlobalLevelOfCompatibility();
+        CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
         searchParams.setQuery("*");

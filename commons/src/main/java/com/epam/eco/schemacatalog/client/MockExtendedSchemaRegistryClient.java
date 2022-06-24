@@ -38,7 +38,6 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
-import io.confluent.kafka.schemaregistry.avro.AvroCompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
@@ -69,36 +68,19 @@ public final class MockExtendedSchemaRegistryClient
         return getSchemaInfo(subject, version).getParsedSchema();
     }
 
-    @Deprecated
-    public AvroCompatibilityLevel getGlobalCompatibilityLevel() {
-        return AvroCompatibilityLevel.forName(getGlobalLevelOfCompatibility().name());
-    }
-
     @Override
-    public CompatibilityLevel getGlobalLevelOfCompatibility() {
+    public CompatibilityLevel getGlobalCompatibilityLevel() {
         return retrieveCompatibility(null);
     }
 
-    @Deprecated
-    public Optional<AvroCompatibilityLevel> getCompatibilityLevel(String subject) {
-        Validate.notBlank(subject, "Subject is blank");
-
-        Optional<CompatibilityLevel> optional = getLevelOfCompatibility(subject);
-        return optional.map(compatibilityLevel -> AvroCompatibilityLevel.forName(compatibilityLevel.name()));
-    }
-
     @Override
-    public Optional<CompatibilityLevel> getLevelOfCompatibility(String subject) {
+    public Optional<CompatibilityLevel> getCompatibilityLevel(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
         return Optional.ofNullable(retrieveCompatibility(subject));
     }
 
-    @Deprecated
-    public AvroCompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
-        return AvroCompatibilityLevel.forName(getEffectiveLevelOfCompatibility(subject).name());
-    }
-
     @Override
-    public CompatibilityLevel getEffectiveLevelOfCompatibility(String subject) {
+    public CompatibilityLevel getEffectiveCompatibilityLevel(String subject) {
         Validate.notBlank(subject, "Subject is blank");
 
         CompatibilityLevel compatibilityLevel = retrieveCompatibility(subject);
@@ -230,13 +212,6 @@ public final class MockExtendedSchemaRegistryClient
                 destinationSubject,
                 destinationVersion,
                 schemaInfo -> replicateCompatibilityIfNeeded(sourceSubject, destinationSubject));
-    }
-
-    @Deprecated
-    public void updateCompatibility(String subject, AvroCompatibilityLevel compatibilityLevel) {
-        Validate.notBlank(subject, "Subject is blank");
-        Validate.notNull(compatibilityLevel, "Compatibility level is null");
-        updateCompatibility(subject, CompatibilityLevel.forName(compatibilityLevel.name));
     }
 
     @Override
