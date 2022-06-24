@@ -37,7 +37,7 @@ public class SwaggerConfig {
     private static final String GROUP_NAME = "schema-catalog-rest";
     private static final String TITLE = "Eco Schema Catalog API";
     private static final String DESCRIPTION = "Service that provides additional features on top of" +
-            " the Schema Registry (https://www.confluent.io/product/confluent-platform/data-compatibility/)";
+            " the Schema Registry (https://docs.confluent.io/platform/current/schema-registry/index.html)";
     private static final String VERSION = "0.1.0";
     private static final String LICENSE = "Apache License Version 2.0";
     private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0";

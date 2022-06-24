@@ -1,6 +1,6 @@
 # Eco Schema Catalog
 
-Eco Schema Catalog is a set of services, components, and utilities aimed at providing additional features on top of the [Schema Registry](https://www.confluent.io/product/confluent-platform/data-compatibility/).
+Eco Schema Catalog is a set of services, components, and utilities aimed at providing additional features on top of the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html).
 
 With Eco Schema Catalog you can use:
 
@@ -17,7 +17,7 @@ The repository contains the following packages:
 * [rest](/rest) - RESTful interface (backend)
 * [ui](/ui) - web UI (frontend)
 * [commons](/commons) - common models, utilities, extensions, etc
-* [store](/store) - service to access data in the [Schema Registry](https://www.confluent.io/product/confluent-platform/data-compatibility/) store, manage metadata, etc
+* [store](/store) - service to access data in the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html) store, manage metadata, etc
 * [fts](/fts) - service that enables Full-Text Search (FTS) capabilities against the store
 * [client](/client) - REST client
 
