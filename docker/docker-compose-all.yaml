@@ -64,10 +64,10 @@ services:
     restart: 'on-failure'
 
   schema-catalog-rest:
-    build:
-      context: '../'
-      dockerfile: './rest/Dockerfile'
-#    image: 'epam/eco-schema-catalog-rest:latest'
+#    build:
+#      context: '../'
+#      dockerfile: './rest/Dockerfile'
+    image: 'epam/eco-schema-catalog-rest:latest'
     hostname: 'schema-catalog-rest'
     depends_on:
       - 'schema-registry'
@@ -79,8 +79,8 @@ services:
     restart: 'on-failure'
 
   schema-catalog-ui:
-    build: '../ui'
-#    image: 'epam/eco-schema-catalog-ui:latest'
+#    build: '../ui'
+    image: 'epam/eco-schema-catalog-ui:latest'
     hostname: 'schema-catalog-ui'
     depends_on:
       - 'schema-catalog-rest'
