@@ -274,7 +274,7 @@ public class InheritingMetadataContainer implements MetadataContainer {
 
         @Override
         public int hashCode() {
-            return HashCodeBuilder.reflectionHashCode(key, "version");
+            return HashCodeBuilder.reflectionHashCode(1, 1, key, false, null, "version");
         }
 
     }
