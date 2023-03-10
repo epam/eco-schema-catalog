@@ -10,4 +10,13 @@
         <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
     </Match>
 
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+
 </FindBugsFilter>

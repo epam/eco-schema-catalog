@@ -17,5 +17,31 @@
         <Method name="cleanUpData" />
         <Bug pattern="PATH_TRAVERSAL_IN" />
     </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.MetadataDocument" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.MetadataDocument" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SchemaDocument" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SchemaDocument" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.autoconfigure.EmbeddedElasticsearchConfiguration" />
+        <Method name="&lt;init&gt;"/>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.autoconfigure.EmbeddedElasticsearchConfiguration" />
+        <Method name="&lt;init&gt;"/>
+        <Bug pattern="PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS" />
+    </Match>
 
 </FindBugsFilter>

@@ -33,8 +33,8 @@ import com.epam.eco.commons.avro.validation.DetailedValidateCanBeRead;
 import com.epam.eco.commons.avro.validation.DetailedValidateCanRead;
 import com.epam.eco.commons.avro.validation.DetailedValidateMutualRead;
 
-import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.CompatibilityChecker;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 
 /**
@@ -45,25 +45,25 @@ import io.confluent.kafka.schemaregistry.ParsedSchema;
  */
 public final class DetailedAvroCompatibilityChecker {
 
-    private static SchemaValidator BACKWARD_VALIDATOR =
+    private static final SchemaValidator BACKWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateLatest();
 
-    private static SchemaValidator FORWARD_VALIDATOR =
+    private static final SchemaValidator FORWARD_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateLatest();
 
-    private static SchemaValidator FULL_VALIDATOR =
+    private static final SchemaValidator FULL_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateLatest();
 
-    private static SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator BACKWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanRead()).validateAll();
 
-    private static SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator FORWARD_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateCanBeRead()).validateAll();
 
-    private static SchemaValidator FULL_TRANSITIVE_VALIDATOR =
+    private static final SchemaValidator FULL_TRANSITIVE_VALIDATOR =
         new SchemaValidatorBuilder().strategy(new DetailedValidateMutualRead()).validateAll();
 
-    private static SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
+    private static final SchemaValidator NO_OP_VALIDATOR = (schema, schemas) -> {/* do nothing */};
 
     private static final Map<CompatibilityLevel, DetailedAvroCompatibilityChecker> MAPPING =
             new EnumMap<>(CompatibilityLevel.class);

@@ -93,5 +93,92 @@
         <Class name="com.epam.eco.schemacatalog.client.ReadOnlySchemaRegistryClient" />
         <Bug pattern="BED_BOGUS_EXCEPTION_DECLARATION" />
     </Match>
-  
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.EcoCachedSchemaRegistryClient" />
+        <Method name='&lt;init&gt;'/>
+        <Bug pattern="PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.SchemaRegistryServiceInfo" />
+        <Method name="getBaseUrls"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.MetadataUpdateParams" />
+        <Method name="getAttributes"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.MetadataValue" />
+        <Method name="getAttributes"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.Tag" />
+        <Method name="getParams"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.metadata.format.TagType" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.SchemaRegistryServiceInfo" />
+        <Method name="getBaseUrls"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SearchParams" />
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SearchParams" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.rest.request.MetadataRequest" />
+        <Method name="getAttributes"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.rest.request.MetadataRequest" />
+        <Method name='&lt;init&gt;'/>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo" />
+        <Method name="getMetadata"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.schema.SchemaRegisterParams" />
+        <Method name="getSchemaAvro"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.domain.schema.SchemaCompatibilityCheckResult" />
+        <Method name="getErrors"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.fts.SearchResult" />
+        <Method name="getAggregations"/>
+        <Bug pattern="EI_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.AbstractVerifier" />
+        <Method name="init"/>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.Verifiable" />
+        <Method name='&lt;init&gt;'/>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.serde.kafka.VerifiableKafkaAvroDeserializer" />
+        <Method name="configure"/>
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+
 </FindBugsFilter>

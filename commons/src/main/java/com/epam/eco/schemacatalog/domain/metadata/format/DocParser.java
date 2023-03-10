@@ -123,8 +123,8 @@ public class DocParser {
 
     private static class TagAndPosition {
 
-        private final Tag tag;
-        private final Pair<Integer, Integer> position;
+        final Tag tag;
+        final Pair<Integer, Integer> position;
 
         public TagAndPosition(Tag tag, Pair<Integer, Integer> position) {
             this.tag = tag;

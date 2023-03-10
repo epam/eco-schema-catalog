@@ -86,19 +86,19 @@ public class SchemaDocumentIndexer implements SchemaCatalogStoreUpdateListener {
     private static boolean schemaFiltered(FullSchemaInfo schemaInfo) {
         for (SchemaFilter filter : SchemaFilter.values()) {
             FilterResult result = filter.test(schemaInfo);
-            if (!result.pass) {
+            if (!result.isPass()) {
                 LOGGER.warn(
                         "Skipping schema subject={} version={}, reason={}",
                         StringUtils.abbreviate(schemaInfo.getSubject(), 100),
                         schemaInfo.getVersion(),
-                        result.message);
+                        result.getMessage());
                 return true;
             }
         }
         return false;
     }
 
-    private static enum SchemaFilter {
+    private enum SchemaFilter {
 
         ID_TOO_LONG {
 
@@ -139,6 +139,13 @@ public class SchemaDocumentIndexer implements SchemaCatalogStoreUpdateListener {
             }
         }
 
+        public boolean isPass() {
+            return pass;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 
 }

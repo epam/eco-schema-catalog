@@ -42,7 +42,7 @@ public final class DocFormatter {
         return doc;
     }
     public List<Part> getParts() {
-        return parts;
+        return Collections.unmodifiableList(parts);
     }
 
     public String format() {

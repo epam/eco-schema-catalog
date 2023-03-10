@@ -65,7 +65,7 @@
     <repositories>
         <repository>
             <id>confluent</id>
-            <url>http://packages.confluent.io/maven</url>
+            <url>https://packages.confluent.io/maven</url>
         </repository>
     </repositories>
 
@@ -83,6 +83,7 @@
         <commons-io.version>2.7</commons-io.version>
         <swagger.version>2.9.2</swagger.version>
         <elasticsearch.version>5.6.16</elasticsearch.version>
+        <javax-annotation.version>1.3.2</javax-annotation.version>
 
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
@@ -92,7 +93,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
         <maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
-        <spotbugs-maven-plugin.version>3.1.9</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
         <findsecbugs-plugin.version>1.8.0</findsecbugs-plugin.version>
         <fb-contrib.version>7.4.3.sb</fb-contrib.version>
 
@@ -100,7 +101,8 @@
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
         <assertj.version>3.5.2</assertj.version>
-        <mockito.version>1.10.19</mockito.version>
+        <mockito.version>4.11.0</mockito.version>
+        <byte-buddy.version>1.12.19</byte-buddy.version>
         <awaitility.version>1.6.1</awaitility.version>
         <random-beans.version>3.7.0</random-beans.version>
         <juparams.version>1.1.1</juparams.version>
@@ -213,11 +215,16 @@
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax-annotation.version}</version>
+            </dependency>
 
             <!-- tests -->
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
             <dependency>
