@@ -17,8 +17,8 @@ package com.epam.eco.schemacatalog.rest.view;
 
 import java.util.Date;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
@@ -32,7 +32,7 @@ import com.epam.eco.schemacatalog.domain.metadata.format.ToStringPartFormatter;
 public class FormattedMetadataValueTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    public void testSerializedToJsonAndBack() {
         Date date = new Date();
         MetadataValue value = MetadataValue.builder()
                 .doc("doc")
@@ -43,11 +43,11 @@ public class FormattedMetadataValueTest {
         FormattedMetadataValue origin = FormattedMetadataValue.from(value, ToStringPartFormatter.INSTANCE);
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         FormattedMetadataValue deserialized = JsonMapper.jsonToObject(json, FormattedMetadataValue.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
     @Test
@@ -62,11 +62,11 @@ public class FormattedMetadataValueTest {
 
         FormattedMetadataValue formattedValue = FormattedMetadataValue.from(value, HtmlPartFormatter.INSTANCE);
 
-        Assert.assertEquals(value.getDoc(), formattedValue.getDoc());
-        Assert.assertEquals(value.getUpdatedAt(), formattedValue.getUpdatedAt());
-        Assert.assertEquals(value.getUpdatedBy(), formattedValue.getUpdatedBy());
-        Assert.assertEquals(value.getAttributes(), formattedValue.getAttributes());
+        Assertions.assertEquals(value.getDoc(), formattedValue.getDoc());
+        Assertions.assertEquals(value.getUpdatedAt(), formattedValue.getUpdatedAt());
+        Assertions.assertEquals(value.getUpdatedBy(), formattedValue.getUpdatedBy());
+        Assertions.assertEquals(value.getAttributes(), formattedValue.getAttributes());
         String format = new DocFormatter("text @{link google|https://google.com} text").format(HtmlPartFormatter.INSTANCE);
-        Assert.assertEquals(format, formattedValue.getFormattedDoc());
+        Assertions.assertEquals(format, formattedValue.getFormattedDoc());
     }
 }

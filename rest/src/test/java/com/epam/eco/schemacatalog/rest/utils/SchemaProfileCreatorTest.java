@@ -22,9 +22,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.metadata.FieldMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
@@ -248,7 +248,7 @@ public class SchemaProfileCreatorTest {
                 .deleted(false)
                 .build();
 
-        Assert.assertEquals(assertProfile, profile);
+        Assertions.assertEquals(assertProfile, profile);
     }
 
 }

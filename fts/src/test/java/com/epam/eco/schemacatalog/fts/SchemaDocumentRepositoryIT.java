@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.Schema;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void searchTest() throws Exception {
+    public void searchTest() {
         SearchResult<SchemaDocument> ftsResult = repository.searchByQuery(
                 new QueryStringQuery("*", PageRequest.of(0, 1000)));
 
@@ -409,7 +409,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void testCompatibilityTermFilter() throws Exception {
+    public void testCompatibilityTermFilter() {
         CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
@@ -522,9 +522,9 @@ public class SchemaDocumentRepositoryIT {
     @SuppressWarnings("unused")
     private Iterator<FtsTestCase> searchByNotAnalyzedFieldsNegativeDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
-        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        ftsTestCases.addAll(FtsTestCaseGenerator.getNegativeTestCasesForNotAnalyzedFields(schemaInfo));
+        List<FtsTestCase> ftsTestCases = new ArrayList<>(
+                FtsTestCaseGenerator.getNegativeTestCasesForNotAnalyzedFields(schemaInfo));
 
         return ftsTestCases.iterator();
     }
@@ -532,9 +532,9 @@ public class SchemaDocumentRepositoryIT {
     @SuppressWarnings("unused")
     private Iterator<FtsTestCase> searchByAnalyzedFieldsDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
-        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        ftsTestCases.addAll(FtsTestCaseGenerator.getTestCasesForAnalyzedFields(schemaInfo));
+        List<FtsTestCase> ftsTestCases = new ArrayList<>(
+                FtsTestCaseGenerator.getTestCasesForAnalyzedFields(schemaInfo));
 
         return ftsTestCases.iterator();
     }
@@ -553,7 +553,6 @@ public class SchemaDocumentRepositoryIT {
         return ftsTestCases.iterator();
     }
 
-    @SuppressWarnings("serial")
     private Map<Integer, Schema> registerSchema(String subject, Schema schema) throws Exception {
         Integer schemaId = client.register(subject, new AvroSchema(schema));
         return new HashMap<Integer, Schema>() {{

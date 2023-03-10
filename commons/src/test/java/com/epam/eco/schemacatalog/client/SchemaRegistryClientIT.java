@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
@@ -38,7 +38,7 @@ public class SchemaRegistryClientIT {
 
     private static final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"%s\", \"type\": \"string\"}]}";
 
-    private static SchemaRegistryClient CLIENT = buildEcoCachedClient();
+    private static final SchemaRegistryClient CLIENT = buildEcoCachedClient();
 
     private static SchemaRegistryClient buildEcoCachedClient() {
         try {
@@ -58,13 +58,13 @@ public class SchemaRegistryClientIT {
         ParsedSchema schema = randomSchema();
 
         int id = CLIENT.register(subject, schema);
-        Assert.assertTrue(id >= 0);
+        Assertions.assertTrue(id >= 0);
 
         ParsedSchema schemaActual = CLIENT.getSchemaBySubjectAndId(subject, id);
-        Assert.assertEquals(schema, schemaActual);
+        Assertions.assertEquals(schema, schemaActual);
 
         schemaActual = CLIENT.getSchemaById(id);
-        Assert.assertEquals(schema, schemaActual);
+        Assertions.assertEquals(schema, schemaActual);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class SchemaRegistryClientIT {
         int idLatest = CLIENT.register(subject, schema3);
 
         SchemaMetadata metadata = CLIENT.getLatestSchemaMetadata(subject);
-        Assert.assertEquals(idLatest, metadata.getId());
+        Assertions.assertEquals(idLatest, metadata.getId());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class SchemaRegistryClientIT {
         CLIENT.register(subject, schema3);
 
         SchemaMetadata metadata = CLIENT.getSchemaMetadata(subject, 2);
-        Assert.assertEquals(id2, metadata.getId());
+        Assertions.assertEquals(id2, metadata.getId());
     }
 
     @Test
@@ -115,15 +115,15 @@ public class SchemaRegistryClientIT {
 
         CLIENT.register(subject, schema1);
         int version = CLIENT.getVersion(subject, schema1);
-        Assert.assertEquals(1, version);
+        Assertions.assertEquals(1, version);
 
         CLIENT.register(subject, schema2);
         version = CLIENT.getVersion(subject, schema2);
-        Assert.assertEquals(2, version);
+        Assertions.assertEquals(2, version);
 
         CLIENT.register(subject, schema3);
         version = CLIENT.getVersion(subject, schema3);
-        Assert.assertEquals(3, version);
+        Assertions.assertEquals(3, version);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class SchemaRegistryClientIT {
 
         List<Integer> versionsActual = CLIENT.getAllVersions(subject);
 
-        Assert.assertEquals(Arrays.asList(1,2,3), versionsActual);
+        Assertions.assertEquals(Arrays.asList(1,2,3), versionsActual);
     }
 
     @Test
@@ -153,10 +153,10 @@ public class SchemaRegistryClientIT {
 
         ParsedSchema schema1 = randomSchema();
         CLIENT.register(subject, schema1);
-        Assert.assertTrue(CLIENT.testCompatibility(subject, schema1));
+        Assertions.assertTrue(CLIENT.testCompatibility(subject, schema1));
 
         ParsedSchema schema2 = randomSchema();
-        Assert.assertFalse(CLIENT.testCompatibility(subject, schema2));
+        Assertions.assertFalse(CLIENT.testCompatibility(subject, schema2));
     }
 
     @Test
@@ -164,10 +164,10 @@ public class SchemaRegistryClientIT {
         String subject = randomSubject();
 
         String compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
-        Assert.assertEquals(CompatibilityLevel.FULL.name, compatibility);
+        Assertions.assertEquals(CompatibilityLevel.FULL.name, compatibility);
 
         compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FORWARD_TRANSITIVE.name);
-        Assert.assertEquals(CompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
+        Assertions.assertEquals(CompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class SchemaRegistryClientIT {
         CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
 
         String compatibility = CLIENT.getCompatibility(subject);
-        Assert.assertEquals(CompatibilityLevel.FULL.name, compatibility);
+        Assertions.assertEquals(CompatibilityLevel.FULL.name, compatibility);
     }
 
     @Test
@@ -188,7 +188,7 @@ public class SchemaRegistryClientIT {
         CLIENT.register(subject, schema);
 
         Collection<String> subjects = CLIENT.getAllSubjects();
-        Assert.assertTrue(subjects.contains(subject));
+        Assertions.assertTrue(subjects.contains(subject));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class SchemaRegistryClientIT {
         int id = CLIENT.register(subject, schema);
 
         int idActual = CLIENT.getId(subject, schema);
-        Assert.assertEquals(id, idActual);
+        Assertions.assertEquals(id, idActual);
     }
 
     @Test
@@ -212,7 +212,7 @@ public class SchemaRegistryClientIT {
         CLIENT.deleteSubject(subject);
 
         Collection<String> subjects = CLIENT.getAllSubjects();
-        Assert.assertFalse(subjects.contains(subject));
+        Assertions.assertFalse(subjects.contains(subject));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class SchemaRegistryClientIT {
         CLIENT.deleteSchemaVersion(subject, "" + 1);
         List<Integer> versionsActual = CLIENT.getAllVersions(subject);
 
-        Assert.assertEquals(Arrays.asList(2,3), versionsActual);
+        Assertions.assertEquals(Arrays.asList(2,3), versionsActual);
     }
 
     @Test
@@ -240,7 +240,7 @@ public class SchemaRegistryClientIT {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 CLIENT.register(subject, schema),
                 CLIENT.register(subject, schema));
     }
@@ -258,7 +258,7 @@ public class SchemaRegistryClientIT {
         CLIENT.register(subject, schema);
         int version2 = CLIENT.getVersion(subject, schema);
 
-        Assert.assertTrue(version2 > version1);
+        Assertions.assertTrue(version2 > version1);
     }
 
     private String randomSubject() {

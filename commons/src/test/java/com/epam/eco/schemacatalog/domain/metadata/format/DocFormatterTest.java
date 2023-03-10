@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -25,13 +25,13 @@ import org.junit.Test;
 public class DocFormatterTest {
 
     @Test
-    public void testDocIsFormatted() throws Exception {
+    public void testDocIsFormatted() {
         String text = DocFormatter.format(null, ToStringPartFormatter.INSTANCE);
-        Assert.assertNull(text);
+        Assertions.assertNull(text);
 
         text = new DocFormatter("text{@link}text").format(p -> "X");
-        Assert.assertNotNull(text);
-        Assert.assertEquals("XXX", text);
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals("XXX", text);
 
         text = new DocFormatter("text{@link}text").format(p -> {
             if (p instanceof Text) {
@@ -42,8 +42,8 @@ public class DocFormatterTest {
                 return null;
             }
         });
-        Assert.assertNotNull(text);
-        Assert.assertEquals("-TEXT--TAG--TEXT-", text);
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals("-TEXT--TAG--TEXT-", text);
 
         text = new DocFormatter("text{@link}text").format(p -> {
             if (p instanceof Text) {
@@ -54,8 +54,8 @@ public class DocFormatterTest {
                 return null;
             }
         });
-        Assert.assertNotNull(text);
-        Assert.assertEquals("text-TAG-text", text);
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals("text-TAG-text", text);
     }
 
 }

@@ -17,8 +17,8 @@ package com.epam.eco.schemacatalog.domain.schema;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.avro.AvroUtils;
 import com.epam.eco.commons.json.JsonMapper;
@@ -36,11 +36,11 @@ public class SchemaRegisterParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         SchemaRegisterParams deserialized = JsonMapper.jsonToObject(json, SchemaRegisterParams.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

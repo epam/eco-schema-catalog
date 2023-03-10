@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Andrei_Tytsik
@@ -24,10 +24,10 @@ import org.junit.Test;
 public class UnescaperTest {
 
     @Test
-    public void testCodesAreUnescaped() throws Exception {
+    public void testCodesAreUnescaped() {
         String text = Unescaper.unescape(
                 "&lbrace;&#123;&lbrace;::&vert;&#124;&vert;&#124;&vert;&#124;&vert;&#124;&vert;&#124;::&rbrace;&#125;&rbrace;");
-        Assert.assertEquals("{{{::||||||||||::}}}", text);
+        Assertions.assertEquals("{{{::||||||||||::}}}", text);
     }
 
 }

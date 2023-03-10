@@ -17,8 +17,8 @@ package com.epam.eco.schemacatalog.domain.metadata;
 
 import java.util.Collections;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
@@ -38,11 +38,11 @@ public class MetadataUpdateParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         MetadataUpdateParams deserialized = JsonMapper.jsonToObject(json, MetadataUpdateParams.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

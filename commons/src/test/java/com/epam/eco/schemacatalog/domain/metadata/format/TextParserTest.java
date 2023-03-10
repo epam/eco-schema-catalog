@@ -15,8 +15,10 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -25,23 +27,26 @@ import org.junit.Test;
 public class TextParserTest {
 
     @Test
-    public void testTextIsParsed() throws Exception {
+    public void testTextIsParsed() {
         Text text = TextParser.parse("");
-        Assert.assertNotNull(text);
-        Assert.assertEquals("", text.getText());
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals("", text.getText());
 
         text = TextParser.parse("text");
-        Assert.assertNotNull(text);
-        Assert.assertEquals("text", text.getText());
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals("text", text.getText());
 
         text = TextParser.parse(" text ");
-        Assert.assertNotNull(text);
-        Assert.assertEquals(" text ", text.getText());
+        Assertions.assertNotNull(text);
+        Assertions.assertEquals(" text ", text.getText());
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument() throws Exception {
-        TextParser.parse(null);
+    @Test
+    public void testParserFailsOnIllegalArgument() {
+        assertThrows(
+                Exception.class,
+                () -> TextParser.parse(null)
+        );
     }
 
 }

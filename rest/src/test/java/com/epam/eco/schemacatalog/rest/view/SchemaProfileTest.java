@@ -21,8 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.avro.Schema;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.domain.metadata.SchemaMetadataKey;
@@ -37,7 +37,7 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 public class SchemaProfileTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    public void testSerializedToJsonAndBack() {
         Date now  = new Date();
         FormattedMetadataValue metadataValue = FormattedMetadataValue.builder()
                 .doc("abcdefg", ToStringPartFormatter.INSTANCE)
@@ -126,11 +126,11 @@ public class SchemaProfileTest {
                 .build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         SchemaProfile deserialized = JsonMapper.jsonToObject(json, SchemaProfile.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

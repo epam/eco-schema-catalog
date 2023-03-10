@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,10 +37,10 @@ import com.epam.eco.schemacatalog.store.metadata.MetadataStore;
 import com.epam.eco.schemacatalog.store.utils.TestMetadata;
 import com.epam.eco.schemacatalog.store.utils.TestMetadataStoreUpdateListener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrei_Tytsik
@@ -82,14 +82,14 @@ public class KafkaMetadataStoreIT {
         assertFalse(updatedSubjects.isEmpty());
 
         String updatedSubject = updatedSubjects.get(updatedSubjects.size() - 1);
-        Assert.assertEquals(updatedSubject, key.getSubject());
+        Assertions.assertEquals(updatedSubject, key.getSubject());
 
         MetadataValue returnedValue = metadataStore.get(key);
-        Assert.assertEquals(returnedValue, value);
+        Assertions.assertEquals(returnedValue, value);
 
         Map<MetadataKey, MetadataValue> metadataCollection =
                 metadataStore.getCollection(key.getSubject(), key.getVersion() + 1);
-        Assert.assertEquals(metadataCollection.get(key), value);
+        Assertions.assertEquals(metadataCollection.get(key), value);
 
         updatedSubjects.clear();
         metadataStore.delete(key);
@@ -98,14 +98,14 @@ public class KafkaMetadataStoreIT {
         assertFalse(updatedSubjects.isEmpty());
 
         updatedSubject = updatedSubjects.get(updatedSubjects.size() - 1);
-        Assert.assertEquals(updatedSubject, key.getSubject());
+        Assertions.assertEquals(updatedSubject, key.getSubject());
 
         TimeUnit.SECONDS.sleep(EVENTUAL_CONSISTENCY_SECONDS);
 
-        Assert.assertNull(metadataStore.get(key));
+        Assertions.assertNull(metadataStore.get(key));
 
         metadataCollection = metadataStore.getCollection(key.getSubject(), key.getVersion() + 1);
-        Assert.assertNull(metadataCollection);
+        Assertions.assertNull(metadataCollection);
 
         Map<MetadataKey, MetadataValue> batch = TestMetadata.samples().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -117,11 +117,11 @@ public class KafkaMetadataStoreIT {
         assertFalse(updatedSubjects.isEmpty());
 
         updatedSubject = updatedSubjects.get(updatedSubjects.size() - 1);
-        Assert.assertEquals(updatedSubject, key.getSubject());
+        Assertions.assertEquals(updatedSubject, key.getSubject());
 
         for (Map.Entry<MetadataKey, MetadataValue> entry : TestMetadata.samples()) {
             returnedValue = metadataStore.get(entry.getKey());
-            Assert.assertEquals(returnedValue, entry.getValue());
+            Assertions.assertEquals(returnedValue, entry.getValue());
         }
 
         Iterator<Integer> versionIterator = TestMetadata.versions().iterator();
@@ -156,17 +156,17 @@ public class KafkaMetadataStoreIT {
         assertFalse(updatedSubjects.isEmpty());
 
         updatedSubject = updatedSubjects.get(updatedSubjects.size() - 1);
-        Assert.assertEquals(updatedSubject, key.getSubject());
+        Assertions.assertEquals(updatedSubject, key.getSubject());
 
         TimeUnit.SECONDS.sleep(EVENTUAL_CONSISTENCY_SECONDS);
 
         for (Map.Entry<MetadataKey, MetadataValue> entry : TestMetadata.samples()) {
             returnedValue = metadataStore.get(entry.getKey());
-            Assert.assertNull(returnedValue);
+            Assertions.assertNull(returnedValue);
         }
     }
 
-    private void resetEnv() throws Exception {
+    private void resetEnv() {
         HashMap<MetadataKey, MetadataValue> batch = new HashMap<>();
         for (Map.Entry<MetadataKey, MetadataValue> entry : TestMetadata.samples()) {
             batch.put(entry.getKey(), null);

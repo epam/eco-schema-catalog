@@ -15,10 +15,10 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import com.epam.eco.schemacatalog.domain.schema.SchemaVersionRange;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
@@ -26,135 +26,153 @@ import com.epam.eco.schemacatalog.domain.schema.SchemaVersionRange;
 public class SchemaVersionRangeTest {
 
     @Test
-    public void testRangeIsParsedFromVersionString() throws Exception {
+    public void testRangeIsParsedFromVersionString() {
         SchemaVersionRange range = SchemaVersionRange.parse("    1          ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(1, range.earliest);
-        Assert.assertEquals(1, range.latest);
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotParsedFromInvalidVersionString1() throws Exception {
-        SchemaVersionRange.parse("              ");
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotParsedFromInvalidVersionString2() throws Exception {
-        SchemaVersionRange.parse("");
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotParsedFromInvalidVersionString3() throws Exception {
-        SchemaVersionRange.parse("a");
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(1, range.earliest);
+        Assertions.assertEquals(1, range.latest);
     }
 
     @Test
-    public void testRangeIsParsedFromVersionRangeString1() throws Exception {
+    public void testRangeIsNotParsedFromInvalidVersionString1() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.parse("              ")
+        );
+    }
+
+    @Test
+    public void testRangeIsNotParsedFromInvalidVersionString2() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.parse("")
+        );
+    }
+
+    @Test
+    public void testRangeIsNotParsedFromInvalidVersionString3() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.parse("a")
+        );
+    }
+
+    @Test
+    public void testRangeIsParsedFromVersionRangeString1() {
         SchemaVersionRange range = SchemaVersionRange.parse("  [,]   ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(0, range.earliest);
-        Assert.assertEquals(Integer.MAX_VALUE, range.latest);
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(0, range.earliest);
+        Assertions.assertEquals(Integer.MAX_VALUE, range.latest);
     }
 
     @Test
-    public void testRangeIsParsedFromVersionRangeString2() throws Exception {
+    public void testRangeIsParsedFromVersionRangeString2() {
         SchemaVersionRange range = SchemaVersionRange.parse("   [     ,     ]   ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(0, range.earliest);
-        Assert.assertEquals(Integer.MAX_VALUE, range.latest);
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(0, range.earliest);
+        Assertions.assertEquals(Integer.MAX_VALUE, range.latest);
     }
 
     @Test
-    public void testRangeIsParsedFromVersionRangeString3() throws Exception {
+    public void testRangeIsParsedFromVersionRangeString3() {
         SchemaVersionRange range = SchemaVersionRange.parse("   [  1   ,     ]   ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(1, range.earliest);
-        Assert.assertEquals(Integer.MAX_VALUE, range.latest);
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(1, range.earliest);
+        Assertions.assertEquals(Integer.MAX_VALUE, range.latest);
     }
 
     @Test
-    public void testRangeIsParsedFromVersionRangeString4() throws Exception {
+    public void testRangeIsParsedFromVersionRangeString4() {
         SchemaVersionRange range = SchemaVersionRange.parse("   [     ,  1   ]   ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(0, range.earliest);
-        Assert.assertEquals(1, range.latest);
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(0, range.earliest);
+        Assertions.assertEquals(1, range.latest);
     }
 
     @Test
-    public void testRangeIsParsedFromVersionRangeString5() throws Exception {
+    public void testRangeIsParsedFromVersionRangeString5() {
         SchemaVersionRange range = SchemaVersionRange.parse("   [  1   ,  1   ]   ");
-        Assert.assertNotNull(range);
-        Assert.assertEquals(1, range.earliest);
-        Assert.assertEquals(1, range.latest);
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotCreatedFromInvalidVersions1() throws Exception {
-        SchemaVersionRange.with(-1, 0);
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotCreatedFromInvalidVersions2() throws Exception {
-        SchemaVersionRange.with(0, -1);
-    }
-
-    @Test(expected=Exception.class)
-    public void testRangeIsNotCreatedFromInvalidVersions3() throws Exception {
-        SchemaVersionRange.with(2, 1);
+        Assertions.assertNotNull(range);
+        Assertions.assertEquals(1, range.earliest);
+        Assertions.assertEquals(1, range.latest);
     }
 
     @Test
-    public void testRangeIsBeforeVersion() throws Exception {
-        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertTrue(range.before(2));
+    public void testRangeIsNotCreatedFromInvalidVersions1() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.with(-1, 0)
+        );
     }
 
     @Test
-    public void testRangeIsNotBeforeVersion1() throws Exception {
-        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.before(1));
+    public void testRangeIsNotCreatedFromInvalidVersions2() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.with(0, -1)
+        );
     }
 
     @Test
-    public void testRangeIsNotBeforeVersion2() throws Exception {
-        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.before(0));
+    public void testRangeIsNotCreatedFromInvalidVersions3() {
+        assertThrows(
+                Exception.class,
+                () -> SchemaVersionRange.with(2, 1)
+        );
     }
 
     @Test
-    public void testRangeIsAfterVersion() throws Exception {
+    public void testRangeIsBeforeVersion() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertTrue(range.after(0));
+        Assertions.assertTrue(range.before(2));
     }
 
     @Test
-    public void testRangeIsNotAfterVersion1() throws Exception {
+    public void testRangeIsNotBeforeVersion1() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.after(1));
+        Assertions.assertFalse(range.before(1));
     }
 
     @Test
-    public void testRangeIsNotAfterVersion2() throws Exception {
+    public void testRangeIsNotBeforeVersion2() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.after(2));
+        Assertions.assertFalse(range.before(0));
     }
 
     @Test
-    public void testVersionIsInRange() throws Exception {
+    public void testRangeIsAfterVersion() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertTrue(range.contains(1));
+        Assertions.assertTrue(range.after(0));
     }
 
     @Test
-    public void testVersionIsNotInRange1() throws Exception {
+    public void testRangeIsNotAfterVersion1() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.contains(0));
+        Assertions.assertFalse(range.after(1));
     }
 
     @Test
-    public void testVersionIsNotInRange2() throws Exception {
+    public void testRangeIsNotAfterVersion2() {
         SchemaVersionRange range = SchemaVersionRange.with(1, 1);
-        Assert.assertFalse(range.contains(2));
+        Assertions.assertFalse(range.after(2));
+    }
+
+    @Test
+    public void testVersionIsInRange() {
+        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
+        Assertions.assertTrue(range.contains(1));
+    }
+
+    @Test
+    public void testVersionIsNotInRange1() {
+        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
+        Assertions.assertFalse(range.contains(0));
+    }
+
+    @Test
+    public void testVersionIsNotInRange2() {
+        SchemaVersionRange range = SchemaVersionRange.with(1, 1);
+        Assertions.assertFalse(range.contains(2));
     }
 
 }

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.metadata.FieldMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
@@ -37,7 +37,7 @@ public class InheritingMetadataContainerTest {
     @Test
     public void testIsEmpty1() {
         InheritingMetadataContainer container = new InheritingMetadataContainer("s");
-        Assert.assertTrue(container.isEmpty());
+        Assertions.assertTrue(container.isEmpty());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class InheritingMetadataContainerTest {
 
         InheritingMetadataContainer container = new InheritingMetadataContainer("s");
         container.put(key, value);
-        Assert.assertFalse(container.isEmpty());
+        Assertions.assertFalse(container.isEmpty());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class InheritingMetadataContainerTest {
         container.put(key1, value1);
         container.put(key4, value4);
 
-        Assert.assertEquals(container.get(key4), value4);
+        Assertions.assertEquals(container.get(key4), value4);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class InheritingMetadataContainerTest {
 
         MetadataKey key2 = new FieldMetadataKey("s", 2, "sfn", "f1");
 
-        Assert.assertNull(container.get(key2));
+        Assertions.assertNull(container.get(key2));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class InheritingMetadataContainerTest {
 
         MetadataKey key2 = new FieldMetadataKey("s", 2, "sfn", "f1");
 
-        Assert.assertNull(container.get(key2));
+        Assertions.assertNull(container.get(key2));
     }
 
     @Test
@@ -158,8 +158,8 @@ public class InheritingMetadataContainerTest {
 
         Map<MetadataKey, MetadataValue> byVersion = container.getCollection(2);
 
-        Assert.assertTrue(byVersion.size() == 1);
-        Assert.assertEquals(byVersion.get(key1), value1);
+        Assertions.assertEquals(1, byVersion.size());
+        Assertions.assertEquals(byVersion.get(key1), value1);
     }
 
     @Test
@@ -186,9 +186,9 @@ public class InheritingMetadataContainerTest {
 
         Map<MetadataKey, MetadataValue> byVersion = container.getCollection(5);
 
-        Assert.assertTrue(byVersion.size() == 2);
-        Assert.assertEquals(byVersion.get(key1), value1);
-        Assert.assertEquals(byVersion.get(key4), value4);
+        Assertions.assertEquals(2, byVersion.size());
+        Assertions.assertEquals(byVersion.get(key1), value1);
+        Assertions.assertEquals(byVersion.get(key4), value4);
     }
 
     @Test
@@ -215,8 +215,8 @@ public class InheritingMetadataContainerTest {
 
         Map<MetadataKey, MetadataValue> byVersion = container.getCollection(5);
 
-        Assert.assertTrue(byVersion.size() == 1);
-        Assert.assertEquals(byVersion.get(key4), value4);
+        Assertions.assertEquals(1, byVersion.size());
+        Assertions.assertEquals(byVersion.get(key4), value4);
     }
 
     @Test
@@ -241,8 +241,8 @@ public class InheritingMetadataContainerTest {
         MetadataValue old1 = container.put(key1, value1);
         MetadataValue old4 = container.put(key4, value4);
 
-        Assert.assertNull(old1);
-        Assert.assertEquals(old4, value1);
+        Assertions.assertNull(old1);
+        Assertions.assertEquals(old4, value1);
     }
 
     @Test
@@ -267,8 +267,8 @@ public class InheritingMetadataContainerTest {
         MetadataValue old1 = container.put(key1, value1);
         MetadataValue old4 = container.put(key4, value4);
 
-        Assert.assertNull(old1);
-        Assert.assertEquals(old4, value1);
+        Assertions.assertNull(old1);
+        Assertions.assertEquals(old4, value1);
     }
 
     @Test
@@ -314,8 +314,8 @@ public class InheritingMetadataContainerTest {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
-        Assert.assertEquals(target.size(), 1);
-        Assert.assertEquals(target.get(0), value122);
+        Assertions.assertEquals(target.size(), 1);
+        Assertions.assertEquals(target.get(0), value122);
     }
 
     @Test
@@ -342,16 +342,16 @@ public class InheritingMetadataContainerTest {
 
         MetadataValue old1 = container.remove(key1);
 
-        Assert.assertEquals(old1, value1);
+        Assertions.assertEquals(old1, value1);
 
         Map<MetadataKey, MetadataValue> byVersion5 = container.getCollection(5);
 
-        Assert.assertTrue(byVersion5.size() == 1);
-        Assert.assertEquals(byVersion5.get(key4), value4);
+        Assertions.assertEquals(1, byVersion5.size());
+        Assertions.assertEquals(byVersion5.get(key4), value4);
 
         Map<MetadataKey, MetadataValue> byVersion1 = container.getCollection(1);
 
-        Assert.assertNull(byVersion1);
+        Assertions.assertNull(byVersion1);
     }
 
     @Test
@@ -385,34 +385,34 @@ public class InheritingMetadataContainerTest {
         container.put(key5, value5);
 
         Map<MetadataKey, MetadataValue> byVersion5 = container.getCollection(5);
-        Assert.assertTrue(byVersion5.size() == 2);
-        Assert.assertEquals(byVersion5.get(key4), value4);
-        Assert.assertEquals(byVersion5.get(key5), value5);
+        Assertions.assertEquals(2, byVersion5.size());
+        Assertions.assertEquals(byVersion5.get(key4), value4);
+        Assertions.assertEquals(byVersion5.get(key5), value5);
 
         Map<MetadataKey, MetadataValue> byVersion1 = container.getCollection(1);
-        Assert.assertTrue(byVersion1.size() == 1);
-        Assert.assertEquals(byVersion1.get(key1), value1);
+        Assertions.assertEquals(1, byVersion1.size());
+        Assertions.assertEquals(byVersion1.get(key1), value1);
 
         Map<MetadataKey, MetadataValue> byVersion4 = container.getCollection(4);
-        Assert.assertTrue(byVersion4.size() == 2);
-        Assert.assertEquals(byVersion4.get(key1), value1);
-        Assert.assertEquals(byVersion4.get(key4), value4);
+        Assertions.assertEquals(2, byVersion4.size());
+        Assertions.assertEquals(byVersion4.get(key1), value1);
+        Assertions.assertEquals(byVersion4.get(key4), value4);
 
         MetadataValue old1 = container.remove(key1);
 
-        Assert.assertEquals(old1, value1);
+        Assertions.assertEquals(old1, value1);
 
         byVersion5 = container.getCollection(5);
-        Assert.assertTrue(byVersion5.size() == 2);
-        Assert.assertEquals(byVersion5.get(key4), value4);
-        Assert.assertEquals(byVersion5.get(key5), value5);
+        Assertions.assertEquals(2, byVersion5.size());
+        Assertions.assertEquals(byVersion5.get(key4), value4);
+        Assertions.assertEquals(byVersion5.get(key5), value5);
 
         byVersion1 = container.getCollection(1);
-        Assert.assertNull(byVersion1);
+        Assertions.assertNull(byVersion1);
 
         byVersion4 = container.getCollection(4);
-        Assert.assertTrue(byVersion4.size() == 1);
-        Assert.assertEquals(byVersion4.get(key4), value4);
+        Assertions.assertEquals(1, byVersion4.size());
+        Assertions.assertEquals(byVersion4.get(key4), value4);
     }
 
     @Test
@@ -439,12 +439,12 @@ public class InheritingMetadataContainerTest {
 
         MetadataValue res = container.remove(key4);
 
-        Assert.assertNull(res);
+        Assertions.assertNull(res);
 
         Map<MetadataKey, MetadataValue> byVersion5 = container.getCollection(5);
 
-        Assert.assertTrue(byVersion5.size() == 1);
-        Assert.assertEquals(byVersion5.get(key1), value1);
+        Assertions.assertEquals(1, byVersion5.size());
+        Assertions.assertEquals(byVersion5.get(key1), value1);
     }
 
     @Test
@@ -486,18 +486,18 @@ public class InheritingMetadataContainerTest {
         container.put(dKey, dValue);
 
         Map<MetadataKey, MetadataValue> byVersion = container.getCollection(6);
-        Assert.assertEquals(3, byVersion.size());
-        Assert.assertEquals(bValue, byVersion.get(bKey));
-        Assert.assertEquals(cValue, byVersion.get(cKey));
-        Assert.assertEquals(dValue, byVersion.get(dKey));
+        Assertions.assertEquals(3, byVersion.size());
+        Assertions.assertEquals(bValue, byVersion.get(bKey));
+        Assertions.assertEquals(cValue, byVersion.get(cKey));
+        Assertions.assertEquals(dValue, byVersion.get(dKey));
 
         container.remove(dKey);
 
         byVersion = container.getCollection(6);
-        Assert.assertEquals(3, byVersion.size());
-        Assert.assertEquals(aValue, byVersion.get(aKey));
-        Assert.assertEquals(bValue, byVersion.get(bKey));
-        Assert.assertEquals(cValue, byVersion.get(cKey));
+        Assertions.assertEquals(3, byVersion.size());
+        Assertions.assertEquals(aValue, byVersion.get(aKey));
+        Assertions.assertEquals(bValue, byVersion.get(bKey));
+        Assertions.assertEquals(cValue, byVersion.get(cKey));
     }
 
     @Test
@@ -547,20 +547,20 @@ public class InheritingMetadataContainerTest {
         container.put(eKey, eValue);
 
         Map<MetadataKey, MetadataValue> byVersion = container.getCollection(6);
-        Assert.assertEquals(4, byVersion.size());
-        Assert.assertEquals(bValue, byVersion.get(bKey));
-        Assert.assertEquals(cValue, byVersion.get(cKey));
-        Assert.assertEquals(dValue, byVersion.get(dKey));
-        Assert.assertEquals(eValue, byVersion.get(eKey));
+        Assertions.assertEquals(4, byVersion.size());
+        Assertions.assertEquals(bValue, byVersion.get(bKey));
+        Assertions.assertEquals(cValue, byVersion.get(cKey));
+        Assertions.assertEquals(dValue, byVersion.get(dKey));
+        Assertions.assertEquals(eValue, byVersion.get(eKey));
 
         container.remove(dKey);
 
         byVersion = container.getCollection(6);
-        Assert.assertEquals(4, byVersion.size());
-        Assert.assertEquals(aValue, byVersion.get(aKey));
-        Assert.assertEquals(bValue, byVersion.get(bKey));
-        Assert.assertEquals(cValue, byVersion.get(cKey));
-        Assert.assertEquals(eValue, byVersion.get(eKey));
+        Assertions.assertEquals(4, byVersion.size());
+        Assertions.assertEquals(aValue, byVersion.get(aKey));
+        Assertions.assertEquals(bValue, byVersion.get(bKey));
+        Assertions.assertEquals(cValue, byVersion.get(cKey));
+        Assertions.assertEquals(eValue, byVersion.get(eKey));
     }
 
     @Test
@@ -594,33 +594,33 @@ public class InheritingMetadataContainerTest {
         container.put(key7, value7);
 
         Map<MetadataKey, MetadataValue> byVersion1 = container.getCollection(1);
-        Assert.assertTrue(byVersion1.size() == 1);
-        Assert.assertEquals(byVersion1.get(key1), value1);
+        Assertions.assertEquals(1, byVersion1.size());
+        Assertions.assertEquals(byVersion1.get(key1), value1);
 
         Map<MetadataKey, MetadataValue> byVersion4 = container.getCollection(4);
-        Assert.assertTrue(byVersion4.size() == 2);
-        Assert.assertEquals(byVersion4.get(key1), value1);
-        Assert.assertEquals(byVersion4.get(key4), value4);
+        Assertions.assertEquals(2, byVersion4.size());
+        Assertions.assertEquals(byVersion4.get(key1), value1);
+        Assertions.assertEquals(byVersion4.get(key4), value4);
 
         Map<MetadataKey, MetadataValue> byVersion7 = container.getCollection(7);
-        Assert.assertTrue(byVersion7.size() == 2);
-        Assert.assertEquals(byVersion7.get(key1), value1);
-        Assert.assertEquals(byVersion7.get(key7), value7);
+        Assertions.assertEquals(2, byVersion7.size());
+        Assertions.assertEquals(byVersion7.get(key1), value1);
+        Assertions.assertEquals(byVersion7.get(key7), value7);
 
         container.remove(key4);
 
         byVersion1 = container.getCollection(1);
-        Assert.assertTrue(byVersion1.size() == 1);
-        Assert.assertEquals(byVersion1.get(key1), value1);
+        Assertions.assertEquals(1, byVersion1.size());
+        Assertions.assertEquals(byVersion1.get(key1), value1);
 
         byVersion4 = container.getCollection(4);
-        Assert.assertTrue(byVersion4.size() == 1);
-        Assert.assertEquals(byVersion4.get(key1), value1);
+        Assertions.assertEquals(1, byVersion4.size());
+        Assertions.assertEquals(byVersion4.get(key1), value1);
 
         byVersion7 = container.getCollection(7);
-        Assert.assertTrue(byVersion7.size() == 2);
-        Assert.assertEquals(byVersion7.get(key1), value1);
-        Assert.assertEquals(byVersion7.get(key7), value7);
+        Assertions.assertEquals(2, byVersion7.size());
+        Assertions.assertEquals(byVersion7.get(key1), value1);
+        Assertions.assertEquals(byVersion7.get(key7), value7);
     }
 
 }

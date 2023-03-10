@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
@@ -31,6 +31,8 @@ import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.SubjectSchemas;
 
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
@@ -86,8 +88,9 @@ public class BySchemaFieldsVerifierTest {
             fieldsBuilder.append(String.format("{\"name\":\"%s\",\"type\":\"int\"}", field));
         }
         return String.format(
-                        "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
-                        fieldsBuilder.toString());
+                "{\"type\":\"record\",\"name\":\"testSchema\",\"fields\":[%s]}",
+                fieldsBuilder
+        );
     }
 
     @Test
@@ -117,82 +120,96 @@ public class BySchemaFieldsVerifierTest {
         try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
 
-            VerificationResult result = null;
+            VerificationResult result;
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(1).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(2).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(3).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(4).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(5).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(6).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, subjectSchemas.getSchema(7).getSchemaAvro());
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
         }
     }
 
-    @Test(expected=Exception.class)
-    public void testInitFailedOnUnfeasibleConfig() throws Exception {
-        SubjectSchemas<BasicSchemaInfo> subjectSchemas = testSubject(
-                new String[] {"a"},                 // 1
-                new String[] {"a","b"},             // 2
-                new String[] {"b", "c"},            // 3
-                new String[] {"b", "e"}             // 4
-                );
+    @Test
+    public void testInitFailedOnUnfeasibleConfig() {
+        assertThrows(
+                Exception.class,
+                () -> {
+                    SubjectSchemas<BasicSchemaInfo> subjectSchemas = testSubject(
+                            new String[] {"a"},                 // 1
+                            new String[] {"a","b"},             // 2
+                            new String[] {"b", "c"},            // 3
+                            new String[] {"b", "e"}             // 4
+                    );
 
-        ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
-        Mockito.
-            when(schemaRegistryClient.getSubjectSchemaInfos(Mockito.anyString())).
-            thenReturn(subjectSchemas);
+                    ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
+                    Mockito.
+                            when(schemaRegistryClient.getSubjectSchemaInfos(Mockito.anyString())).
+                            thenReturn(subjectSchemas);
 
-        Map<String, Object> config = new HashMap<>();
-        config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_REQUIRED_CONFIG, "a");
-        config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_EXPECTED_CONFIG, "c");
+                    Map<String, Object> config = new HashMap<>();
+                    config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_REQUIRED_CONFIG, "a");
+                    config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_EXPECTED_CONFIG, "c");
 
-        try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
-            verifier.init("nomatter", schemaRegistryClient, config);
-        }
+                    try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
+                        verifier.init("nomatter", schemaRegistryClient, config);
+                    }
+                }
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testInitFailedOnMissingConfigArgument() throws Exception {
-        Map<String, Object> config = null;
+    @Test
+    public void testInitFailedOnMissingConfigArgument() {
+        assertThrows(
+                Exception.class,
+                () -> {
+                    Map<String, Object> config = null;
 
-        ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
+                    ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
 
-        try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
-            verifier.init("nomatter", schemaRegistryClient, config);
-        }
+                    try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
+                        verifier.init("nomatter", schemaRegistryClient, config);
+                    }
+                }
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testInitFailedOnInvalidRequiredFieldsArgument() throws Exception {
-        Map<String, Object> config = new HashMap<>();
-        config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_REQUIRED_CONFIG, "");
+    @Test
+    public void testInitFailedOnInvalidRequiredFieldsArgument() {
+        assertThrows(
+                Exception.class,
+                () -> {
+                    Map<String, Object> config = new HashMap<>();
+                    config.put(BySchemaFieldsVerifier.SCHEMA_FIELDS_REQUIRED_CONFIG, "");
 
-        ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
+                    ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
 
-        try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
-            verifier.init("nomatter", schemaRegistryClient, config);
-        }
+                    try (BySchemaFieldsVerifier verifier = new BySchemaFieldsVerifier()) {
+                        verifier.init("nomatter", schemaRegistryClient, config);
+                    }
+                }
+        );
     }
-
 }

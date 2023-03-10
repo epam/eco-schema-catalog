@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
@@ -27,11 +27,11 @@ import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 public class IdentitySchemaInfoTest {
 
     @Test
-    public void testEcoIdCalculated() throws Exception {
+    public void testEcoIdCalculated() {
         IdentitySchemaInfo schemaInfo = SchemaTestData.randomIdentitySchemaInfo();
 
-        Assert.assertNotNull(schemaInfo);
-        Assert.assertNotNull(schemaInfo.getEcoId());
+        Assertions.assertNotNull(schemaInfo);
+        Assertions.assertNotNull(schemaInfo.getEcoId());
     }
 
     @Test
@@ -39,11 +39,11 @@ public class IdentitySchemaInfoTest {
         IdentitySchemaInfo origin = SchemaTestData.randomIdentitySchemaInfo();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         IdentitySchemaInfo deserialized = JsonMapper.jsonToObject(json, IdentitySchemaInfo.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

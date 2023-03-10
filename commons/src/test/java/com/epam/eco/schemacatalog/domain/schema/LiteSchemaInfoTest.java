@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
@@ -31,20 +31,20 @@ public class LiteSchemaInfoTest {
         LiteSchemaInfo origin = SchemaTestData.randomLiteSchemaInfo();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         LiteSchemaInfo deserialized = JsonMapper.jsonToObject(json, LiteSchemaInfo.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testCasted() throws Exception {
+    public void testCasted() {
         LiteSchemaInfo origin = SchemaTestData.randomLiteSchemaInfo();
 
         IdentitySchemaInfo schemaInfo = IdentitySchemaInfo.cast(origin);
-        Assert.assertNotNull(schemaInfo);
-        Assert.assertNotEquals(origin, schemaInfo);
+        Assertions.assertNotNull(schemaInfo);
+        Assertions.assertNotEquals(origin, schemaInfo);
     }
 
 }

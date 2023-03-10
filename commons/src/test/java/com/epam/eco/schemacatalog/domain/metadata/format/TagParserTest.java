@@ -15,8 +15,10 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
@@ -24,103 +26,118 @@ import org.junit.Test;
 public class TagParserTest {
 
     @Test
-    public void testTagIsParsed() throws Exception {
+    public void testTagIsParsed() {
         Tag tag = TagParser.parse("{@link}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals(null, tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertNull(tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link }");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals(null, tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertNull(tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link      &vert;     }");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals("     |     ", tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertEquals("     |     ", tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link param_title}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals("param_title", tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertEquals("param_title", tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link param_title|param_link}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals("param_title", tag.getParams().get(0));
-        Assert.assertEquals("param_link", tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertEquals("param_title", tag.getParams().get(0));
+        Assertions.assertEquals("param_link", tag.getParams().get(1));
 
         tag = TagParser.parse("{@link |}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals(null, tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertNull(tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link |param_link}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals(null, tag.getParams().get(0));
-        Assert.assertEquals("param_link", tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertNull(tag.getParams().get(0));
+        Assertions.assertEquals("param_link", tag.getParams().get(1));
 
         tag = TagParser.parse("{@link param_title|}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals("param_title", tag.getParams().get(0));
-        Assert.assertEquals(null, tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertEquals("param_title", tag.getParams().get(0));
+        Assertions.assertNull(tag.getParams().get(1));
 
         tag = TagParser.parse("{@link &#123;&#124;&rbrace;|&#124;}");
-        Assert.assertNotNull(tag);
-        Assert.assertEquals(TagType.LINK, tag.getType());
-        Assert.assertNotNull(tag.getParams());
-        Assert.assertEquals(2, tag.getParams().size());
-        Assert.assertEquals("{|}", tag.getParams().get(0));
-        Assert.assertEquals("|", tag.getParams().get(1));
+        Assertions.assertNotNull(tag);
+        Assertions.assertEquals(TagType.LINK, tag.getType());
+        Assertions.assertNotNull(tag.getParams());
+        Assertions.assertEquals(2, tag.getParams().size());
+        Assertions.assertEquals("{|}", tag.getParams().get(0));
+        Assertions.assertEquals("|", tag.getParams().get(1));
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument1() throws Exception {
-        TagParser.parse(null);
+    @Test
+    public void testParserFailsOnIllegalArgument1() {
+        assertThrows(
+                Exception.class,
+                () -> TagParser.parse(null)
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument2() throws Exception {
-        TagParser.parse("");
+    @Test
+    public void testParserFailsOnIllegalArgument2() {
+        assertThrows(
+                Exception.class,
+                () -> TagParser.parse("")
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument3() throws Exception {
-        TagParser.parse("{@lin}");
+    @Test
+    public void testParserFailsOnIllegalArgument3() {
+        assertThrows(
+                Exception.class,
+                () -> TagParser.parse("{@lin}")
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument4() throws Exception {
-        TagParser.parse("{@link");
+    @Test
+    public void testParserFailsOnIllegalArgument4() {
+        assertThrows(
+                Exception.class,
+                () -> TagParser.parse("{@link")
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testParserFailsOnIllegalArgument5() throws Exception {
-        TagParser.parse("@link}");
+    @Test
+    public void testParserFailsOnIllegalArgument5() {
+        assertThrows(
+                Exception.class,
+                () -> TagParser.parse("@link}")
+        );
     }
 
 }

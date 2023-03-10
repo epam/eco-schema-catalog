@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
@@ -27,13 +27,13 @@ import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 public class BasicSchemaInfoTest {
 
     @Test
-    public void testAvroSchemaAvailable() throws Exception {
+    public void testAvroSchemaAvailable() {
         BasicSchemaInfo schemaInfo = SchemaTestData.randomBasicSchemaInfo();
 
-        Assert.assertNotNull(schemaInfo);
-        Assert.assertNotNull(schemaInfo.getSchemaAvro());
-        Assert.assertNotNull(schemaInfo.getSchemaFieldInfosAsList());
-        Assert.assertFalse(schemaInfo.getSchemaFieldInfosAsList().isEmpty());
+        Assertions.assertNotNull(schemaInfo);
+        Assertions.assertNotNull(schemaInfo.getSchemaAvro());
+        Assertions.assertNotNull(schemaInfo.getSchemaFieldInfosAsList());
+        Assertions.assertFalse(schemaInfo.getSchemaFieldInfosAsList().isEmpty());
     }
 
     @Test
@@ -41,20 +41,20 @@ public class BasicSchemaInfoTest {
         BasicSchemaInfo origin = SchemaTestData.randomBasicSchemaInfo();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         BasicSchemaInfo deserialized = JsonMapper.jsonToObject(json, BasicSchemaInfo.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testCasted() throws Exception {
+    public void testCasted() {
         BasicSchemaInfo origin = SchemaTestData.randomBasicSchemaInfo();
 
         IdentitySchemaInfo schemaInfo = IdentitySchemaInfo.cast(origin);
-        Assert.assertNotNull(schemaInfo);
-        Assert.assertNotEquals(origin, schemaInfo);
+        Assertions.assertNotNull(schemaInfo);
+        Assertions.assertNotEquals(origin, schemaInfo);
     }
 
 }

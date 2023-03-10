@@ -22,8 +22,8 @@ import java.util.Random;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.commons.lang3.ObjectUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,19 +48,19 @@ public class KafkaSchemaRegistryStoreIT {
     private SchemaRegistryStore schemaRegistryStore;
 
     @Test
-    public void testAllWorksFine() throws Exception {
+    public void testAllWorksFine() {
         List<String> allSubjects = schemaRegistryStore.getAllSubjects();
-        Assert.assertNotNull(allSubjects);
-        Assert.assertFalse(allSubjects.isEmpty());
+        Assertions.assertNotNull(allSubjects);
+        Assertions.assertFalse(allSubjects.isEmpty());
 
         for (String subject : allSubjects) {
             List<SchemaEntity> subjectSchemas = schemaRegistryStore.getSchemas(subject);
-            Assert.assertNotNull(subjectSchemas);
+            Assertions.assertNotNull(subjectSchemas);
 
             SchemaEntity latestSchema = subjectSchemas.stream()
                     .max((o1, o2) -> ObjectUtils.compare(o1.getVersion(), o2.getVersion())).get();
 
-            Assert.assertTrue(latestSchema.isVersionLatest());
+            Assertions.assertTrue(latestSchema.isVersionLatest());
 
             int latestCount = 0;
             for (SchemaEntity schema : subjectSchemas) {
@@ -69,54 +69,54 @@ public class KafkaSchemaRegistryStoreIT {
                 }
             }
 
-            Assert.assertEquals(1, latestCount);
+            Assertions.assertEquals(1, latestCount);
         }
 
         List<SchemaEntity> allSchemas = schemaRegistryStore.getAllSchemas();
-        Assert.assertNotNull(allSchemas);
-        Assert.assertFalse(allSchemas.isEmpty());
+        Assertions.assertNotNull(allSchemas);
+        Assertions.assertFalse(allSchemas.isEmpty());
 
         String subject = allSubjects.get(new Random().nextInt(allSubjects.size()));
         SchemaEntity latestSchema = schemaRegistryStore.getLatestSchema(subject);
-        Assert.assertNotNull(latestSchema);
-        Assert.assertTrue(latestSchema.isVersionLatest());
-        Assert.assertNotNull(latestSchema.getSchema());
-        Assert.assertNotNull(latestSchema.getSubject());
-        Assert.assertNotNull(latestSchema.getCompatibilityLevel());
+        Assertions.assertNotNull(latestSchema);
+        Assertions.assertTrue(latestSchema.isVersionLatest());
+        Assertions.assertNotNull(latestSchema.getSchema());
+        Assertions.assertNotNull(latestSchema.getSubject());
+        Assertions.assertNotNull(latestSchema.getCompatibilityLevel());
 
         subject = allSubjects.get(new Random().nextInt(allSubjects.size()));
         List<SchemaEntity> schemas = schemaRegistryStore.getSchemas(subject);
-        Assert.assertFalse(schemas.isEmpty());
+        Assertions.assertFalse(schemas.isEmpty());
 
         List<String> subjects = Arrays.asList(
                 allSubjects.get(new Random().nextInt(allSubjects.size())),
                 allSubjects.get(new Random().nextInt(allSubjects.size())),
                 allSubjects.get(new Random().nextInt(allSubjects.size())));
         schemas = schemaRegistryStore.getSchemas(subjects);
-        Assert.assertFalse(schemas.isEmpty());
+        Assertions.assertFalse(schemas.isEmpty());
     }
 
     @Test
-    public void testSchemaRegisteredAndDeleted() throws Exception {
+    public void testSchemaRegisteredAndDeleted() {
         String subject = "test_register_and_delete_schema_" + System.currentTimeMillis();
         Schema schema = Schema.create(Type.LONG);
 
         SchemaEntity schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
-        Assert.assertNotNull(schemaEntity);
+        Assertions.assertNotNull(schemaEntity);
 
         // and one more time
         schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
-        Assert.assertNotNull(schemaEntity);
+        Assertions.assertNotNull(schemaEntity);
 
         schemaRegistryStore.deleteSchema(subject, schemaEntity.getVersion());
 
         schemaEntity = schemaRegistryStore.getSchema(subject, schemaEntity.getVersion());
-        Assert.assertNotNull(schemaEntity);
-        Assert.assertTrue(schemaEntity.isDeleted());
+        Assertions.assertNotNull(schemaEntity);
+        Assertions.assertTrue(schemaEntity.isDeleted());
     }
 
     @Test
-    public void testSubjectDeleted() throws Exception {
+    public void testSubjectDeleted() {
         String schema1 = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]}";
         String schema2 = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"},{\"name\":\"f2\",\"type\":[\"null\",\"int\"],\"default\": null}]}";
         String schema3 = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"},{\"name\":\"f2\",\"type\":[\"null\",\"int\"],\"default\": null},{\"name\":\"f3\",\"type\":[\"null\",\"int\"],\"default\": null}]}";
@@ -125,35 +125,35 @@ public class KafkaSchemaRegistryStoreIT {
 
         SchemaEntity schemaEntity1 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema1));
-        Assert.assertNotNull(schemaEntity1);
+        Assertions.assertNotNull(schemaEntity1);
 
         SchemaEntity schemaEntity2 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema2));
-        Assert.assertNotNull(schemaEntity2);
+        Assertions.assertNotNull(schemaEntity2);
 
         SchemaEntity schemaEntity3 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema3));
-        Assert.assertNotNull(schemaEntity3);
+        Assertions.assertNotNull(schemaEntity3);
 
         schemaRegistryStore.deleteSubject(subject);
 
         List<SchemaEntity> schemas = schemaRegistryStore.getSchemas(subject);
-        Assert.assertNotNull(schemas);
-        Assert.assertEquals(3, schemas.size());
-        Assert.assertTrue(schemas.get(0).isDeleted());
-        Assert.assertTrue(schemas.get(1).isDeleted());
-        Assert.assertTrue(schemas.get(2).isDeleted());
+        Assertions.assertNotNull(schemas);
+        Assertions.assertEquals(3, schemas.size());
+        Assertions.assertTrue(schemas.get(0).isDeleted());
+        Assertions.assertTrue(schemas.get(1).isDeleted());
+        Assertions.assertTrue(schemas.get(2).isDeleted());
     }
 
     @Test
-    public void testSubjectCompatibilityUpdated() throws Exception {
+    public void testSubjectCompatibilityUpdated() {
         String subject = "test_update_subject_compatibility_" + System.currentTimeMillis();
         CompatibilityLevel compatibilityLevel =
                 CompatibilityLevel.values()[new Random().nextInt(CompatibilityLevel.values().length)];
 
         schemaRegistryStore.updateSubjectCompatibility(subject, compatibilityLevel);
 
-        Assert.assertEquals(schemaRegistryStore.getSubjectCompatibility(subject), compatibilityLevel);
+        Assertions.assertEquals(schemaRegistryStore.getSubjectCompatibility(subject), compatibilityLevel);
     }
 
 }

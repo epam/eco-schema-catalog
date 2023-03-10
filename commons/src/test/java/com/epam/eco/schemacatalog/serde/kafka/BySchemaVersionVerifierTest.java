@@ -20,13 +20,15 @@ import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -53,47 +55,57 @@ public class BySchemaVersionVerifierTest {
         try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
 
-            VerificationResult result = null;
+            VerificationResult result;
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assert.assertNotNull(result);
-            Assert.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
         }
     }
 
-    @Test(expected=Exception.class)
-    public void testInitFailedOnMissingConfigArgument() throws Exception {
-        Map<String, Object> config = null;
+    @Test
+    public void testInitFailedOnMissingConfigArgument() {
+        assertThrows(
+                Exception.class,
+                () -> {
+                    Map<String, Object> config = null;
 
-        ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
+                    ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
 
-        try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
-            verifier.init("nomatter", schemaRegistryClient, config);
-        }
+                    try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
+                        verifier.init("nomatter", schemaRegistryClient, config);
+                    }
+                }
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testInitFailedOnInvalidVersionArgument() throws Exception {
-        Map<String, Object> config = new HashMap<>();
-        config.put(BySchemaVersionVerifier.SCHEMA_VERSION_CONFIG, "[3,2]");
+    @Test
+    public void testInitFailedOnInvalidVersionArgument() {
+        assertThrows(
+                Exception.class,
+                () -> {
+                    Map<String, Object> config = new HashMap<>();
+                    config.put(BySchemaVersionVerifier.SCHEMA_VERSION_CONFIG, "[3,2]");
 
-        ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
+                    ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
 
-        try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
-            verifier.init("nomatter", schemaRegistryClient, config);
-        }
+                    try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
+                        verifier.init("nomatter", schemaRegistryClient, config);
+                    }
+                }
+        );
     }
 
 }

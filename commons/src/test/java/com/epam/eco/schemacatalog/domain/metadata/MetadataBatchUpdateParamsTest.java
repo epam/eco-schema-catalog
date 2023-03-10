@@ -18,11 +18,13 @@ package com.epam.eco.schemacatalog.domain.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.MetadataTestData;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
@@ -30,7 +32,7 @@ import com.epam.eco.schemacatalog.testdata.MetadataTestData;
 public class MetadataBatchUpdateParamsTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    public void testSerializedToJsonAndBack() {
         MetadataBatchUpdateParams origin = MetadataBatchUpdateParams.builder().
                 update(MetadataTestData.randomUpdateParams()).
                 update(MetadataTestData.randomUpdateParams()).
@@ -42,15 +44,15 @@ public class MetadataBatchUpdateParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         MetadataBatchUpdateParams deserialized = JsonMapper.jsonToObject(json, MetadataBatchUpdateParams.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testConsistsOfExpectedUpdates() throws Exception {
+    public void testConsistsOfExpectedUpdates() {
         MetadataUpdateParams params1 = MetadataTestData.randomUpdateParams();
         MetadataKey key1 = params1.getKey();
 
@@ -70,15 +72,15 @@ public class MetadataBatchUpdateParamsTest {
 
         Map<MetadataKey, MetadataUpdateParams> operations = batchParams.getOperations();
 
-        Assert.assertNotNull(operations);
-        Assert.assertEquals(3, operations.size());
-        Assert.assertEquals(params1, operations.get(key1));
-        Assert.assertEquals(params2, operations.get(key2));
-        Assert.assertNull(operations.get(key3));
+        Assertions.assertNotNull(operations);
+        Assertions.assertEquals(3, operations.size());
+        Assertions.assertEquals(params1, operations.get(key1));
+        Assertions.assertEquals(params2, operations.get(key2));
+        Assertions.assertNull(operations.get(key3));
     }
 
     @Test
-    public void testSizesExpected() throws Exception {
+    public void testSizesExpected() {
         MetadataUpdateParams params1 = MetadataTestData.randomUpdateParams();
         MetadataKey key1 = params1.getKey();
 
@@ -105,28 +107,39 @@ public class MetadataBatchUpdateParamsTest {
 
         Map<MetadataKey, MetadataUpdateParams> operations = batchParams.getOperations();
 
-        Assert.assertNotNull(operations);
-        Assert.assertEquals(3, operations.size());
+        Assertions.assertNotNull(operations);
+        Assertions.assertEquals(3, operations.size());
     }
 
-    @Test(expected=Exception.class)
-    public void testFailsOnIllegalArguments1() throws Exception {
-        new MetadataBatchUpdateParams(null);
+    @Test
+    public void testFailsOnIllegalArguments1() {
+        assertThrows(
+                Exception.class,
+                () -> new MetadataBatchUpdateParams(null)
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testFailsOnIllegalArguments2() throws Exception {
-        new MetadataBatchUpdateParams(new HashMap<>());
+    @Test
+    public void testFailsOnIllegalArguments2() {
+        assertThrows(
+                Exception.class,
+                () -> new MetadataBatchUpdateParams(new HashMap<>())
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testFailsOnIllegalArguments3() throws Exception {
-        MetadataBatchUpdateParams.builder().update(null);
+    @Test
+    public void testFailsOnIllegalArguments3() {
+        assertThrows(
+                Exception.class,
+                () -> MetadataBatchUpdateParams.builder().update(null)
+        );
     }
 
-    @Test(expected=Exception.class)
-    public void testFailsOnIllegalArguments4() throws Exception {
-        MetadataBatchUpdateParams.builder().delete(null);
+    @Test
+    public void testFailsOnIllegalArguments4() {
+        assertThrows(
+                Exception.class,
+                () -> MetadataBatchUpdateParams.builder().delete(null)
+        );
     }
-
 }

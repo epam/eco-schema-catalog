@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.rest.convert;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.LiteSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
@@ -72,17 +72,17 @@ public class SchemaDocumentConverterTest {
 
         LiteSchemaInfo schemaInfo = SchemaDocumentConverter.toLiteSchemaInfo(doc);
 
-        Assert.assertEquals("subject", schemaInfo.getSubject());
-        Assert.assertEquals(EcoIdUtils.formatId("subject", 2), schemaInfo.getEcoId());
-        Assert.assertEquals(1, schemaInfo.getSchemaRegistryId());
-        Assert.assertEquals(2, schemaInfo.getVersion());
-        Assert.assertEquals("rootFullname", schemaInfo.getFullName());
-        Assert.assertEquals("rootName", schemaInfo.getName());
-        Assert.assertEquals("rootNamespace", schemaInfo.getNamespace());
-        Assert.assertEquals(CompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
-        Assert.assertEquals(Mode.IMPORT, schemaInfo.getMode());
-        Assert.assertTrue(schemaInfo.isVersionLatest());
-        Assert.assertFalse(schemaInfo.isDeleted());
+        Assertions.assertEquals("subject", schemaInfo.getSubject());
+        Assertions.assertEquals(EcoIdUtils.formatId("subject", 2), schemaInfo.getEcoId());
+        Assertions.assertEquals(1, schemaInfo.getSchemaRegistryId());
+        Assertions.assertEquals(2, schemaInfo.getVersion());
+        Assertions.assertEquals("rootFullname", schemaInfo.getFullName());
+        Assertions.assertEquals("rootName", schemaInfo.getName());
+        Assertions.assertEquals("rootNamespace", schemaInfo.getNamespace());
+        Assertions.assertEquals(CompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
+        Assertions.assertEquals(Mode.IMPORT, schemaInfo.getMode());
+        Assertions.assertTrue(schemaInfo.isVersionLatest());
+        Assertions.assertFalse(schemaInfo.isDeleted());
     }
 
 }

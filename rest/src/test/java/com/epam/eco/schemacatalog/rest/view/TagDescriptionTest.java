@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.rest.view;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
@@ -26,7 +26,7 @@ import com.epam.eco.commons.json.JsonMapper;
 public class TagDescriptionTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    public void testSerializedToJsonAndBack() {
         TagDescription origin = TagDescription.builder()
                 .name("NAME")
                 .addParamName("param-1")
@@ -38,11 +38,11 @@ public class TagDescriptionTest {
                 .build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         TagDescription deserialized = JsonMapper.jsonToObject(json, TagDescription.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

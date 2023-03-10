@@ -15,15 +15,15 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Dzmitry_Krivolap
  */
 public class HtmlPartFormatterTest {
 
-    private HtmlPartFormatter formatter = HtmlPartFormatter.INSTANCE;
+    private final HtmlPartFormatter formatter = HtmlPartFormatter.INSTANCE;
 
     @Test
     public void testFormatLink() {
@@ -34,7 +34,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Google" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class HtmlPartFormatterTest {
                 formatter);
         String expected =
                 "{@sql_table database|schema|table}";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Google" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"link#&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"link#&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class HtmlPartFormatterTest {
                 formatter);
         String expected =
                 "{@sql_table database|&lt;div&gt;&lt;/div&gt;|table} &lt;form&gt;&lt;/form&gt;";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class HtmlPartFormatterTest {
                 formatter);
         String expected =
                 "<a href=\"_no_javascript_alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">title</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a>";
-        Assert.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result);
     }
 
 }

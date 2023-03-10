@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
@@ -35,12 +35,12 @@ public class SubjectUpdateCompatibilityParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assert.assertNotNull(json);
+        Assertions.assertNotNull(json);
 
         SubjectCompatibilityUpdateParams deserialized = JsonMapper.jsonToObject(
                 json, SubjectCompatibilityUpdateParams.class);
-        Assert.assertNotNull(deserialized);
-        Assert.assertEquals(origin, deserialized);
+        Assertions.assertNotNull(deserialized);
+        Assertions.assertEquals(origin, deserialized);
     }
 
 }

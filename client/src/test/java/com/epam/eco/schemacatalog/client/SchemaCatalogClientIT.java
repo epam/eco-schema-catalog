@@ -15,8 +15,8 @@
  */
 package com.epam.eco.schemacatalog.client;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +46,7 @@ public class SchemaCatalogClientIT {
     public void testSchemaRegistryServiceInfoResolved() {
         SchemaRegistryServiceInfo info = client.getSchemaRegistryServiceInfo();
 
-        Assert.assertNotNull(info);
+        Assertions.assertNotNull(info);
     }
 
     @SuppressWarnings("unused")

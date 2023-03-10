@@ -18,7 +18,7 @@ package com.epam.eco.schemacatalog.fts.convert;
 import java.util.Arrays;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SchemaDocumentConverterTest {
 
     @Test
-    public void testSchemaConverted() throws Exception {
+    public void testSchemaConverted() {
         FullSchemaInfo schemaInfo = SchemaInfoGenerator.randomFull("Subject", 3);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
@@ -88,7 +88,7 @@ public class SchemaDocumentConverterTest {
 
         assertThat(schemaDocument.getProperty()).isNotNull();
         // can't check sizes as logical types are considered as properties
-        // Assert.assertEquals(TestSchemaData.PROP_KEYS.length, schemaDocument.getProperties().size());
+        // Assertions.assertEquals(TestSchemaData.PROP_KEYS.length, schemaDocument.getProperties().size());
         for (int i = 0; i < SchemaInfoGenerator.PROP_KEYS.length; i++) {
             assertThat(schemaDocument.getProperty()).contains(
                     new KeyValue(
@@ -99,7 +99,7 @@ public class SchemaDocumentConverterTest {
     }
 
     @Test
-    public void testSubjectAndVersionConverted() throws Exception {
+    public void testSubjectAndVersionConverted() {
         SubjectAndVersion subjectAndVersion = SubjectAndVersion.with("TestSubject", 42);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(subjectAndVersion);
