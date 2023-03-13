@@ -21,17 +21,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.eco.schemacatalog.domain.metadata.Metadata;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * @author Raman_Babich
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes=Config.class)
 public class SchemaCatalogStoreImplIT {
 
@@ -61,7 +61,7 @@ public class SchemaCatalogStoreImplIT {
     @Autowired
     private TestSchemaCatalogStoreUpdateListener updateListener;
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         SecurityContext context = new SecurityContextImpl();
         context.setAuthentication(new TestingAuthenticationToken("principal", null));

@@ -303,7 +303,7 @@ public final class MockExtendedSchemaRegistryClient
         if (id == null) {
             id = getIdFromRegistry(subject, schema);
             schemaIdMap.put(schema, id);
-            getIdCache().get(null).put(id, schema);
+            getIdCache().get(":.:").put(id, schema);
         }
         return id;
     }
@@ -400,12 +400,25 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     private CompatibilityLevel retrieveCompatibility(String subject) {
+        String compatibility = null;
         try {
-            String compatibility = super.getCompatibility(subject);
-            return compatibility != null ? CompatibilityLevel.forName(compatibility) : null;
+            compatibility = super.getCompatibility(subject);
+        } catch (RestClientException e) {
+            // if it is not found then keep compatibility == null
+            if (!isNotFoundError(e)) {
+                throw new RuntimeException(e);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        try {
+            if (compatibility == null) {
+                compatibility = super.getCompatibility(null);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return compatibility != null ? CompatibilityLevel.forName(compatibility) : null;
     }
 
     private Mode retrieveMode(String subject) {
@@ -430,8 +443,8 @@ public final class MockExtendedSchemaRegistryClient
 
         return (int) callClientMethod(
                 "getIdFromRegistry",
-                new Class[] {String.class, Schema.class, boolean.class},
-                subject, schema, Boolean.TRUE);
+                new Class[] {String.class, ParsedSchema.class, boolean.class, int.class},
+                subject, schema, Boolean.TRUE, -1);
     }
 
     private void updateCompatibilityUnchecked(String subject, CompatibilityLevel compatibilityLevel) {
@@ -504,4 +517,17 @@ public final class MockExtendedSchemaRegistryClient
         }
     }
 
+    private boolean isNotFoundError(RestClientException rce) {
+        /*
+         * See io.confluent.kafka.schemaregistry.rest.exceptions.Errors
+         * public static final int SUBJECT_NOT_FOUND_ERROR_CODE = 40401;
+         * public static final int VERSION_NOT_FOUND_ERROR_CODE = 40402;
+         * public static final int SCHEMA_NOT_FOUND_ERROR_CODE = 40403;
+         * public static final int SUBJECT_LEVEL_COMPATIBILITY_NOT_CONFIGURED_ERROR_CODE = 40408;
+         */
+        return rce.getErrorCode() == 40401
+                || rce.getErrorCode() == 40402
+                || rce.getErrorCode() == 40403
+                || rce.getErrorCode() == 40408;
+    }
 }

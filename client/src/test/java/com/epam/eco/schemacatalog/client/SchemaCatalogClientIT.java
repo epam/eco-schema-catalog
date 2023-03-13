@@ -17,10 +17,10 @@ package com.epam.eco.schemacatalog.client;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.eco.schemacatalog.domain.metadata.FieldMetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataBatchUpdateParams;
@@ -35,7 +35,7 @@ import com.epam.eco.schemacatalog.fts.SearchResult;
 /**
  * @author Raman_Babich
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes=Config.class)
 public class SchemaCatalogClientIT {
 

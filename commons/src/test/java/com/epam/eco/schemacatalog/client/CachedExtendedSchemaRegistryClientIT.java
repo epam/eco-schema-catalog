@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -81,7 +80,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertEquals(schemaExpected, schemaResult);
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void getBySubjectAndNullVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
@@ -89,7 +89,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void getByBlankSubjectAndVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
@@ -97,7 +98,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void testSchemaInfoIsResolvedBySubjectAndVersion(ExtendedSchemaRegistryClient client) throws Exception {
         String subject = "getSchemaInfoTest-subj";
 
@@ -115,7 +117,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertEquals(schema, info.getParsedSchema());
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void getSchemaInfoByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
@@ -123,7 +126,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void getSchemaInfoByNullVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
@@ -131,7 +135,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void testLatestSchemaInfoIsResolvedBySubject(ExtendedSchemaRegistryClient client) throws Exception {
         String subject = "getSchemaInfoLatestTest-subj";
 
@@ -150,7 +155,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertEquals(schemaExpected, info.getParsedSchema());
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void getSchemaInfoLatestByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
@@ -158,7 +164,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void testSchemaIsModifiedAndRegistered(ExtendedSchemaRegistryClient client) {
         String subject = "modifyAndRegisterSchemaTest-subj";
 
@@ -182,6 +189,8 @@ public class CachedExtendedSchemaRegistryClientIT {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(propKey, propValue);
+
+//        client.register("nomatter", new AvroSchema(schema));
 
         BasicSchemaInfo info = client.modifyAndRegisterSchema(
                 "nomatter",
@@ -214,7 +223,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertEquals("c", info.getSchemaAvro().getFields().get(2).name());
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void testSchemasWithDifferentFieldOrderAreSortedModifiedAndRegisteredAsSingleSchema(ExtendedSchemaRegistryClient client) {
         String subject = "modifySortAndRegisterSchemaTest-subj";
 
@@ -255,7 +265,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         assertEquals(info1.getSchemaAvro(), info2.getSchemaAvro());
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void modifyAndRegisterNotExistentSchema(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
@@ -268,7 +279,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void modifyAndRegisterWithNullSourceSchema(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 NullPointerException.class,
@@ -281,7 +293,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void modifyAndRegisterWithNullTargetSubject(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
@@ -294,7 +307,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void modifyAndRegisterWithBlankSourceSubject(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
@@ -307,7 +321,8 @@ public class CachedExtendedSchemaRegistryClientIT {
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(Clients.class)
     public void modifyAndRegisterWithNullSourceVersion(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,

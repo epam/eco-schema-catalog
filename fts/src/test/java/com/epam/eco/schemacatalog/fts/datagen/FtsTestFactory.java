@@ -57,9 +57,8 @@ public class FtsTestFactory {
     private static EnhancedRandom enhancedRandom;
 
     private static TestSchemaEntity entity;
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
-    private static Set<Integer> uniqueNumbers;
     private static Iterator<Integer> iterator;
 
     @Autowired
@@ -206,7 +205,7 @@ public class FtsTestFactory {
     }
 
     private static void generateUniqueNumbers(Integer max) {
-        uniqueNumbers = IntStream.range(0, max).boxed().collect(Collectors.toCollection(HashSet::new));
+        Set<Integer> uniqueNumbers = IntStream.range(0, max).boxed().collect(Collectors.toCollection(HashSet::new));
         iterator = uniqueNumbers.iterator();
     }
 

@@ -20,13 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.epam.eco.commons.avro.modification.RenameSchema;
 import com.epam.eco.commons.avro.modification.SchemaModifications;
 import com.epam.eco.commons.avro.modification.SetSchemaProperties;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
@@ -49,8 +52,6 @@ import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
 import static com.epam.eco.schemacatalog.fts.asserts.FtsAsserts.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +59,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Andrei_Tytsik
  */
-@RunWith(JUnitParamsRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Config.class})
 @TestPropertySource(value = "classpath:application.properties")
 public class SchemaDocumentRepositoryIT {
@@ -429,8 +430,8 @@ public class SchemaDocumentRepositoryIT {
                 .containsOnly(compatibility.toString());
     }
 
-    @Test
-    @Parameters(method = "searchByParamsTestDp")
+    @ParameterizedTest
+    @MethodSource("searchByParamsTestDp")
     public void searchByParamsTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
@@ -455,20 +456,18 @@ public class SchemaDocumentRepositoryIT {
                 .hasCorrectAggregations(documents);
     }
 
-    @SuppressWarnings("unused")
-    private Iterator<FtsTestCase> searchByParamsTestDp() {
+    private static Stream<Arguments> searchByParamsTestDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
-        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        ftsTestCases.addAll(FtsTestCaseGenerator.getRegExpTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getQueryStringTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getTermsTestCases(schemaInfo));
+        List<FtsTestCase> cases = new ArrayList<>(FtsTestCaseGenerator.getRegExpTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getQueryStringTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getTermsTestCases(schemaInfo));
 
-        return ftsTestCases.iterator();
+        return cases.stream().map(Arguments::of);
     }
 
-    @Test
-    @Parameters(method = "searchByJsonQueryTestDp")
+    @ParameterizedTest
+    @MethodSource("searchByJsonQueryTestDp")
     public void searchByJsonQueryTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
@@ -486,8 +485,8 @@ public class SchemaDocumentRepositoryIT {
                 .isEqualTo(ftsTestCase.getSchemaDocument());
     }
 
-    @Test
-    @Parameters(method = "searchByNotAnalyzedFieldsNegativeDp")
+    @ParameterizedTest
+    @MethodSource("searchByNotAnalyzedFieldsNegativeDp")
     public void searchByNotAnalyzedFieldsNegative(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
@@ -501,8 +500,8 @@ public class SchemaDocumentRepositoryIT {
                 .hasSize(0);
     }
 
-    @Test
-    @Parameters(method = "searchByAnalyzedFieldsDp")
+    @ParameterizedTest
+    @MethodSource("searchByAnalyzedFieldsDp")
     public void searchByAnalyzedFields(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
@@ -519,38 +518,35 @@ public class SchemaDocumentRepositoryIT {
                 .isEqualTo(ftsTestCase.getSchemaDocument());
     }
 
-    @SuppressWarnings("unused")
-    private Iterator<FtsTestCase> searchByNotAnalyzedFieldsNegativeDp() {
+    private static Stream<Arguments> searchByNotAnalyzedFieldsNegativeDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
 
-        List<FtsTestCase> ftsTestCases = new ArrayList<>(
+        List<FtsTestCase> cases = new ArrayList<>(
                 FtsTestCaseGenerator.getNegativeTestCasesForNotAnalyzedFields(schemaInfo));
 
-        return ftsTestCases.iterator();
+        return cases.stream().map(Arguments::of);
     }
 
-    @SuppressWarnings("unused")
-    private Iterator<FtsTestCase> searchByAnalyzedFieldsDp() {
+    private static Stream<Arguments> searchByAnalyzedFieldsDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
 
-        List<FtsTestCase> ftsTestCases = new ArrayList<>(
+        List<FtsTestCase> cases = new ArrayList<>(
                 FtsTestCaseGenerator.getTestCasesForAnalyzedFields(schemaInfo));
 
-        return ftsTestCases.iterator();
+        return cases.stream().map(Arguments::of);
     }
 
-    @SuppressWarnings("unused")
-    private Iterator<FtsTestCase> searchByJsonQueryTestDp() {
+    private static Stream<Arguments> searchByJsonQueryTestDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
-        List<FtsTestCase> ftsTestCases = new ArrayList<>();
 
-        ftsTestCases.addAll(FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getJsonTermsTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getJsonFuzzinessTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getJsonProximityTestCases(schemaInfo));
-        ftsTestCases.addAll(FtsTestCaseGenerator.getJsonBooleanOperatorsTestCases(schemaInfo));
+        List<FtsTestCase> cases = new ArrayList<>(
+                FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getJsonTermsTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getJsonFuzzinessTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getJsonProximityTestCases(schemaInfo));
+        cases.addAll(FtsTestCaseGenerator.getJsonBooleanOperatorsTestCases(schemaInfo));
 
-        return ftsTestCases.iterator();
+        return cases.stream().map(Arguments::of);
     }
 
     private Map<Integer, Schema> registerSchema(String subject, Schema schema) throws Exception {
@@ -565,7 +561,6 @@ public class SchemaDocumentRepositoryIT {
         for (int i = 0; i < times; i++) {
             SimpleEntry<String, String> property = FtsTestFactory.getRandomProperty();
             Schema schemaModified = SchemaModifications.of(
-                    new RenameSchema(FtsTestFactory.getRandomName(), null),
                     new SetSchemaProperties(property.getKey(), property.getValue())
             ).applyTo(schema);
             Integer schemaId = client.register(subject, new AvroSchema(schemaModified));

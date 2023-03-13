@@ -16,9 +16,11 @@
 package com.epam.eco.schemacatalog.store.schema.kafka;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.support.RetryTemplate;
 
 import com.epam.eco.schemacatalog.store.autoconfigure.SchemaCatalogStoreProperties;
 
@@ -30,4 +32,9 @@ import com.epam.eco.schemacatalog.store.autoconfigure.SchemaCatalogStoreProperti
 @Import(KafkaSchemaRegistryStoreConfiguration.class)
 @EnableConfigurationProperties(SchemaCatalogStoreProperties.class)
 public class Config {
+
+    @Bean
+    public RetryTemplate retryTemplate() {
+        return new RetryTemplate();
+    }
 }

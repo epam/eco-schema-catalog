@@ -550,7 +550,7 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
             String subject,
             Integer version) throws IOException, RestClientException {
         if (version != null) {
-            return getSchemaMetadata(subject, version.intValue());
+            return getSchemaMetadata(subject, version);
         } else {
             return getLatestSchemaMetadata(subject);
         }
@@ -627,11 +627,12 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
          * public static final int SUBJECT_NOT_FOUND_ERROR_CODE = 40401;
          * public static final int VERSION_NOT_FOUND_ERROR_CODE = 40402;
          * public static final int SCHEMA_NOT_FOUND_ERROR_CODE = 40403;
+         * public static final int SUBJECT_LEVEL_COMPATIBILITY_NOT_CONFIGURED_ERROR_CODE = 40408;
          */
-        return
-                rce.getErrorCode() == 40401 ||
-                rce.getErrorCode() == 40402 ||
-                rce.getErrorCode() == 40403;
+        return rce.getErrorCode() == 40401
+                || rce.getErrorCode() == 40402
+                || rce.getErrorCode() == 40403
+                || rce.getErrorCode() == 40408;
     }
 
 }

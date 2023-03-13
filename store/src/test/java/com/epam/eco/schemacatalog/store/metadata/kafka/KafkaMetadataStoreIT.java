@@ -22,14 +22,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.eco.schemacatalog.domain.metadata.MetadataKey;
 import com.epam.eco.schemacatalog.domain.metadata.MetadataValue;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Andrei_Tytsik
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes=Config.class)
 public class KafkaMetadataStoreIT {
 
@@ -54,13 +54,13 @@ public class KafkaMetadataStoreIT {
     @Autowired
     private MetadataStore metadataStore;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         resetEnv();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         resetEnv();
     }
 

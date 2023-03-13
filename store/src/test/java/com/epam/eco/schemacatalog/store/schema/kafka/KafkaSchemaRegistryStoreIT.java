@@ -24,11 +24,11 @@ import org.apache.avro.Schema.Type;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.eco.commons.avro.AvroUtils;
 import com.epam.eco.schemacatalog.store.schema.SchemaEntity;
@@ -39,7 +39,7 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 /**
  * @author Andrei_Tytsik
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes=Config.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class KafkaSchemaRegistryStoreIT {
