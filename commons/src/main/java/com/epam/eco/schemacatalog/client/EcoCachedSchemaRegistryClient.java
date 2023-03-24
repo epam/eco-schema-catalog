@@ -319,6 +319,15 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
+    public io.confluent.kafka.schemaregistry.client.rest.entities.Schema getByVersion(String subject, int version, boolean lookupDeletedSchema) {
+        try {
+            return restService.getVersion(subject, version, lookupDeletedSchema);
+        } catch (IOException | RestClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Collection<String> getAllSubjectsByPrefix(String subjectPrefix) throws IOException, RestClientException {
         return restService.getAllSubjects(subjectPrefix, false);
     }
@@ -343,6 +352,12 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     @Deprecated
     public int getVersion(String subject, Schema schema) throws IOException, RestClientException {
         return getVersion(subject, new AvroSchema(schema));
+    }
+
+    @Override
+    public int getVersion(String subject, ParsedSchema schema, boolean normalize)
+            throws IOException, RestClientException {
+        return getVersion(subject, schema);
     }
 
     @Override
@@ -438,6 +453,12 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
+    public int getId(String subject, ParsedSchema schema, boolean normalize)
+            throws IOException, RestClientException {
+        return getId(subject, schema);
+    }
+
+    @Override
     public int getId(String subject, ParsedSchema schema) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
@@ -459,7 +480,20 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
+    public List<Integer> deleteSubject(String subject, boolean isPermanent)
+            throws IOException, RestClientException {
+        return deleteSubject(DEFAULT_REQUEST_PROPERTIES, subject);
+    }
+
+    @Override
     public List<Integer> deleteSubject(String subject) throws IOException, RestClientException {
+        return deleteSubject(DEFAULT_REQUEST_PROPERTIES, subject);
+    }
+
+    @Override
+    public List<Integer> deleteSubject(Map<String,
+            String> requestProperties, String subject, boolean isPermanent)
+            throws IOException, RestClientException {
         return deleteSubject(DEFAULT_REQUEST_PROPERTIES, subject);
     }
 
@@ -482,7 +516,26 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
     @Override
     public Integer deleteSchemaVersion(
             String subject,
+            String version,
+            boolean isPermanent)
+            throws IOException, RestClientException {
+        return deleteSchemaVersion(DEFAULT_REQUEST_PROPERTIES, subject, version);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(
+            String subject,
             String version) throws IOException, RestClientException {
+        return deleteSchemaVersion(DEFAULT_REQUEST_PROPERTIES, subject, version);
+    }
+
+    @Override
+    public Integer deleteSchemaVersion(
+            Map<String, String> requestProperties,
+            String subject,
+            String version,
+            boolean isPermanent)
+            throws IOException, RestClientException {
         return deleteSchemaVersion(DEFAULT_REQUEST_PROPERTIES, subject, version);
     }
 

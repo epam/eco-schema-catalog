@@ -376,6 +376,12 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         }
     }
 
+    @Override
+    public int register(String subject, ParsedSchema schema, boolean normalize)
+            throws IOException, RestClientException {
+        return register(subject, schema);
+    }
+
     @Deprecated
     public int registerUnchecked(String subject, Schema schema) {
         Validate.notBlank(subject, "Subject is blank");
