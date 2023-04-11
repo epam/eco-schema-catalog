@@ -119,12 +119,20 @@ public class ExtendedRestService extends RestService {
     }
 
     @Override
+    public Config getConfig(String subject)
+            throws IOException, RestClientException {
+        return getConfig(DEFAULT_REQUEST_PROPERTIES, subject, true);
+    }
+
+    @Override
     public Config getConfig(
             Map<String, String> requestProperties,
             String subject) throws IOException, RestClientException {
         return super.getConfig(
                 requestProperties,
-                encodeSubjectAsPathSegment(subject));
+                encodeSubjectAsPathSegment(subject),
+                true
+        );
     }
 
     @Override
