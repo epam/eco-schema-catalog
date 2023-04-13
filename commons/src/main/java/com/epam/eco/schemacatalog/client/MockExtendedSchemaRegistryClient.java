@@ -53,6 +53,11 @@ public final class MockExtendedSchemaRegistryClient
         extends MockSchemaRegistryClient
         implements ExtendedSchemaRegistryClient {
 
+    //constants based on results of io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient.toQualifiedContext
+    private static final String DEFAULT_CONTEXT_SUBJECT = ":.:";
+    private static final String NO_SUBJECT = "";
+
+
     @Override
     public SchemaRegistryServiceInfo getServiceInfo() {
         return SchemaRegistryServiceInfo.with("fake-url.com");
@@ -303,7 +308,14 @@ public final class MockExtendedSchemaRegistryClient
         if (id == null) {
             id = getIdFromRegistry(subject, schema);
             schemaIdMap.put(schema, id);
-            getIdCache().get(":.:").put(id, schema);
+
+            Map<String, Map<Integer, ParsedSchema>> idCache = getIdCache();
+            Map<Integer, ParsedSchema> innerMap = idCache.get(DEFAULT_CONTEXT_SUBJECT);
+            if (innerMap != null) {
+                innerMap.put(id, schema);
+            } else {
+                idCache.get(NO_SUBJECT).put(id, schema);
+            }
         }
         return id;
     }
