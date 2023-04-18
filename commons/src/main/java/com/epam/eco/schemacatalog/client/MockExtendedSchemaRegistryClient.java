@@ -25,8 +25,10 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import io.confluent.kafka.schemaregistry.utils.QualifiedSubject;
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
 
@@ -52,6 +54,8 @@ import static java.util.Collections.emptyMap;
 public final class MockExtendedSchemaRegistryClient
         extends MockSchemaRegistryClient
         implements ExtendedSchemaRegistryClient {
+
+    private static final String NO_SUBJECT = "";
 
     @Override
     public SchemaRegistryServiceInfo getServiceInfo() {
@@ -303,7 +307,10 @@ public final class MockExtendedSchemaRegistryClient
         if (id == null) {
             id = getIdFromRegistry(subject, schema);
             schemaIdMap.put(schema, id);
-            getIdCache().get(":.:").put(id, schema);
+            String context = toQualifiedContext(subject);
+            final Map<Integer, ParsedSchema> idSchemaMap = getIdCache().computeIfAbsent(
+                    context, k -> new ConcurrentHashMap<>());
+            idSchemaMap.put(id, schema);
         }
         return id;
     }
@@ -529,5 +536,11 @@ public final class MockExtendedSchemaRegistryClient
                 || rce.getErrorCode() == 40402
                 || rce.getErrorCode() == 40403
                 || rce.getErrorCode() == 40408;
+    }
+
+    private static String toQualifiedContext(String subject) {
+        QualifiedSubject qualifiedSubject =
+                QualifiedSubject.create(QualifiedSubject.DEFAULT_TENANT, subject);
+        return qualifiedSubject != null ? qualifiedSubject.toQualifiedContext() : NO_SUBJECT;
     }
 }
