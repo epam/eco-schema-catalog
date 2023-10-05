@@ -257,6 +257,38 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         Validate.notBlank(sourceSubject, "Source subject is blank");
         Validate.notBlank(destinationSubject, "Destination subject is blank");
 
+        return doModifyAndRegisterSchema(
+                sourceSubject,
+                sourceSchema,
+                destinationSubject,
+                modifications);
+    }
+
+    @Override
+    public BasicSchemaInfo modifyAndRegisterSchema(Schema sourceSchema, String destinationSubject, SchemaModification... modifications) {
+        return modifyAndRegisterSchema(
+                sourceSchema,
+                destinationSubject,
+                modifications != null ? Arrays.asList(modifications) : null);
+    }
+
+    @Override
+    public BasicSchemaInfo modifyAndRegisterSchema(Schema sourceSchema, String destinationSubject, List<SchemaModification> modifications) {
+        Validate.notNull(sourceSchema, "Source schema is null");
+        Validate.notBlank(destinationSubject, "Destination subject is blank");
+
+        return doModifyAndRegisterSchema(
+                null,
+                sourceSchema,
+                destinationSubject,
+                modifications);
+    }
+
+    private BasicSchemaInfo doModifyAndRegisterSchema(
+            String sourceSubject,
+            Schema sourceSchema,
+            String destinationSubject,
+            List<SchemaModification> modifications) {
         Schema destinationSchema =
                 CachedSchemaModifications.of(modifications).applyTo(sourceSchema);
 
@@ -499,6 +531,9 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     }
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
+        if (sourceSubject == null) {
+            return;
+        }
         CompatibilityLevel sourceCompatibilityLevel =
                 getCompatibilityLevelOrNullIfNotFound(sourceSubject);
         if (sourceCompatibilityLevel == null) {
