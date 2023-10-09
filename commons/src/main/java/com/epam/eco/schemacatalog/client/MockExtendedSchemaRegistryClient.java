@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import io.confluent.kafka.schemaregistry.utils.QualifiedSubject;
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
 
@@ -45,15 +44,14 @@ import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.utils.QualifiedSubject;
 
 import static java.util.Collections.emptyMap;
 
 /**
  * @author Aliaksei_Valyaev
  */
-public final class MockExtendedSchemaRegistryClient
-        extends MockSchemaRegistryClient
-        implements ExtendedSchemaRegistryClient {
+public final class MockExtendedSchemaRegistryClient extends MockSchemaRegistryClient implements ExtendedSchemaRegistryClient {
 
     private static final String NO_SUBJECT = "";
 
@@ -206,6 +204,38 @@ public final class MockExtendedSchemaRegistryClient
         Validate.notBlank(sourceSubject, "Source subject is blank");
         Validate.notBlank(destinationSubject, "Destination subject is blank");
 
+        return doModifyAndRegisterSchema(
+                sourceSubject,
+                sourceSchema,
+                destinationSubject,
+                modifications);
+    }
+
+    @Override
+    public BasicSchemaInfo modifyAndRegisterSchema(Schema sourceSchema, String destinationSubject, SchemaModification... modifications) {
+        return modifyAndRegisterSchema(
+                sourceSchema,
+                destinationSubject,
+                modifications != null ? Arrays.asList(modifications) : null);
+    }
+
+    @Override
+    public BasicSchemaInfo modifyAndRegisterSchema(Schema sourceSchema, String destinationSubject, List<SchemaModification> modifications) {
+        Validate.notNull(sourceSchema, "Source schema is null");
+        Validate.notBlank(destinationSubject, "Destination subject is blank");
+
+        return doModifyAndRegisterSchema(
+                null,
+                sourceSchema,
+                destinationSubject,
+                modifications);
+    }
+
+    private BasicSchemaInfo doModifyAndRegisterSchema(
+            String sourceSubject,
+            Schema sourceSchema,
+            String destinationSubject,
+            List<SchemaModification> modifications) {
         Schema destinationSchema =
                 CachedSchemaModifications.of(modifications).applyTo(sourceSchema);
 
@@ -350,6 +380,9 @@ public final class MockExtendedSchemaRegistryClient
     }
 
     private void replicateCompatibilityIfNeeded(String sourceSubject, String destinationSubject) {
+        if (sourceSubject == null) {
+            return;
+        }
         CompatibilityLevel sourceCompatibilityLevel =
                 retrieveCompatibility(sourceSubject);
         if (sourceCompatibilityLevel == null) {
