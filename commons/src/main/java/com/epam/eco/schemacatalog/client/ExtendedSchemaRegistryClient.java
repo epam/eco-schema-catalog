@@ -65,7 +65,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
 
     /**
      * Modifies source schema and registers it with provided destinationSubject cloning compatibility type
-     * from sourceSubject if it is defined.
+     * from sourceSubject if no global compatibility type is defined.
      * <br>
      * For details see {@link #modifyAndRegisterSchema(String, int, String, List)}.
      */
@@ -78,7 +78,8 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     /**
      * Applies provided modifications to source schema with provided sourceSubject and sourceVersion
      * and registers it in Schema registry with provided destinationSubject.
-     * Schema compatibility type for destination subject is taken from sourceSubject if it is defined.
+     * Schema compatibility type for destination subject is taken from sourceSubject if no global compatibility type
+     * is defined.
      *
      * @param sourceSubject      subject name of source schema
      * @param sourceVersion      source schema version
@@ -96,7 +97,7 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
 
     /**
      * Modifies source schema and registers it with provided destinationSubject cloning compatibility type
-     * from sourceSubject if it is defined.
+     * from sourceSubject if no global compatibility type is defined.
      * <br>
      * For details see {@link #modifyAndRegisterSchema(String, Schema, String, List)}.
      */
@@ -108,7 +109,8 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
 
     /**
      * Applies provided modifications to provided source schema and registers it in Schema registry with provided
-     * destinationSubject. Schema compatibility type for destination subject is taken from sourceSubject if it is defined.
+     * destinationSubject. Schema compatibility type for destination subject is taken from sourceSubject if no global
+     * compatibility type is defined.
      *
      * @param sourceSubject      subject name of source schema
      * @param sourceSchema       source schema
