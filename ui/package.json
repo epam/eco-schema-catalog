@@ -17,7 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "autosize": "^4.0.2",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.58.2",
     "connected-react-router": "^6.6.1",
