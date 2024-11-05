@@ -63,7 +63,7 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
  */
 public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListener<Key, Value>, SmartLifecycle {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(KafkaSchemaRegistryStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSchemaRegistryStore.class);
 
     private static final String TOPIC = "_schemas";
 

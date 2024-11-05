@@ -15,28 +15,29 @@
  */
 package com.epam.eco.schemacatalog.utils;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Andrei_Tytsik
  */
-public class EcoIdUtilsTest {
+class EcoIdUtilsTest {
 
     @Test
-    public void testIdFormatted1() {
+    void testIdFormatted1() {
         String ecoId = EcoIdUtils.formatId("subject", 10);
 
-        Assertions.assertNotNull(ecoId);
+        assertNotNull(ecoId);
     }
 
     @Test
-    public void testIdFormatted2() {
+    void testIdFormatted2() {
         String ecoId = EcoIdUtils.formatId(SubjectAndVersion.with("subject", 10));
 
-        Assertions.assertNotNull(ecoId);
+        assertNotNull(ecoId);
     }
 
 }

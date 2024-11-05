@@ -59,7 +59,7 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
  */
 public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistryStoreUpdateListener, MetadataStoreUpdateListener {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SchemaCatalogStoreImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SchemaCatalogStoreImpl.class);
 
     @Autowired
     private SchemaRegistryStore schemaRegistryStore;

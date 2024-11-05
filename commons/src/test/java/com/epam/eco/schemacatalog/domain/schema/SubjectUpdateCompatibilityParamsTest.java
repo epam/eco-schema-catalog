@@ -15,32 +15,35 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Andrei_Tytsik
  */
-public class SubjectUpdateCompatibilityParamsTest {
+class SubjectUpdateCompatibilityParamsTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    void testSerializedToJsonAndBack() {
         SubjectCompatibilityUpdateParams origin = SubjectCompatibilityUpdateParams.builder().
                 subject("subject1").
                 compatibilityLevel(CompatibilityLevel.BACKWARD).
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SubjectCompatibilityUpdateParams deserialized = JsonMapper.jsonToObject(
                 json, SubjectCompatibilityUpdateParams.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
 }

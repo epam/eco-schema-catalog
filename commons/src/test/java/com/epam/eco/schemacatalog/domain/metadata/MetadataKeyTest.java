@@ -15,34 +15,37 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Andrei_Tytsik
  */
-public class MetadataKeyTest {
+class MetadataKeyTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    void testSerializedToJsonAndBack() {
         MetadataKey origin1 = SchemaMetadataKey.with("subject1", 42);
         MetadataKey origin2 = FieldMetadataKey.with("subject2", 42, "schemaFullName", "field3");
 
         String json1 = JsonMapper.toJson(origin1);
-        Assertions.assertNotNull(json1);
+        assertNotNull(json1);
 
         String json2 = JsonMapper.toJson(origin2);
-        Assertions.assertNotNull(json2);
+        assertNotNull(json2);
 
         MetadataKey deserialized1 = JsonMapper.jsonToObject(json1, MetadataKey.class);
-        Assertions.assertNotNull(deserialized1);
-        Assertions.assertEquals(origin1, deserialized1);
+        assertNotNull(deserialized1);
+        assertEquals(origin1, deserialized1);
 
         MetadataKey deserialized2 = JsonMapper.jsonToObject(json2, MetadataKey.class);
-        Assertions.assertNotNull(deserialized2);
-        Assertions.assertEquals(origin2, deserialized2);
+        assertNotNull(deserialized2);
+        assertEquals(origin2, deserialized2);
     }
 
 }

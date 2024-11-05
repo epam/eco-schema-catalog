@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,18 +42,22 @@ import com.epam.eco.schemacatalog.domain.schema.SchemaCompatibilityCheckResult;
 import com.epam.eco.schemacatalog.domain.schema.SchemaRegisterParams;
 import com.epam.eco.schemacatalog.store.utils.TestSchemaCatalogStoreUpdateListener;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Raman_Babich
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes=Config.class)
-public class SchemaCatalogStoreImplIT {
+@SpringBootTest(classes = Config.class)
+@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+class SchemaCatalogStoreImplIT {
 
     private static final String TARGET_SUBJECT = "03_avro-example_1-value";
 
-    private static final int EVENTUAL_CONSISTENCY_SECONDS = 1;
+    private static final int EVENTUAL_CONSISTENCY_SECONDS = 2;
 
     @Autowired
     private SchemaCatalogStore schemaCatalogStore;
@@ -69,7 +73,18 @@ public class SchemaCatalogStoreImplIT {
     }
 
     @Test
-    public void testAllWorksFine() throws Exception {
+    void updatesMetadataForExistingSubjectWithSchema() throws InterruptedException {
+        schemaCatalogStore.registerSchema(
+                SchemaRegisterParams.builder()
+                        .schemaJson("{\n" +
+                                    "   \"type\" : \"record\",\n" +
+                                    "   \"namespace\" : \"namespace1\",\n" +
+                                    "   \"name\" : \"Employee\",\n" +
+                                    "   \"fields\" : [\n" +
+                                    "      { \"name\" : \"Name\" , \"type\" : \"string\" },\n" +
+                                    "      { \"name\" : \"Age\" , \"type\" : \"int\" }\n" +
+                                    "   ]\n" +
+                                    "}").subject(TARGET_SUBJECT).build());
         List<FullSchemaInfo> updatedSchemas = updateListener.getUpdated();
 
         String subject = TARGET_SUBJECT;
@@ -94,15 +109,15 @@ public class SchemaCatalogStoreImplIT {
 
         FullSchemaInfo schemaInfo = updatedSchemas.get(0);
         String updatedSubject = schemaInfo.getSubject();
-        Assertions.assertEquals(subject, updatedSubject);
+        assertEquals(subject, updatedSubject);
         int updatedVersion = schemaInfo.getVersion();
-        Assertions.assertEquals(version, updatedVersion);
+        assertEquals(version, updatedVersion);
         Optional<Metadata> schemaMetadata = schemaInfo.getMetadataBrowser().getSchemaMetadata();
-        Assertions.assertTrue(schemaMetadata.isPresent());
-        Assertions.assertEquals(key, schemaMetadata.get().getKey());
-        Assertions.assertEquals(doc, schemaMetadata.get().getValue().getDoc());
+        assertTrue(schemaMetadata.isPresent());
+        assertEquals(key, schemaMetadata.get().getKey());
+        assertEquals(doc, schemaMetadata.get().getValue().getDoc());
         for (String attributeKey : attributes.keySet()) {
-            Assertions.assertEquals(
+            assertEquals(
                     attributes.get(attributeKey),
                     schemaMetadata.get().getValue().getAttributes().get(attributeKey));
         }
@@ -115,14 +130,14 @@ public class SchemaCatalogStoreImplIT {
 
         schemaInfo = updatedSchemas.get(0);
         updatedSubject = schemaInfo.getSubject();
-        Assertions.assertEquals(subject, updatedSubject);
+        assertEquals(subject, updatedSubject);
         updatedVersion = schemaInfo.getVersion();
-        Assertions.assertEquals(version, updatedVersion);
-        Assertions.assertFalse(schemaInfo.getMetadataBrowser().getSchemaMetadata().isPresent());
+        assertEquals(version, updatedVersion);
+        assertFalse(schemaInfo.getMetadataBrowser().getSchemaMetadata().isPresent());
     }
 
     @Test
-    public void testSchemaTestedForCompatibilityDetailed() {
+    void testSchemaTestedForCompatibilityDetailed() {
         String existingSchema = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]}";
         String incompatibleSchema = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"},{\"name\":\"f2\",\"type\":\"int\"}]}";
         String compatibleSchema = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"},{\"name\":\"f2\",\"type\":[\"null\",\"int\"],\"default\": null}]}";
@@ -131,26 +146,26 @@ public class SchemaCatalogStoreImplIT {
 
         FullSchemaInfo existingSchemaInfo = schemaCatalogStore.registerSchema(
                 SchemaRegisterParams.builder().
-                    subject(subject).
-                    schemaJson(existingSchema).
-                    build());
-        Assertions.assertNotNull(existingSchemaInfo);
+                        subject(subject).
+                        schemaJson(existingSchema).
+                        build());
+        assertNotNull(existingSchemaInfo);
 
         SchemaCompatibilityCheckResult checkResult = schemaCatalogStore.testSchemaCompatibleDetailed(
                 SchemaRegisterParams.builder().
-                    subject(subject).
-                    schemaJson(incompatibleSchema).
-                    build());
-        Assertions.assertNotNull(checkResult);
-        Assertions.assertTrue(checkResult.hasErrors());
+                        subject(subject).
+                        schemaJson(incompatibleSchema).
+                        build());
+        assertNotNull(checkResult);
+        assertTrue(checkResult.hasErrors());
 
         checkResult = schemaCatalogStore.testSchemaCompatibleDetailed(
                 SchemaRegisterParams.builder().
-                    subject(subject).
-                    schemaJson(compatibleSchema).
-                    build());
-        Assertions.assertNotNull(checkResult);
-        Assertions.assertFalse(checkResult.hasErrors());
+                        subject(subject).
+                        schemaJson(compatibleSchema).
+                        build());
+        assertNotNull(checkResult);
+        assertFalse(checkResult.hasErrors());
     }
 
 }

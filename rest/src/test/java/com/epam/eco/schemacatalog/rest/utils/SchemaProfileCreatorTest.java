@@ -22,8 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.metadata.FieldMetadataKey;
@@ -39,20 +38,22 @@ import com.epam.eco.schemacatalog.rest.view.SchemaEntity;
 import com.epam.eco.schemacatalog.rest.view.SchemaField;
 import com.epam.eco.schemacatalog.rest.view.SchemaProfile;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * @author Raman_Babich
  */
-public class SchemaProfileCreatorTest {
+class SchemaProfileCreatorTest {
 
     private SchemaProfileCreator profileCreator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         profileCreator = new SchemaProfileCreator();
     }
 
     @Test
-    public void testCreateSchemaProfile() {
+    void testCreateSchemaProfile() {
         Date now = new Date();
 
         SchemaProfile profile = profileCreator.createSchemaProfile(
@@ -248,7 +249,7 @@ public class SchemaProfileCreatorTest {
                 .deleted(false)
                 .build();
 
-        Assertions.assertEquals(assertProfile, profile);
+        assertEquals(assertProfile, profile);
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,7 +63,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Config.class})
 @TestPropertySource(value = "classpath:application.properties")
-public class SchemaDocumentRepositoryIT {
+@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+class SchemaDocumentRepositoryIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaDocumentRepositoryIT.class);
 
     @Autowired
@@ -76,12 +78,12 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void searchTest() {
+    void searchTest() {
         SearchResult<SchemaDocument> ftsResult = repository.searchByQuery(
                 new QueryStringQuery("*", PageRequest.of(0, 1000)));
 
         List<Integer> list = new ArrayList<>();
-        ftsResult.getContent().forEach((doc)-> list.add(doc.getSchemaRegistryId()));
+        ftsResult.getContent().forEach((doc) -> list.add(doc.getSchemaRegistryId()));
         Collections.sort(list);
         list.forEach(System.out::println);
 
@@ -122,7 +124,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findOneBySchemaSubjectAndVersion() throws Exception {
+    void findOneBySchemaSubjectAndVersion() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchema = registerSchema(testSchema.getKey(), parseSchema(testSchema.getValue()));
@@ -138,7 +140,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespace() throws Exception {
+    void findByRootNamespace() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchema = registerSchema(testSchema.getKey(), parseSchema(testSchema.getValue()));
@@ -158,7 +160,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndVersionLatest() throws Exception {
+    void findByRootNamespaceAndVersionLatest() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
@@ -181,7 +183,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndVersionNotLatest() throws Exception {
+    void findByRootNamespaceAndVersionNotLatest() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
@@ -205,7 +207,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndAnyVersion() throws Exception {
+    void findByRootNamespaceAndAnyVersion() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
@@ -225,7 +227,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionLatest() throws Exception {
+    void findByRootNamespaceInAndVersionLatest() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -252,7 +254,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionNotLatest() throws Exception {
+    void findByRootNamespaceInAndVersionNotLatest() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -280,7 +282,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndAnyVersion() throws Exception {
+    void findByRootNamespaceInAndAnyVersion() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -305,7 +307,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionLatestAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndVersionLatestAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -341,7 +343,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionNotLatestAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndVersionNotLatestAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -377,7 +379,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndAnyVersionAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndAnyVersionAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -410,7 +412,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void testCompatibilityTermFilter() {
+    void testCompatibilityTermFilter() {
         CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
@@ -432,7 +434,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByParamsTestDp")
-    public void searchByParamsTest(FtsTestCase ftsTestCase) {
+    void searchByParamsTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("Test search params: {}", ftsTestCase.getSearchParams().toString());
@@ -441,9 +443,9 @@ public class SchemaDocumentRepositoryIT {
 
         SearchParams sp = ftsTestCase.getSearchParams();
         sp.setNamespaceAggregation(new AggregationParams(
-                        FtsConstants.FIELD_ROOT_NAMESPACE,
-                        FtsConstants.FIELD_ROOT_NAMESPACE,
-                        10000));
+                FtsConstants.FIELD_ROOT_NAMESPACE,
+                FtsConstants.FIELD_ROOT_NAMESPACE,
+                10000));
         SearchResult<SchemaDocument> documents = repository.searchByParams(sp);
         assertThat(documents.getContent())
                 .describedAs("Number of schemas was found")
@@ -468,7 +470,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByJsonQueryTestDp")
-    public void searchByJsonQueryTest(FtsTestCase ftsTestCase) {
+    void searchByJsonQueryTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("Test search json query: {}", ftsTestCase.getSearchJsonQuery());
@@ -487,7 +489,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByNotAnalyzedFieldsNegativeDp")
-    public void searchByNotAnalyzedFieldsNegative(FtsTestCase ftsTestCase) {
+    void searchByNotAnalyzedFieldsNegative(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("searchByNotAnalyzedFieldsNegative() params: {}", ftsTestCase.getSearchParams().toString());
@@ -502,7 +504,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByAnalyzedFieldsDp")
-    public void searchByAnalyzedFields(FtsTestCase ftsTestCase) {
+    void searchByAnalyzedFields(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("searchByAnalyzedFields() params: {}", ftsTestCase.getSearchParams().toString());
@@ -569,7 +571,6 @@ public class SchemaDocumentRepositoryIT {
         return result;
     }
 
-    @SuppressWarnings("unused")
     private Map<Integer, Schema> registerSchemas(Map<String, String> schemaMap) throws Exception {
         Map<Integer, Schema> result = new HashMap<>(schemaMap.size());
         for (Map.Entry<String, String> entry : schemaMap.entrySet()) {

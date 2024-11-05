@@ -21,22 +21,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
  */
-public class SubjectSchemasTest {
+class SubjectSchemasTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testIdentitySerializedToJsonAndBack() {
+    void testIdentitySerializedToJsonAndBack() {
         SubjectSchemas<IdentitySchemaInfo> origin = SubjectSchemas.<IdentitySchemaInfo>builder().
                 appendSchema(SchemaTestData.randomIdentitySchemaInfo("subject1")).
                 appendSchema(SchemaTestData.randomIdentitySchemaInfo("subject1")).
@@ -44,16 +46,16 @@ public class SubjectSchemasTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SubjectSchemas<IdentitySchemaInfo> deserialized = JsonMapper.jsonToObject(json, SubjectSchemas.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testBasicSerializedToJsonAndBack() {
+    void testBasicSerializedToJsonAndBack() {
         SubjectSchemas<BasicSchemaInfo> origin = SubjectSchemas.<BasicSchemaInfo>builder().
                 appendSchema(SchemaTestData.randomBasicSchemaInfo("subject1")).
                 appendSchema(SchemaTestData.randomBasicSchemaInfo("subject1")).
@@ -61,16 +63,16 @@ public class SubjectSchemasTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SubjectSchemas<BasicSchemaInfo> deserialized = JsonMapper.jsonToObject(json, SubjectSchemas.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testLiteSerializedToJsonAndBack() {
+    void testLiteSerializedToJsonAndBack() {
         SubjectSchemas<LiteSchemaInfo> origin = SubjectSchemas.<LiteSchemaInfo>builder().
                 appendSchema(SchemaTestData.randomLiteSchemaInfo("subject1")).
                 appendSchema(SchemaTestData.randomLiteSchemaInfo("subject1")).
@@ -78,16 +80,16 @@ public class SubjectSchemasTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SubjectSchemas<LiteSchemaInfo> deserialized = JsonMapper.jsonToObject(json, SubjectSchemas.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testFullSerializedToJsonAndBack() {
+    void testFullSerializedToJsonAndBack() {
         SubjectSchemas<FullSchemaInfo> origin = SubjectSchemas.<FullSchemaInfo>builder().
                 appendSchema(SchemaTestData.randomFullSchemaInfo("subject1")).
                 appendSchema(SchemaTestData.randomFullSchemaInfo("subject1")).
@@ -95,54 +97,54 @@ public class SubjectSchemasTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SubjectSchemas<FullSchemaInfo> deserialized = JsonMapper.jsonToObject(json, SubjectSchemas.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testSchemasAreDiscoverable() {
+    void testSchemasAreDiscoverable() {
         String subject = "subject999";
 
         BasicSchemaInfo info1 = SchemaTestData.randomBasicSchemaInfo(subject, 1);
         BasicSchemaInfo info2 = SchemaTestData.randomBasicSchemaInfo(subject, 22);
         BasicSchemaInfo info3 = SchemaTestData.randomBasicSchemaInfo(subject, 333);
 
-        BasicSchemaInfo[] schemas = new BasicSchemaInfo[] {info2, info3, info1};
+        BasicSchemaInfo[] schemas = new BasicSchemaInfo[]{info2, info3, info1};
 
         SubjectSchemas<BasicSchemaInfo> subjectSchemas = SubjectSchemas.with(Arrays.asList(schemas));
 
-        Assertions.assertNotNull(subjectSchemas);
-        Assertions.assertEquals(3, subjectSchemas.size());
-        Assertions.assertEquals(subject, subjectSchemas.getSubject());
+        assertNotNull(subjectSchemas);
+        assertEquals(3, subjectSchemas.size());
+        assertEquals(subject, subjectSchemas.getSubject());
 
-        Assertions.assertEquals(info1, subjectSchemas.getSchema(1));
-        Assertions.assertEquals(info2, subjectSchemas.getSchema(22));
-        Assertions.assertEquals(info3, subjectSchemas.getSchema(333));
-        Assertions.assertNull(subjectSchemas.getSchema(444));
+        assertEquals(info1, subjectSchemas.getSchema(1));
+        assertEquals(info2, subjectSchemas.getSchema(22));
+        assertEquals(info3, subjectSchemas.getSchema(333));
+        assertNull(subjectSchemas.getSchema(444));
 
-        Assertions.assertEquals(Integer.valueOf(1), subjectSchemas.getEarliestSchemaVersion());
-        Assertions.assertEquals(info1, subjectSchemas.getEarliestSchema());
+        assertEquals(Integer.valueOf(1), subjectSchemas.getEarliestSchemaVersion());
+        assertEquals(info1, subjectSchemas.getEarliestSchema());
 
-        Assertions.assertEquals(Integer.valueOf(333), subjectSchemas.getLatestSchemaVersion());
-        Assertions.assertEquals(info3, subjectSchemas.getLatestSchema());
+        assertEquals(Integer.valueOf(333), subjectSchemas.getLatestSchemaVersion());
+        assertEquals(info3, subjectSchemas.getLatestSchema());
 
         Map<Integer, BasicSchemaInfo> schemasMap = subjectSchemas.getSchemasAsMap();
-        Assertions.assertNotNull(schemasMap);
-        Assertions.assertEquals(3, schemasMap.size());
+        assertNotNull(schemasMap);
+        assertEquals(3, schemasMap.size());
 
         List<BasicSchemaInfo> schemasList = new ArrayList<>();
         subjectSchemas.forEach(schemasList::add);
-        Assertions.assertEquals(3, schemasList.size());
-        Assertions.assertEquals(info1, schemasList.get(0));
-        Assertions.assertEquals(info2, schemasList.get(1));
-        Assertions.assertEquals(info3, schemasList.get(2));
+        assertEquals(3, schemasList.size());
+        assertEquals(info1, schemasList.get(0));
+        assertEquals(info2, schemasList.get(1));
+        assertEquals(info3, schemasList.get(2));
     }
 
     @Test
-    public void testFailsOnIllegalArguments1() {
+    void testFailsOnIllegalArguments1() {
         assertThrows(
                 Exception.class,
                 () -> SubjectSchemas.with(null)
@@ -150,7 +152,7 @@ public class SubjectSchemasTest {
     }
 
     @Test
-    public void testFailsOnIllegalArguments2() {
+    void testFailsOnIllegalArguments2() {
         assertThrows(
                 Exception.class,
                 () -> SubjectSchemas.with(Collections.singletonList(null))
@@ -158,11 +160,11 @@ public class SubjectSchemasTest {
     }
 
     @Test
-    public void testFailsOnDifferentSubjects() {
+    void testFailsOnDifferentSubjects() {
         assertThrows(
                 Exception.class,
                 () -> {
-                    BasicSchemaInfo[] schemas = new BasicSchemaInfo[] {
+                    BasicSchemaInfo[] schemas = new BasicSchemaInfo[]{
                             SchemaTestData.randomBasicSchemaInfo("subject1", 1),
                             SchemaTestData.randomBasicSchemaInfo("subject2", 1)};
 
