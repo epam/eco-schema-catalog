@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
@@ -31,10 +31,15 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrei_Tytsik
  */
-public class SchemaRegistryClientIT {
+@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+class SchemaRegistryClientIT {
 
     private static final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"%s\", \"type\": \"string\"}]}";
 
@@ -53,22 +58,22 @@ public class SchemaRegistryClientIT {
     }
 
     @Test
-    public void testSchemaRegisteredAndGotById() throws Exception {
+    void testSchemaRegisteredAndGotById() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
         int id = CLIENT.register(subject, schema);
-        Assertions.assertTrue(id >= 0);
+        assertTrue(id >= 0);
 
         ParsedSchema schemaActual = CLIENT.getSchemaBySubjectAndId(subject, id);
-        Assertions.assertEquals(schema, schemaActual);
+        assertEquals(schema, schemaActual);
 
         schemaActual = CLIENT.getSchemaById(id);
-        Assertions.assertEquals(schema, schemaActual);
+        assertEquals(schema, schemaActual);
     }
 
     @Test
-    public void testLatestSchemaMetadataGot()  throws Exception {
+    void testLatestSchemaMetadataGot() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
@@ -82,11 +87,11 @@ public class SchemaRegistryClientIT {
         int idLatest = CLIENT.register(subject, schema3);
 
         SchemaMetadata metadata = CLIENT.getLatestSchemaMetadata(subject);
-        Assertions.assertEquals(idLatest, metadata.getId());
+        assertEquals(idLatest, metadata.getId());
     }
 
     @Test
-    public void testSchemaMetadataGot()  throws Exception {
+    void testSchemaMetadataGot() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
@@ -100,11 +105,11 @@ public class SchemaRegistryClientIT {
         CLIENT.register(subject, schema3);
 
         SchemaMetadata metadata = CLIENT.getSchemaMetadata(subject, 2);
-        Assertions.assertEquals(id2, metadata.getId());
+        assertEquals(id2, metadata.getId());
     }
 
     @Test
-    public void testVersionGot()  throws Exception {
+    void testVersionGot() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
@@ -115,19 +120,19 @@ public class SchemaRegistryClientIT {
 
         CLIENT.register(subject, schema1);
         int version = CLIENT.getVersion(subject, schema1);
-        Assertions.assertEquals(1, version);
+        assertEquals(1, version);
 
         CLIENT.register(subject, schema2);
         version = CLIENT.getVersion(subject, schema2);
-        Assertions.assertEquals(2, version);
+        assertEquals(2, version);
 
         CLIENT.register(subject, schema3);
         version = CLIENT.getVersion(subject, schema3);
-        Assertions.assertEquals(3, version);
+        assertEquals(3, version);
     }
 
     @Test
-    public void testAllVersionsGot()  throws Exception {
+    void testAllVersionsGot() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
@@ -142,68 +147,68 @@ public class SchemaRegistryClientIT {
 
         List<Integer> versionsActual = CLIENT.getAllVersions(subject);
 
-        Assertions.assertEquals(Arrays.asList(1,2,3), versionsActual);
+        assertEquals(Arrays.asList(1, 2, 3), versionsActual);
     }
 
     @Test
-    public void testCompatibilityTested()  throws Exception {
+    void testCompatibilityTested() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
 
         ParsedSchema schema1 = randomSchema();
         CLIENT.register(subject, schema1);
-        Assertions.assertTrue(CLIENT.testCompatibility(subject, schema1));
+        assertTrue(CLIENT.testCompatibility(subject, schema1));
 
         ParsedSchema schema2 = randomSchema();
-        Assertions.assertFalse(CLIENT.testCompatibility(subject, schema2));
+        assertFalse(CLIENT.testCompatibility(subject, schema2));
     }
 
     @Test
-    public void testCompatibilityUpdated()  throws Exception {
+    void testCompatibilityUpdated() throws Exception {
         String subject = randomSubject();
 
         String compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
-        Assertions.assertEquals(CompatibilityLevel.FULL.name, compatibility);
+        assertEquals(CompatibilityLevel.FULL.name, compatibility);
 
         compatibility = CLIENT.updateCompatibility(subject, CompatibilityLevel.FORWARD_TRANSITIVE.name);
-        Assertions.assertEquals(CompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
+        assertEquals(CompatibilityLevel.FORWARD_TRANSITIVE.name, compatibility);
     }
 
     @Test
-    public void testCompatibilityGot()  throws Exception {
+    void testCompatibilityGot() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.FULL.name);
 
         String compatibility = CLIENT.getCompatibility(subject);
-        Assertions.assertEquals(CompatibilityLevel.FULL.name, compatibility);
+        assertEquals(CompatibilityLevel.FULL.name, compatibility);
     }
 
     @Test
-    public void testAllSubjectsGot()  throws Exception {
+    void testAllSubjectsGot() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
         CLIENT.register(subject, schema);
 
         Collection<String> subjects = CLIENT.getAllSubjects();
-        Assertions.assertTrue(subjects.contains(subject));
+        assertTrue(subjects.contains(subject));
     }
 
     @Test
-    public void testIdGot()  throws Exception {
+    void testIdGot() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
         int id = CLIENT.register(subject, schema);
 
         int idActual = CLIENT.getId(subject, schema);
-        Assertions.assertEquals(id, idActual);
+        assertEquals(id, idActual);
     }
 
     @Test
-    public void testSubjectDeleted()  throws Exception {
+    void testSubjectDeleted() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
@@ -212,11 +217,11 @@ public class SchemaRegistryClientIT {
         CLIENT.deleteSubject(subject);
 
         Collection<String> subjects = CLIENT.getAllSubjects();
-        Assertions.assertFalse(subjects.contains(subject));
+        assertFalse(subjects.contains(subject));
     }
 
     @Test
-    public void testSchemaVersionDeleted()  throws Exception {
+    void testSchemaVersionDeleted() throws Exception {
         String subject = randomSubject();
 
         CLIENT.updateCompatibility(subject, CompatibilityLevel.NONE.name);
@@ -232,21 +237,21 @@ public class SchemaRegistryClientIT {
         CLIENT.deleteSchemaVersion(subject, "" + 1);
         List<Integer> versionsActual = CLIENT.getAllVersions(subject);
 
-        Assertions.assertEquals(Arrays.asList(2,3), versionsActual);
+        assertEquals(Arrays.asList(2, 3), versionsActual);
     }
 
     @Test
-    public void testSameSchemaRegisteredMultipleTimes() throws Exception {
+    void testSameSchemaRegisteredMultipleTimes() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
-        Assertions.assertEquals(
+        assertEquals(
                 CLIENT.register(subject, schema),
                 CLIENT.register(subject, schema));
     }
 
     @Test
-    public void testSameSchemaRegisteredThenDeletedThenRegistered() throws Exception {
+    void testSameSchemaRegisteredThenDeletedThenRegistered() throws Exception {
         String subject = randomSubject();
         ParsedSchema schema = randomSchema();
 
@@ -258,7 +263,7 @@ public class SchemaRegistryClientIT {
         CLIENT.register(subject, schema);
         int version2 = CLIENT.getVersion(subject, schema);
 
-        Assertions.assertTrue(version2 > version1);
+        assertTrue(version2 > version1);
     }
 
     private String randomSubject() {

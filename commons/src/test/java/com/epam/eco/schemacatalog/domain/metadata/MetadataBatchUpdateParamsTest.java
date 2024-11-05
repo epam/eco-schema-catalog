@@ -18,21 +18,23 @@ package com.epam.eco.schemacatalog.domain.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.MetadataTestData;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
  */
-public class MetadataBatchUpdateParamsTest {
+class MetadataBatchUpdateParamsTest {
 
     @Test
-    public void testSerializedToJsonAndBack() {
+    void testSerializedToJsonAndBack() {
         MetadataBatchUpdateParams origin = MetadataBatchUpdateParams.builder().
                 update(MetadataTestData.randomUpdateParams()).
                 update(MetadataTestData.randomUpdateParams()).
@@ -44,15 +46,15 @@ public class MetadataBatchUpdateParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         MetadataBatchUpdateParams deserialized = JsonMapper.jsonToObject(json, MetadataBatchUpdateParams.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testConsistsOfExpectedUpdates() {
+    void testConsistsOfExpectedUpdates() {
         MetadataUpdateParams params1 = MetadataTestData.randomUpdateParams();
         MetadataKey key1 = params1.getKey();
 
@@ -63,24 +65,24 @@ public class MetadataBatchUpdateParamsTest {
         MetadataKey key3 = params3.getKey();
 
         MetadataBatchUpdateParams batchParams = MetadataBatchUpdateParams.builder().
-            update(params1).
-            update(params2).
-            update(params3).
-            delete(key3).
-            update(params2).
-        build();
+                update(params1).
+                update(params2).
+                update(params3).
+                delete(key3).
+                update(params2).
+                build();
 
         Map<MetadataKey, MetadataUpdateParams> operations = batchParams.getOperations();
 
-        Assertions.assertNotNull(operations);
-        Assertions.assertEquals(3, operations.size());
-        Assertions.assertEquals(params1, operations.get(key1));
-        Assertions.assertEquals(params2, operations.get(key2));
-        Assertions.assertNull(operations.get(key3));
+        assertNotNull(operations);
+        assertEquals(3, operations.size());
+        assertEquals(params1, operations.get(key1));
+        assertEquals(params2, operations.get(key2));
+        assertNull(operations.get(key3));
     }
 
     @Test
-    public void testSizesExpected() {
+    void testSizesExpected() {
         MetadataUpdateParams params1 = MetadataTestData.randomUpdateParams();
         MetadataKey key1 = params1.getKey();
 
@@ -91,28 +93,28 @@ public class MetadataBatchUpdateParamsTest {
         MetadataKey key3 = params3.getKey();
 
         MetadataBatchUpdateParams batchParams = MetadataBatchUpdateParams.builder().
-            update(params1).
-            update(params2).
-            update(params3).
-            update(params3).
-            update(params2).
-            update(params1).
-            delete(key1).
-            delete(key3).
-            delete(key2).
-            update(params1).
-            update(params2).
-            update(params3).
-        build();
+                update(params1).
+                update(params2).
+                update(params3).
+                update(params3).
+                update(params2).
+                update(params1).
+                delete(key1).
+                delete(key3).
+                delete(key2).
+                update(params1).
+                update(params2).
+                update(params3).
+                build();
 
         Map<MetadataKey, MetadataUpdateParams> operations = batchParams.getOperations();
 
-        Assertions.assertNotNull(operations);
-        Assertions.assertEquals(3, operations.size());
+        assertNotNull(operations);
+        assertEquals(3, operations.size());
     }
 
     @Test
-    public void testFailsOnIllegalArguments1() {
+    void testFailsOnIllegalArguments1() {
         assertThrows(
                 Exception.class,
                 () -> new MetadataBatchUpdateParams(null)
@@ -120,7 +122,7 @@ public class MetadataBatchUpdateParamsTest {
     }
 
     @Test
-    public void testFailsOnIllegalArguments2() {
+    void testFailsOnIllegalArguments2() {
         assertThrows(
                 Exception.class,
                 () -> new MetadataBatchUpdateParams(new HashMap<>())
@@ -128,7 +130,7 @@ public class MetadataBatchUpdateParamsTest {
     }
 
     @Test
-    public void testFailsOnIllegalArguments3() {
+    void testFailsOnIllegalArguments3() {
         assertThrows(
                 Exception.class,
                 () -> MetadataBatchUpdateParams.builder().update(null)
@@ -136,7 +138,7 @@ public class MetadataBatchUpdateParamsTest {
     }
 
     @Test
-    public void testFailsOnIllegalArguments4() {
+    void testFailsOnIllegalArguments4() {
         assertThrows(
                 Exception.class,
                 () -> MetadataBatchUpdateParams.builder().delete(null)

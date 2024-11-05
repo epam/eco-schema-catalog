@@ -16,28 +16,30 @@
 package com.epam.eco.schemacatalog.rest.view;
 
 import org.apache.avro.Schema;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Raman_Babich
  */
-public class PrimitiveSchemaFieldTypeTest {
+class PrimitiveSchemaFieldTypeTest {
 
     @Test
-    public void testSerializedToJsonAndBack() {
+    void testSerializedToJsonAndBack() {
         SchemaFieldType origin = PrimitiveSchemaFieldType.builder()
                 .type(Schema.Type.STRING)
                 .build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         SchemaFieldType deserialized = JsonMapper.jsonToObject(json, SchemaFieldType.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
 }

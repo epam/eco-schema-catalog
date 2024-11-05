@@ -33,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Andrei_Tytsik
  */
-public class SchemaDocumentConverterTest {
+class SchemaDocumentConverterTest {
 
     @Test
-    public void testSchemaConverted() {
+    void testSchemaConverted() {
         FullSchemaInfo schemaInfo = SchemaInfoGenerator.randomFull("Subject", 3);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
@@ -99,7 +99,7 @@ public class SchemaDocumentConverterTest {
     }
 
     @Test
-    public void testSubjectAndVersionConverted() {
+    void testSubjectAndVersionConverted() {
         SubjectAndVersion subjectAndVersion = SubjectAndVersion.with("TestSubject", 42);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(subjectAndVersion);

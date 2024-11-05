@@ -20,22 +20,24 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.serde.kafka.VerificationResult.Status;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrei_Tytsik
  */
-public class VerifiableTest {
+class VerifiableTest {
 
     private static final Schema TEST_SCHEMA = new Schema.Parser().parse(
             "{\"type\":\"record\",\"name\":\"x\",\"fields\":[]}"
-            );
+    );
 
     private static final GenericContainer TEST_RECORD = () -> null;
 
@@ -44,10 +46,12 @@ public class VerifiableTest {
             @Override
             public void init(String subject, ExtendedSchemaRegistryClient schemaRegistryClient, Map<String, ?> config) {
             }
+
             @Override
             public VerificationResult verify(GenericContainer data, Schema originalSchema) {
                 return result;
             }
+
             @Override
             public void close() {
             }
@@ -55,7 +59,7 @@ public class VerifiableTest {
     }
 
     @Test
-    public void testDataIsGet() {
+    void testDataIsGet() {
         Verifiable<GenericContainer> verifiable = Verifiable.with(
                 TEST_RECORD,
                 TEST_SCHEMA,
@@ -63,12 +67,12 @@ public class VerifiableTest {
 
         GenericContainer data = verifiable.get();
 
-        Assertions.assertNotNull(data);
-        Assertions.assertEquals(TEST_RECORD, data);
+        assertNotNull(data);
+        assertEquals(TEST_RECORD, data);
     }
 
     @Test
-    public void testDataIsVerified() {
+    void testDataIsVerified() {
         VerificationResult resultExpected = VerificationResult.with(Status.PASSED);
 
         Verifiable<GenericContainer> verifiable = Verifiable.with(
@@ -78,12 +82,12 @@ public class VerifiableTest {
 
         VerificationResult resultActual = verifiable.verify();
 
-        Assertions.assertNotNull(resultActual);
-        Assertions.assertEquals(resultExpected, resultActual);
+        assertNotNull(resultActual);
+        assertEquals(resultExpected, resultActual);
     }
 
     @Test
-    public void testDataIsVerifiedAndAccepted() throws Exception {
+    void testDataIsVerifiedAndAccepted() throws VerificationNotPassedException {
         Verifiable<GenericContainer> verifiable = Verifiable.with(
                 TEST_RECORD,
                 TEST_SCHEMA,
@@ -92,12 +96,12 @@ public class VerifiableTest {
         AtomicReference<GenericContainer> accepted = new AtomicReference<>();
         verifiable.verifyAndAcceptIfPassed(accepted::set);
 
-        Assertions.assertNotNull(accepted.get());
-        Assertions.assertEquals(TEST_RECORD, accepted.get());
+        assertNotNull(accepted.get());
+        assertEquals(TEST_RECORD, accepted.get());
     }
 
     @Test
-    public void testDataIsVerifiedAndNotAccepted() throws Exception {
+    void testDataIsVerifiedAndNotAccepted() throws Exception {
         Verifiable<GenericContainer> verifiable = Verifiable.with(
                 TEST_RECORD,
                 TEST_SCHEMA,
@@ -106,11 +110,11 @@ public class VerifiableTest {
         AtomicReference<GenericContainer> accepted = new AtomicReference<>();
         verifiable.verifyAndAcceptIfPassed(accepted::set);
 
-        Assertions.assertNull(accepted.get());
+        assertNull(accepted.get());
     }
 
     @Test
-    public void testDataIsVerifiedAndFailed() {
+    void testDataIsVerifiedAndFailed() {
         assertThrows(
                 Exception.class,
                 () -> {
@@ -126,7 +130,7 @@ public class VerifiableTest {
     }
 
     @Test
-    public void testInitFailedOnInconsistentDataAndSchemaArguments1() {
+    void testInitFailedOnInconsistentDataAndSchemaArguments1() {
         assertThrows(
                 Exception.class,
                 () -> Verifiable.with(null, TEST_SCHEMA, testVerifier(null))
@@ -134,7 +138,7 @@ public class VerifiableTest {
     }
 
     @Test
-    public void testInitFailedOnInconsistentDataAndSchemaArguments2() {
+    void testInitFailedOnInconsistentDataAndSchemaArguments2() {
         assertThrows(
                 Exception.class,
                 () -> Verifiable.with(TEST_RECORD, null, testVerifier(null))
@@ -142,7 +146,7 @@ public class VerifiableTest {
     }
 
     @Test
-    public void testInitFailedOnMissingVerifierArgument() {
+    void testInitFailedOnMissingVerifierArgument() {
         assertThrows(
                 Exception.class,
                 () -> Verifiable.with(TEST_RECORD, TEST_SCHEMA, null)

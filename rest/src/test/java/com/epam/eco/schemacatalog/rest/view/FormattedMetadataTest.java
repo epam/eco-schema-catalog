@@ -17,7 +17,6 @@ package com.epam.eco.schemacatalog.rest.view;
 
 import java.util.Date;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
@@ -28,13 +27,16 @@ import com.epam.eco.schemacatalog.domain.metadata.format.DocFormatter;
 import com.epam.eco.schemacatalog.domain.metadata.format.HtmlPartFormatter;
 import com.epam.eco.schemacatalog.domain.metadata.format.ToStringPartFormatter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Raman_Babich
  */
-public class FormattedMetadataTest {
+class FormattedMetadataTest {
 
     @Test
-    public void testSerializedToJsonAndBack() {
+    void testSerializedToJsonAndBack() {
         Date date = new Date();
         FieldMetadataKey key = FieldMetadataKey.with("subject", 1, "schemaFullName", "field");
         MetadataValue value = MetadataValue.builder()
@@ -46,15 +48,15 @@ public class FormattedMetadataTest {
         FormattedMetadata origin = FormattedMetadata.with(key, value, ToStringPartFormatter.INSTANCE);
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         FormattedMetadata deserialized = JsonMapper.jsonToObject(json, FormattedMetadata.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testMetadataToFormattedMetadataConversion() {
+    void testMetadataToFormattedMetadataConversion() {
         Date date = new Date();
         FieldMetadataKey key = FieldMetadataKey.with("subject", 1, "schemaFullName", "field");
         MetadataValue value = MetadataValue.builder()
@@ -67,13 +69,13 @@ public class FormattedMetadataTest {
 
         FormattedMetadata formattedMetadata = FormattedMetadata.with(metadata, HtmlPartFormatter.INSTANCE);
 
-        Assertions.assertEquals(metadata.getKey(), formattedMetadata.getKey());
-        Assertions.assertEquals(metadata.getValue().getDoc(), formattedMetadata.getValue().getDoc());
-        Assertions.assertEquals(metadata.getValue().getUpdatedAt(), formattedMetadata.getValue().getUpdatedAt());
-        Assertions.assertEquals(metadata.getValue().getUpdatedBy(), formattedMetadata.getValue().getUpdatedBy());
-        Assertions.assertEquals(metadata.getValue().getAttributes(), formattedMetadata.getValue().getAttributes());
+        assertEquals(metadata.getKey(), formattedMetadata.getKey());
+        assertEquals(metadata.getValue().getDoc(), formattedMetadata.getValue().getDoc());
+        assertEquals(metadata.getValue().getUpdatedAt(), formattedMetadata.getValue().getUpdatedAt());
+        assertEquals(metadata.getValue().getUpdatedBy(), formattedMetadata.getValue().getUpdatedBy());
+        assertEquals(metadata.getValue().getAttributes(), formattedMetadata.getValue().getAttributes());
         String format = new DocFormatter("text @{link google|https://google.com} text").format(HtmlPartFormatter.INSTANCE);
-        Assertions.assertEquals(format, formattedMetadata.getValue().getFormattedDoc());
+        assertEquals(format, formattedMetadata.getValue().getFormattedDoc());
     }
 
 }

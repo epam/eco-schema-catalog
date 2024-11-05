@@ -15,42 +15,45 @@
  */
 package com.epam.eco.schemacatalog.serde.kafka;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
  * @author Andrei_Tytsik
  */
-public class BySchemaVersionVerifierTest {
+class BySchemaVersionVerifierTest {
 
     private static final GenericContainer TEST_RECORD = () -> null;
 
     private static final Schema TEST_SCHEMA = new Schema.Parser().parse(
             "{\"type\":\"record\",\"name\":\"x\",\"fields\":[]}"
-            );
+    );
 
     @Test
-    public void testGeneralLogicIsOk() throws Exception {
+    void testGeneralLogicIsOk() throws RestClientException, IOException {
         Map<String, Object> config = new HashMap<>();
         config.put(BySchemaVersionVerifier.SCHEMA_VERSION_CONFIG, "[2,3]");
 
         ExtendedSchemaRegistryClient schemaRegistryClient = Mockito.mock(ExtendedSchemaRegistryClient.class);
         Mockito.
-            when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(ParsedSchema.class))).
-            thenReturn(1,2,3,4);
+                when(schemaRegistryClient.getVersion(Mockito.anyString(), Mockito.any(ParsedSchema.class))).
+                thenReturn(1, 2, 3, 4);
 
         try (BySchemaVersionVerifier verifier = new BySchemaVersionVerifier()) {
             verifier.init("nomatter", schemaRegistryClient, config);
@@ -58,25 +61,25 @@ public class BySchemaVersionVerifierTest {
             VerificationResult result;
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assertions.assertNotNull(result);
-            Assertions.assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
+            assertNotNull(result);
+            assertEquals(VerificationResult.Status.SKIPPABLE, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assertions.assertNotNull(result);
-            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            assertNotNull(result);
+            assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assertions.assertNotNull(result);
-            Assertions.assertEquals(VerificationResult.Status.PASSED, result.getStatus());
+            assertNotNull(result);
+            assertEquals(VerificationResult.Status.PASSED, result.getStatus());
 
             result = verifier.verify(TEST_RECORD, TEST_SCHEMA);
-            Assertions.assertNotNull(result);
-            Assertions.assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
+            assertNotNull(result);
+            assertEquals(VerificationResult.Status.NOT_PASSED, result.getStatus());
         }
     }
 
     @Test
-    public void testInitFailedOnMissingConfigArgument() {
+    void testInitFailedOnMissingConfigArgument() {
         assertThrows(
                 Exception.class,
                 () -> {
@@ -92,7 +95,7 @@ public class BySchemaVersionVerifierTest {
     }
 
     @Test
-    public void testInitFailedOnInvalidVersionArgument() {
+    void testInitFailedOnInvalidVersionArgument() {
         assertThrows(
                 Exception.class,
                 () -> {

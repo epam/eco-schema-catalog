@@ -15,7 +15,7 @@
  */
 package com.epam.eco.schemacatalog.rest.convert;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.LiteSchemaInfo;
@@ -26,13 +26,17 @@ import com.epam.eco.schemacatalog.utils.EcoIdUtils;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Raman_Babich
  */
-public class SchemaDocumentConverterTest {
+class SchemaDocumentConverterTest {
 
     @Test
-    public void testConvert() {
+    void testConvert() {
         SchemaDocument doc = new SchemaDocument();
         doc.setEcoId("ecoId");
         doc.setSchemaRegistryId(1);
@@ -72,17 +76,17 @@ public class SchemaDocumentConverterTest {
 
         LiteSchemaInfo schemaInfo = SchemaDocumentConverter.toLiteSchemaInfo(doc);
 
-        Assertions.assertEquals("subject", schemaInfo.getSubject());
-        Assertions.assertEquals(EcoIdUtils.formatId("subject", 2), schemaInfo.getEcoId());
-        Assertions.assertEquals(1, schemaInfo.getSchemaRegistryId());
-        Assertions.assertEquals(2, schemaInfo.getVersion());
-        Assertions.assertEquals("rootFullname", schemaInfo.getFullName());
-        Assertions.assertEquals("rootName", schemaInfo.getName());
-        Assertions.assertEquals("rootNamespace", schemaInfo.getNamespace());
-        Assertions.assertEquals(CompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
-        Assertions.assertEquals(Mode.IMPORT, schemaInfo.getMode());
-        Assertions.assertTrue(schemaInfo.isVersionLatest());
-        Assertions.assertFalse(schemaInfo.isDeleted());
+        assertEquals("subject", schemaInfo.getSubject());
+        assertEquals(EcoIdUtils.formatId("subject", 2), schemaInfo.getEcoId());
+        assertEquals(1, schemaInfo.getSchemaRegistryId());
+        assertEquals(2, schemaInfo.getVersion());
+        assertEquals("rootFullname", schemaInfo.getFullName());
+        assertEquals("rootName", schemaInfo.getName());
+        assertEquals("rootNamespace", schemaInfo.getNamespace());
+        assertEquals(CompatibilityLevel.BACKWARD_TRANSITIVE, schemaInfo.getCompatibility());
+        assertEquals(Mode.IMPORT, schemaInfo.getMode());
+        assertTrue(schemaInfo.isVersionLatest());
+        assertFalse(schemaInfo.isDeleted());
     }
 
 }

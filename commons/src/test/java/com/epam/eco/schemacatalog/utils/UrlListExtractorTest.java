@@ -18,40 +18,43 @@ package com.epam.eco.schemacatalog.utils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.confluent.kafka.schemaregistry.client.rest.utils.UrlList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrei_Tytsik
  */
-public class UrlListExtractorTest {
+class UrlListExtractorTest {
 
     @Test
-    public void testUrlsExtractedFromMultipleElementsList() {
+    void testUrlsExtractedFromMultipleElementsList() {
         UrlList urlList = new UrlList(Arrays.asList("url1", "url2", "url3"));
 
         List<String> urls = UrlListExtractor.extract(urlList);
 
-        Assertions.assertNotNull(urls);
-        Assertions.assertEquals(3, urls.size());
-        Assertions.assertTrue(urls.contains("url1"));
-        Assertions.assertTrue(urls.contains("url2"));
-        Assertions.assertTrue(urls.contains("url3"));
+        assertNotNull(urls);
+        assertEquals(3, urls.size());
+        assertTrue(urls.contains("url1"));
+        assertTrue(urls.contains("url2"));
+        assertTrue(urls.contains("url3"));
     }
 
     @Test
-    public void testUrlsExtractedFromOneElementList() {
+    void testUrlsExtractedFromOneElementList() {
         UrlList urlList = new UrlList("url");
 
         List<String> urls = UrlListExtractor.extract(urlList);
 
-        Assertions.assertEquals("url", urlList.current());
+        assertEquals("url", urlList.current());
 
-        Assertions.assertNotNull(urls);
-        Assertions.assertEquals(1, urls.size());
-        Assertions.assertTrue(urls.contains("url"));
+        assertNotNull(urls);
+        assertEquals(1, urls.size());
+        assertTrue(urls.contains("url"));
     }
 
 }

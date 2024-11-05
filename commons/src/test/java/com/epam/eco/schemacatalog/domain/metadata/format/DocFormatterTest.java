@@ -15,23 +15,26 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Andrei_Tytsik
  */
-public class DocFormatterTest {
+class DocFormatterTest {
 
     @Test
-    public void testDocIsFormatted() {
+    void testDocIsFormatted() {
         String text = DocFormatter.format(null, ToStringPartFormatter.INSTANCE);
-        Assertions.assertNull(text);
+        assertNull(text);
 
         text = new DocFormatter("text{@link}text").format(p -> "X");
-        Assertions.assertNotNull(text);
-        Assertions.assertEquals("XXX", text);
+        assertNotNull(text);
+        assertEquals("XXX", text);
 
         text = new DocFormatter("text{@link}text").format(p -> {
             if (p instanceof Text) {
@@ -42,8 +45,8 @@ public class DocFormatterTest {
                 return null;
             }
         });
-        Assertions.assertNotNull(text);
-        Assertions.assertEquals("-TEXT--TAG--TEXT-", text);
+        assertNotNull(text);
+        assertEquals("-TEXT--TAG--TEXT-", text);
 
         text = new DocFormatter("text{@link}text").format(p -> {
             if (p instanceof Text) {
@@ -54,8 +57,8 @@ public class DocFormatterTest {
                 return null;
             }
         });
-        Assertions.assertNotNull(text);
-        Assertions.assertEquals("text-TAG-text", text);
+        assertNotNull(text);
+        assertEquals("text-TAG-text", text);
     }
 
 }
