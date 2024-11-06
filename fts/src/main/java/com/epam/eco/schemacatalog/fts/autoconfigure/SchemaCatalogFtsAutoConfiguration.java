@@ -29,7 +29,6 @@ import com.epam.eco.schemacatalog.fts.SchemaDocumentIndexer;
 @Configuration
 @EnableElasticsearchRepositories(basePackages = {"com.epam.eco.schemacatalog.fts.repo"})
 @EnableConfigurationProperties(SchemaCatalogFtsProperties.class)
-@Import(EmbeddedElasticsearchConfiguration.class)
 public class SchemaCatalogFtsAutoConfiguration {
 
     @Bean
