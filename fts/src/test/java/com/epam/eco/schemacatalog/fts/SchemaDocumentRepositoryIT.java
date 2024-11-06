@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.TestContextManager;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.query.DeleteQuery;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -54,6 +57,8 @@ import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 
+import static com.epam.eco.schemacatalog.fts.SchemaDocument.INDEX_NAME;
+import static com.epam.eco.schemacatalog.fts.SchemaDocument.TYPE;
 import static com.epam.eco.schemacatalog.fts.asserts.FtsAsserts.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,7 +68,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Config.class})
 @TestPropertySource(value = "classpath:application.properties")
-@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+@Disabled("Manual, requires schema-registry and elastic running, see docker-compose in root dir")
 class SchemaDocumentRepositoryIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaDocumentRepositoryIT.class);
 
@@ -73,8 +78,16 @@ class SchemaDocumentRepositoryIT {
     @Autowired
     private ExtendedSchemaRegistryClient client;
 
-    public SchemaDocumentRepositoryIT() throws Exception {
-        new TestContextManager(getClass()).prepareTestInstance(this);
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
+
+    @BeforeEach
+    public void cleanup() {
+        DeleteQuery deleteQuery = new DeleteQuery();
+        deleteQuery.setQuery(QueryBuilders.matchAllQuery());
+        deleteQuery.setIndex(INDEX_NAME);
+        deleteQuery.setType(TYPE);
+        elasticsearchOperations.delete(deleteQuery, SchemaDocument.class);
     }
 
     @Test
@@ -541,8 +554,8 @@ class SchemaDocumentRepositoryIT {
     private static Stream<Arguments> searchByJsonQueryTestDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
 
-        List<FtsTestCase> cases = new ArrayList<>(
-                FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
+        List<FtsTestCase> cases = new ArrayList<>();
+        cases.addAll(FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonTermsTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonFuzzinessTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonProximityTestCases(schemaInfo));

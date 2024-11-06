@@ -42,7 +42,11 @@
                 },
                 "updatedBy" : {
                     "type": "keyword",
-                    "index": true
+                    "fields": {
+                        "keyword": {
+                            "type": "text"
+                        }
+                    }
                 }
             }
         },

@@ -32,6 +32,7 @@ import org.elasticsearch.index.query.WrapperQueryBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -74,11 +75,11 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     private void readMaxResultWindowSetting() {
         Map settings = template.getSetting(SchemaDocument.class);
         String maxResultWindowStr =
-                (String)settings.get(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey());
+                (String) settings.get(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey());
         maxResultWindow =
                 maxResultWindowStr != null ?
-                maxResultWindow = Integer.parseInt(maxResultWindowStr) :
-                IndexSettings.MAX_RESULT_WINDOW_SETTING.getDefault(null);
+                        Integer.parseInt(maxResultWindowStr) :
+                        IndexSettings.MAX_RESULT_WINDOW_SETTING.getDefault(null);
     }
 
     @Override
@@ -150,11 +151,11 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
                 withSort(SortBuilders.scoreSort().order(SortOrder.DESC));
 
         params.getAggregations().forEach(aggregationParams -> queryBuilder.addAggregation(
-                AggregationBuilders.
-                    terms(aggregationParams.getTerm()).
-                    field(aggregationParams.getField()).
-                    order(Terms.Order.count(false)).
-                    size(aggregationParams.getSize())));
+                AggregationBuilders
+                        .terms(aggregationParams.getTerm())
+                        .field(aggregationParams.getField())
+                        .order(BucketOrder.count(false))
+                        .size(aggregationParams.getSize())));
 
         return queryBuilder;
     }
