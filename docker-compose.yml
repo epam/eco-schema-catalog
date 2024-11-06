@@ -45,6 +45,8 @@ services:
     depends_on:
       - kafka1
 
+  #elastic requires more memory
+  #sudo sysctl -w vm.max_map_count=262144
   elasticsearch:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
     image: docker.elastic.co/elasticsearch/elasticsearch:6.8.1

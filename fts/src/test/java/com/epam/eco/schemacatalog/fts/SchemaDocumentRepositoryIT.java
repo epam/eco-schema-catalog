@@ -425,7 +425,13 @@ class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    void testCompatibilityTermFilter() {
+    void testCompatibilityTermFilter() throws Exception {
+        SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
+        registerSchemaWithRandomNameAndProperty(testSchemas1.getKey(), parseSchema(testSchemas1.getValue()), 1);
+
+        //due to async nature of elastic client
+        Thread.currentThread().sleep(500);
+
         CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
