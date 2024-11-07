@@ -50,9 +50,8 @@ public class FtsTestUtils {
         await().atMost(1200, TimeUnit.SECONDS)
                 .pollInterval(100, TimeUnit.MILLISECONDS)
                 .until(() -> {
-                    Page<SchemaDocument> result = repository.findByRootNamespaceInAndVersionLatest(
+                    Page<SchemaDocument> result = repository.findByRootNamespaceIn(
                             Arrays.asList(namespaces),
-                            null,
                             PageRequest.of(0, 100));
                     return result.getTotalElements();
                 }, equalTo(count));

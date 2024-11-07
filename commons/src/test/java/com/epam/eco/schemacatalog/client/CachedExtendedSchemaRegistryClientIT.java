@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+//@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
 class CachedExtendedSchemaRegistryClientIT {
 
     private static final String TEST_SCHEMA_JSON1 = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": []}";

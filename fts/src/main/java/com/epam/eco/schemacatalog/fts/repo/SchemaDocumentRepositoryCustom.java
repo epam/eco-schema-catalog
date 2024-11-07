@@ -15,7 +15,7 @@
  */
 package com.epam.eco.schemacatalog.fts.repo;
 
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 
 import com.epam.eco.schemacatalog.fts.JsonSearchQuery;
 import com.epam.eco.schemacatalog.fts.QueryStringQuery;
@@ -28,8 +28,12 @@ import com.epam.eco.schemacatalog.fts.SearchResult;
  */
 public interface SchemaDocumentRepositoryCustom {
     int getMaxResultWindow();
-    SearchResult<SchemaDocument> searchByQuery(SearchQuery query);
+
+    SearchResult<SchemaDocument> searchByQuery(Query query);
+
     SearchResult<SchemaDocument> searchByQuery(JsonSearchQuery query);
+
     SearchResult<SchemaDocument> searchByQuery(QueryStringQuery query);
+
     SearchResult<SchemaDocument> searchByParams(SearchParams params);
 }
