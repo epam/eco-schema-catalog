@@ -22,8 +22,8 @@ import java.util.Random;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.elasticsearch.common.unit.Fuzziness;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 import com.epam.eco.schemacatalog.domain.metadata.Metadata;
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
@@ -150,7 +150,7 @@ public class FtsTestCaseGenerator {
         List<Metadata> metadataList = schemaInfo.getMetadataBrowser().getFieldMetadataAsList();
 
         String doc = schemaDocument.getDoc().iterator().next().split("\\.\\s\\{@.+$")[0];
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(regexpQuery(FtsConstants.FIELD_DOC, doc.replaceAll("[A-Z]+", ".*").concat(".*")))
                 .build();
         ftsTestCases.add(new FtsTestCase(schemaInfo, schemaDocument, searchQuery.getQuery().toString()));
@@ -175,7 +175,7 @@ public class FtsTestCaseGenerator {
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
 
         String subjectTerm = schemaDocument.getSubject();
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(termQuery(FtsConstants.FIELD_SUBJECT, subjectTerm))
                 .build();
         ftsTestCases.add(new FtsTestCase(schemaInfo, schemaDocument, searchQuery.getQuery().toString()));
@@ -214,7 +214,7 @@ public class FtsTestCaseGenerator {
         List<Metadata> metadataList = schemaInfo.getMetadataBrowser().getFieldMetadataAsList();
 
         String subject = schemaDocument.getSubject();
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(fuzzyQuery(FtsConstants.FIELD_SUBJECT, subject.replaceFirst("\\w", "%"))
                         .fuzziness(Fuzziness.ONE))
                 .build();
@@ -249,7 +249,7 @@ public class FtsTestCaseGenerator {
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
 
         String[] doc = schemaDocument.getMetadata().getDoc().iterator().next().split("\\.\\s\\{@.+$")[0].split("\\s");
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryStringQuery(String.format(PROXIMITY_QUERY, doc[0], doc[doc.length - 1], doc.length)))
                 .build();
         ftsTestCases.add(new FtsTestCase(schemaInfo, schemaDocument, searchQuery.getQuery().toString()));
@@ -268,7 +268,7 @@ public class FtsTestCaseGenerator {
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(schemaInfo);
 
         String[] doc = schemaDocument.getMetadata().getDoc().iterator().next().split("\\.\\s\\{@.+$")[0].split("\\s");
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryStringQuery(String.format(BOOLEAN_OPERATORS_QUERY, doc[0])))
                 .build();
         ftsTestCases.add(new FtsTestCase(schemaInfo, schemaDocument, searchQuery.getQuery().toString()));

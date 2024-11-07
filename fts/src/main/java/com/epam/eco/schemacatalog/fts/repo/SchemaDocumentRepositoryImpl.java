@@ -23,6 +23,8 @@ import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.Validate;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -33,16 +35,20 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.BucketOrder;
-import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.document.Document;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 
 import com.epam.eco.schemacatalog.fts.FtsConstants;
 import com.epam.eco.schemacatalog.fts.JsonSearchQuery;
@@ -57,7 +63,10 @@ import com.epam.eco.schemacatalog.fts.SearchResult;
 public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCustom {
 
     @Autowired
-    private ElasticsearchTemplate template;
+    private ElasticsearchOperations elasticsearchOperations;
+
+    @Autowired
+    private ElasticsearchRestTemplate restTemplate;
 
     private int maxResultWindow;
 
@@ -68,12 +77,37 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     }
 
     private void createIndexIfNotCreated() {
-        template.createIndex(SchemaDocument.class);
+        IndexOperations indexOperations = elasticsearchOperations.indexOps(SchemaDocument.class);
+        if (indexOperations.exists()) {
+            return;
+        }
+
+        IndexCoordinates coordinates = indexOperations.getIndexCoordinates();
+
+        Document mapping = indexOperations.createMapping(SchemaDocument.class);
+        Document settings = indexOperations.createSettings(SchemaDocument.class);
+
+        //todo replace with create(settings, mapping) when spring-data elastic ups to 4.2+
+        //indexOperations.create(mapping);
+
+        CreateIndexRequest request = new CreateIndexRequest(coordinates.getIndexName());
+
+        if (settings != null && !settings.isEmpty()) {
+            request.settings(settings);
+        }
+        if (mapping != null && !mapping.isEmpty()) {
+            request.mapping(mapping);
+        }
+
+        restTemplate.execute(client -> client.indices().create(request, RequestOptions.DEFAULT).isAcknowledged());
     }
 
     @SuppressWarnings("rawtypes")
     private void readMaxResultWindowSetting() {
-        Map settings = template.getSetting(SchemaDocument.class);
+        Map settings = elasticsearchOperations.indexOps(
+                        IndexCoordinates.of(SchemaDocument.INDEX_NAME)
+                )
+                .getSettings();
         String maxResultWindowStr =
                 (String) settings.get(IndexSettings.MAX_RESULT_WINDOW_SETTING.getKey());
         maxResultWindow =
@@ -88,10 +122,16 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     }
 
     @Override
-    public SearchResult<SchemaDocument> searchByQuery(SearchQuery query) {
+    public SearchResult<SchemaDocument> searchByQuery(Query query) {
         Validate.notNull(query, "Query is null");
 
-        return toSearchResult(template.queryForPage(query, SchemaDocument.class));
+        return toSearchResult(
+                elasticsearchOperations.queryForPage(
+                        query,
+                        SchemaDocument.class,
+                        IndexCoordinates.of(SchemaDocument.INDEX_NAME)
+                )
+        );
     }
 
     @Override
@@ -103,7 +143,12 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
         nativeSearchQueryBuilder.withQuery(wrapperQueryBuilder);
         nativeSearchQueryBuilder.withPageable(query.getPageable());
 
-        return toSearchResult(template.queryForPage(nativeSearchQueryBuilder.build(), SchemaDocument.class));
+        return toSearchResult(
+                elasticsearchOperations.queryForPage(
+                        nativeSearchQueryBuilder.build(),
+                        SchemaDocument.class,
+                        IndexCoordinates.of(SchemaDocument.INDEX_NAME)
+                ));
     }
 
     @Override
@@ -115,7 +160,13 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
                 withQuery(QueryBuilders.queryStringQuery(query.getQueryString())).
                 withPageable(query.getPageable());
 
-        return toSearchResult(template.queryForPage(queryBuilder.build(), SchemaDocument.class));
+        return toSearchResult(
+                elasticsearchOperations.queryForPage(
+                        queryBuilder.build(),
+                        SchemaDocument.class,
+                        IndexCoordinates.of(SchemaDocument.INDEX_NAME)
+                )
+        );
     }
 
     @Override
@@ -129,7 +180,12 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
                         params.getPageable());
         queryBuilder.withFilter(createFilter(params));
 
-        return toSearchResult(template.queryForPage(queryBuilder.build(), SchemaDocument.class));
+        return toSearchResult(elasticsearchOperations.queryForPage(
+                        queryBuilder.build(),
+                        SchemaDocument.class,
+                        IndexCoordinates.of(SchemaDocument.INDEX_NAME)
+                )
+        );
     }
 
     private SearchResult<SchemaDocument> toSearchResult(AggregatedPage<SchemaDocument> page) {
@@ -246,9 +302,9 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
             Map<String, Aggregation> aggregationNameMap = aggregations.asMap();
             aggregationMap = new HashMap<>((int) (aggregationNameMap.size() / 0.75));
             for (Map.Entry<String, Aggregation> agg : aggregationNameMap.entrySet()) {
-                InternalTerms<?, ?> internalTerms = (InternalTerms<?, ?>) agg.getValue();
+                ParsedTerms terms = (ParsedTerms) agg.getValue();
                 Map<String, Long> buckets = new TreeMap<>();
-                for (Terms.Bucket bucket : internalTerms.getBuckets()) {
+                for (Terms.Bucket bucket : terms.getBuckets()) {
                     buckets.put(bucket.getKeyAsString(), bucket.getDocCount());
                 }
                 aggregationMap.put(agg.getKey(), buckets);

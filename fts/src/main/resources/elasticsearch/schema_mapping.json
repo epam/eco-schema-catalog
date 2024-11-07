@@ -1,67 +1,67 @@
 {
-    "properties": {
-        "subject": {
-            "type": "keyword",
-            "index": true
-        },
-        "rootNamespace": {
-            "type": "keyword",
-            "index": true
-        },
-        "namespace": {
-            "type": "keyword",
-            "index": true
-        },
-        "compatibility": {
-            "type": "keyword",
-            "index": true
-        },
-        "mode": {
-            "type": "keyword",
-            "index": true
-        },
-        "path": {
-            "type": "keyword",
-            "index": true
-        },
-        "metadata": {
-            "type": "object",
-            "properties": {
-                "attribute" : {
-                    "type": "object",
-                    "properties": {
-                        "key": {
-                            "type": "keyword",
-                            "index": true
-                        },
-                        "value": {
-                            "type": "keyword",
-                            "index": true
-                        }
-                    }
-                },
-                "updatedBy" : {
-                    "type": "keyword",
-                    "fields": {
-                        "keyword": {
-                            "type": "text"
-                        }
-                    }
-                }
+  "properties": {
+    "subject": {
+      "type": "keyword",
+      "index": true
+    },
+    "rootNamespace": {
+      "type": "keyword",
+      "index": true
+    },
+    "namespace": {
+      "type": "keyword",
+      "index": true
+    },
+    "compatibility": {
+      "type": "keyword",
+      "index": true
+    },
+    "mode": {
+      "type": "keyword",
+      "index": true
+    },
+    "path": {
+      "type": "keyword",
+      "index": true
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "keyword",
+              "index": true
+            },
+            "value": {
+              "type": "keyword",
+              "index": true
             }
+          }
         },
-        "property": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "keyword",
-                    "index": true
-                },
-                "value": {
-                    "type": "keyword",
-                    "index": true
-                }
+        "updatedBy": {
+          "type": "keyword",
+          "fields": {
+            "keyword": {
+              "type": "text"
             }
+          }
         }
+      }
+    },
+    "property": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "keyword",
+          "index": true
+        },
+        "value": {
+          "type": "keyword",
+          "index": true
+        }
+      }
     }
+  }
 }

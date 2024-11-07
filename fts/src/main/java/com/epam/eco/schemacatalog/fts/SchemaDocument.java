@@ -30,9 +30,10 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 /**
  * @author Andrei_Tytsik
  */
-@Document(indexName=SchemaDocument.INDEX_NAME, type=SchemaDocument.TYPE)
-@Setting(settingPath=SchemaDocument.SETTING_PATH)
-@Mapping(mappingPath=SchemaDocument.MAPPING_PATH)
+//createIndex false is because spring data doesn't use MAPPING_PATH mappings but builds its own mapping based on fields
+@Document(indexName = SchemaDocument.INDEX_NAME, createIndex = false)
+@Setting(settingPath = SchemaDocument.SETTING_PATH)
+@Mapping(mappingPath = SchemaDocument.MAPPING_PATH)
 public final class SchemaDocument {
 
     public static final String INDEX_NAME = "schemacatalog_index";
@@ -66,120 +67,159 @@ public final class SchemaDocument {
     public String getEcoId() {
         return ecoId;
     }
+
     public void setEcoId(String ecoId) {
         this.ecoId = ecoId;
     }
+
     public Integer getSchemaRegistryId() {
         return schemaRegistryId;
     }
+
     public void setSchemaRegistryId(Integer schemaRegistryId) {
         this.schemaRegistryId = schemaRegistryId;
     }
+
     public String getSubject() {
         return subject;
     }
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
     public Integer getVersion() {
         return version;
     }
+
     public void setVersion(Integer version) {
         this.version = version;
     }
+
     public String getCompatibility() {
         return compatibility;
     }
+
     public void setCompatibility(String compatibility) {
         this.compatibility = compatibility;
     }
+
     public String getMode() {
         return mode;
     }
+
     public void setMode(String mode) {
         this.mode = mode;
     }
+
     public String getRootName() {
         return rootName;
     }
+
     public void setRootName(String rootName) {
         this.rootName = rootName;
     }
+
     public String getRootNamespace() {
         return rootNamespace;
     }
+
     public void setRootNamespace(String rootNamespace) {
         this.rootNamespace = rootNamespace;
     }
+
     public String getRootFullname() {
         return rootFullname;
     }
+
     public void setRootFullname(String rootFullname) {
         this.rootFullname = rootFullname;
     }
+
     public Boolean getDeleted() {
         return deleted;
     }
+
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
     public Set<String> getPath() {
         return path;
     }
+
     public void setPath(Set<String> path) {
         this.path = path;
     }
+
     public Set<String> getAlias() {
         return alias;
     }
+
     public void setAlias(Set<String> alias) {
         this.alias = alias;
     }
+
     public Set<String> getName() {
         return name;
     }
+
     public void setName(Set<String> name) {
         this.name = name;
     }
+
     public Set<String> getNamespace() {
         return namespace;
     }
+
     public void setNamespace(Set<String> namespace) {
         this.namespace = namespace;
     }
+
     public Set<String> getDoc() {
         return doc;
     }
+
     public void setDoc(Set<String> doc) {
         this.doc = doc;
     }
+
     public Set<String> getLogicalType() {
         return logicalType;
     }
+
     public void setLogicalType(Set<String> logicalType) {
         this.logicalType = logicalType;
     }
+
     public Set<KeyValue> getProperty() {
         return property;
     }
+
     public void setProperty(Set<KeyValue> property) {
         this.property = property;
     }
+
     public Set<String> getFullname() {
         return fullname;
     }
+
     public void setFullname(Set<String> fullname) {
         this.fullname = fullname;
     }
+
     public Boolean getVersionLatest() {
         return versionLatest;
     }
+
     public void setVersionLatest(Boolean versionLatest) {
         this.versionLatest = versionLatest;
     }
+
     public MetadataDocument getMetadata() {
         return metadata;
     }
+
     public void setMetadata(MetadataDocument metadata) {
         this.metadata = metadata;
     }
