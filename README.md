@@ -100,6 +100,7 @@ The installation consists of:
 * Schema Registry
 * Schema Catalog REST
 * Schema Catalog UI
+* Elasticsearch
 
 Run the following command sequence:
 
