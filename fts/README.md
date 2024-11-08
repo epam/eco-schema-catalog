@@ -1,7 +1,7 @@
 # Eco Schema Catalog FTS
 
-Eco Schema Catalog FTS is a Spring Boot auto-configuration library, provides service that enables Full-Text Search (FTS) capabilities against the data in the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html).
-
+Eco Schema Catalog FTS is a Spring Boot autoconfiguration library, provides service that enables Full-Text Search (FTS) capabilities against the data in the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html).<br>
+**Requires** Elasticsearch deployment, see [Elasticsearch](https://www.elastic.co/)<br>
 The library can be obtained from Maven by adding the following dependency in the pom.xml:
 
 ```
@@ -28,17 +28,24 @@ private SchemaDocumentRepository schemaDocumentRepository;
 ```
 eco.schemacatalog.store.schemaRegistryUrl=http://schema-registry:8081
 eco.schemacatalog.store.kafka.bootstrapServers=kafka:9092
+spring.elasticsearch.rest.uris=localhost:9200
 ```
 
 or **application.yml**
 ```
 eco:
-    schemacatalog:
-        store:
-            schemaRegistryUrl: http://schema-registry:8081
-            kafka:
-                bootstrapServers: kafka:9092
+  schemacatalog:
+    store:
+      schemaRegistryUrl: http://schema-registry:8081
+      kafka:
+        bootstrapServers: kafka:9092
+spring:
+  elasticsearch:
+    rest:
+      uris: localhost:9200
 ```
+
+The infrastructure example could be found in [docker-compose.yml](../docker-compose.yml), which also could be used for launching Manual integration tests.
 
 ## License
 
