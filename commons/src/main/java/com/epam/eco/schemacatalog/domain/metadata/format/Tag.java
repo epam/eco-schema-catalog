@@ -16,6 +16,7 @@
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class Tag implements Part {
     private final TagType type;
     private final List<Object> params;
 
-    public Tag(TagType type, List<Object> params) {
+    public Tag(TagType type, Collection<Object> params) {
         Validate.notNull(type, "Type is null");
 
         this.type = type;

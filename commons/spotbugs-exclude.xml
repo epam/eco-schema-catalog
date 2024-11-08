@@ -180,5 +180,9 @@
         <Method name="configure"/>
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient"/>
+        <Bug pattern="ENMI_NULL_ENUM_VALUE"/>
+    </Match>
 
 </FindBugsFilter>

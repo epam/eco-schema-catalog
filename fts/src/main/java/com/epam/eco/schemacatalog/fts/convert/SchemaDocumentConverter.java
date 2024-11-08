@@ -15,11 +15,11 @@
  */
 package com.epam.eco.schemacatalog.fts.convert;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
@@ -139,14 +139,14 @@ public abstract class SchemaDocumentConverter {
                 (key, value) -> document.addAttribute(key, Objects.toString(value, null)));
     }
 
-    private static List<String> toString(List<?> list) {
+    private static List<String> toString(Collection<?> list) {
         if (list == null) {
             return null;
         }
 
         return list.stream().
-                map(elem -> Objects.toString(elem, null)).
-                collect(Collectors.toList());
+                map(elem -> Objects.toString(elem, null))
+                .toList();
     }
 
 }
