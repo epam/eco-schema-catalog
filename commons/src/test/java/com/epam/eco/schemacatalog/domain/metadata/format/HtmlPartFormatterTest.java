@@ -15,18 +15,19 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dzmitry_Krivolap
  */
-public class HtmlPartFormatterTest {
+class HtmlPartFormatterTest {
 
     private final HtmlPartFormatter formatter = HtmlPartFormatter.INSTANCE;
 
     @Test
-    public void testFormatLink() {
+    void testFormatLink() {
         String result = DocFormatter.format(
                 "{@link Google|http://google.com}",
                 formatter);
@@ -34,11 +35,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Google" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatFieldLink() {
+    void testFormatFieldLink() {
         String result = DocFormatter.format(
                 "{@field_link Field Link|subject|1|schemaFullName|field|http://google.com}",
                 formatter);
@@ -46,11 +47,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatSchemaLink() {
+    void testFormatSchemaLink() {
         String result = DocFormatter.format(
                 "{@schema_link Schema Link|subject|1|http://google.com}",
                 formatter);
@@ -58,11 +59,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatForeignKey() {
+    void testFormatForeignKey() {
         String result = DocFormatter.format(
                 "{@foreign_key Foreign key|subject|1|schemaFullName|field|http://google.com}",
                 formatter);
@@ -70,21 +71,21 @@ public class HtmlPartFormatterTest {
                 "<a href=\"http://google.com#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatSqlTable() {
+    void testFormatSqlTable() {
         String result = DocFormatter.format(
                 "{@sql_table database|schema|table}",
                 formatter);
         String expected =
                 "{@sql_table database|schema|table}";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatLinkWithUnacceptableTags() {
+    void testFormatLinkWithUnacceptableTags() {
         String result = DocFormatter.format(
                 "{@link Google|<div></div>} <form></form>",
                 formatter);
@@ -92,11 +93,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Google" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatFieldLinkWithUnacceptableTags(){
+    void testFormatFieldLinkWithUnacceptableTags() {
         String result = DocFormatter.format(
                 "{@field_link Field Link|subject|1|schemaFullName|<div></div>|link} <form></form>",
                 formatter);
@@ -104,11 +105,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"link#&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatSchemaLinkWithUnacceptableTags() {
+    void testFormatSchemaLinkWithUnacceptableTags() {
         String result = DocFormatter.format(
                 "{@schema_link Schema Link|subject|1|<div></div>} <form></form>",
                 formatter);
@@ -116,11 +117,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatForeignKeyWithUnacceptableTags() {
+    void testFormatForeignKeyWithUnacceptableTags() {
         String result = DocFormatter.format(
                 "{@foreign_key Foreign key|subject|1|schemaFullName|<div></div>|link} <form></form>",
                 formatter);
@@ -128,31 +129,31 @@ public class HtmlPartFormatterTest {
                 "<a href=\"link#&lt;div&gt;&lt;/div&gt;\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a> &lt;form&gt;&lt;/form&gt;";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatSqlTableWithUnacceptableTags() {
+    void testFormatSqlTableWithUnacceptableTags() {
         String result = DocFormatter.format(
                 "{@sql_table database|<div></div>|table} <form></form>",
                 formatter);
         String expected =
                 "{@sql_table database|&lt;div&gt;&lt;/div&gt;|table} &lt;form&gt;&lt;/form&gt;";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatLinkWithJavaScript() {
+    void testFormatLinkWithJavaScript() {
         String result = DocFormatter.format(
                 "{@link title|javascript:alert(1)}",
                 formatter);
         String expected =
                 "<a href=\"_no_javascript_alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">title</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatFieldLinkWithJavaScript() {
+    void testFormatFieldLinkWithJavaScript() {
         String result = DocFormatter.format(
                 "{@field_link Field Link|subject|1|schemaFullName|field|javascript:alert(1)}",
                 formatter);
@@ -160,11 +161,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Field Link" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatForeignKeyWithJavaScript() {
+    void testFormatForeignKeyWithJavaScript() {
         String result = DocFormatter.format(
                 "{@foreign_key Foreign key|subject|1|schemaFullName|field|javascript:alert(1)}",
                 formatter);
@@ -172,11 +173,11 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)#field\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Foreign key" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testFormatSchemaLinkWithJavaScript(){
+    void testFormatSchemaLinkWithJavaScript() {
         String result = DocFormatter.format(
                 "{@schema_link Schema Link|subject|1|javascript:alert(1)}",
                 formatter);
@@ -184,7 +185,7 @@ public class HtmlPartFormatterTest {
                 "<a href=\"_no_javascript_alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">" +
                 "Schema Link" +
                 "</a>";
-        Assertions.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
 }

@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.schemacatalog.domain.schema.FullSchemaInfo;
@@ -30,15 +29,19 @@ import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrei_Tytsik
  */
-public class MetadataBrowserTest {
+class MetadataBrowserTest {
 
     @Test
-    public void testBrowserFunctional() {
+    void testBrowserFunctional() {
         MetadataKey schemaKey = schemaKey();
         MetadataValue schemaValue = randomValue();
         Metadata schemaMetadata = Metadata.with(schemaKey, schemaValue);
@@ -59,64 +62,64 @@ public class MetadataBrowserTest {
         FullSchemaInfo schemaInfo = testSchema(metadata);
         MetadataBrowser<FullSchemaInfo> browser = schemaInfo.getMetadataBrowser();
 
-        Assertions.assertNotNull(browser);
+        assertNotNull(browser);
 
-        Assertions.assertFalse(browser.isEmpty());
-        Assertions.assertEquals(3, browser.size());
+        assertFalse(browser.isEmpty());
+        assertEquals(3, browser.size());
 
-        Assertions.assertTrue(browser.getSchemaMetadata().isPresent());
-        Assertions.assertEquals(schemaMetadata, browser.getSchemaMetadata().get());
+        assertTrue(browser.getSchemaMetadata().isPresent());
+        assertEquals(schemaMetadata, browser.getSchemaMetadata().get());
 
-        Assertions.assertTrue(browser.getFieldMetadata("TestA", "f1").isPresent());
-        Assertions.assertEquals(field1Metadata, browser.getFieldMetadata("TestA", "f1").get());
+        assertTrue(browser.getFieldMetadata("TestA", "f1").isPresent());
+        assertEquals(field1Metadata, browser.getFieldMetadata("TestA", "f1").get());
 
-        Assertions.assertFalse(browser.getFieldMetadata("TestC", "f3").isPresent());
+        assertFalse(browser.getFieldMetadata("TestC", "f3").isPresent());
 
-        Assertions.assertTrue(browser.getFieldMetadata("TestB", "f2").isPresent());
-        Assertions.assertEquals(field3Metadata, browser.getFieldMetadata("TestB", "f2").get());
+        assertTrue(browser.getFieldMetadata("TestB", "f2").isPresent());
+        assertEquals(field3Metadata, browser.getFieldMetadata("TestB", "f2").get());
 
-        Assertions.assertFalse(browser.getFieldMetadata("TestD", "f4").isPresent());
+        assertFalse(browser.getFieldMetadata("TestD", "f4").isPresent());
 
         List<Metadata> fieldMetadataList = browser.getFieldMetadataAsList();
-        Assertions.assertNotNull(fieldMetadataList);
-        Assertions.assertEquals(2, fieldMetadataList.size());
-        Assertions.assertTrue(fieldMetadataList.contains(field1Metadata));
-        Assertions.assertTrue(fieldMetadataList.contains(field3Metadata));
+        assertNotNull(fieldMetadataList);
+        assertEquals(2, fieldMetadataList.size());
+        assertTrue(fieldMetadataList.contains(field1Metadata));
+        assertTrue(fieldMetadataList.contains(field3Metadata));
 
         Map<MetadataKey, Metadata> fieldMetadataMap = browser.getFieldMetadataAsMap();
-        Assertions.assertNotNull(fieldMetadataMap);
-        Assertions.assertEquals(2, fieldMetadataMap.size());
-        Assertions.assertEquals(fieldMetadataMap.get(field1Key), field1Metadata);
-        Assertions.assertEquals(fieldMetadataMap.get(field3Key), field3Metadata);
+        assertNotNull(fieldMetadataMap);
+        assertEquals(2, fieldMetadataMap.size());
+        assertEquals(fieldMetadataMap.get(field1Key), field1Metadata);
+        assertEquals(fieldMetadataMap.get(field3Key), field3Metadata);
     }
 
     @Test
-    public void testEmptyBrowserIsFunctional() {
+    void testEmptyBrowserIsFunctional() {
         FullSchemaInfo schemaInfo = testSchema(null);
         MetadataBrowser<FullSchemaInfo> browser = schemaInfo.getMetadataBrowser();
 
-        Assertions.assertNotNull(browser);
+        assertNotNull(browser);
 
-        Assertions.assertTrue(browser.isEmpty());
-        Assertions.assertEquals(0, browser.size());
+        assertTrue(browser.isEmpty());
+        assertEquals(0, browser.size());
 
-        Assertions.assertFalse(browser.getSchemaMetadata().isPresent());
-        Assertions.assertFalse(browser.getFieldMetadata("TestA", "f1").isPresent());
-        Assertions.assertFalse(browser.getFieldMetadata("TestB", "f2").isPresent());
-        Assertions.assertFalse(browser.getFieldMetadata("TestC", "f3").isPresent());
-        Assertions.assertFalse(browser.getFieldMetadata("TestD", "f4").isPresent());
+        assertFalse(browser.getSchemaMetadata().isPresent());
+        assertFalse(browser.getFieldMetadata("TestA", "f1").isPresent());
+        assertFalse(browser.getFieldMetadata("TestB", "f2").isPresent());
+        assertFalse(browser.getFieldMetadata("TestC", "f3").isPresent());
+        assertFalse(browser.getFieldMetadata("TestD", "f4").isPresent());
 
         List<Metadata> fieldMetadataList = browser.getFieldMetadataAsList();
-        Assertions.assertNotNull(fieldMetadataList);
-        Assertions.assertTrue(fieldMetadataList.isEmpty());
+        assertNotNull(fieldMetadataList);
+        assertTrue(fieldMetadataList.isEmpty());
 
         Map<MetadataKey, Metadata> fieldMetadataMap = browser.getFieldMetadataAsMap();
-        Assertions.assertNotNull(fieldMetadataMap);
-        Assertions.assertTrue(fieldMetadataMap.isEmpty());
+        assertNotNull(fieldMetadataMap);
+        assertTrue(fieldMetadataMap.isEmpty());
     }
 
     @Test
-    public void testFailsOnIllegalArguments() {
+    void testFailsOnIllegalArguments() {
         assertThrows(
                 Exception.class,
                 () -> new MetadataBrowser<>(null)
@@ -124,14 +127,14 @@ public class MetadataBrowserTest {
     }
 
     @Test
-    public void testFailsOnUnknownField() {
+    void testFailsOnUnknownField() {
         assertThrows(
                 Exception.class,
                 () -> {
                     FullSchemaInfo schemaInfo = testSchema(null);
                     MetadataBrowser<FullSchemaInfo> browser = schemaInfo.getMetadataBrowser();
 
-                    Assertions.assertNotNull(browser);
+                    assertNotNull(browser);
 
                     browser.getFieldMetadata("schemaFullName", "unknown_field_path");
                 }

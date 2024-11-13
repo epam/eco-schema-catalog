@@ -15,19 +15,21 @@
  */
 package com.epam.eco.schemacatalog.domain.metadata.format;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Andrei_Tytsik
  */
-public class UnescaperTest {
+class UnescaperTest {
 
     @Test
-    public void testCodesAreUnescaped() {
+    void testCodesAreUnescaped() {
         String text = Unescaper.unescape(
                 "&lbrace;&#123;&lbrace;::&vert;&#124;&vert;&#124;&vert;&#124;&vert;&#124;&vert;&#124;::&rbrace;&#125;&rbrace;");
-        Assertions.assertEquals("{{{::||||||||||::}}}", text);
+        assertEquals("{{{::||||||||||::}}}", text);
     }
 
 }

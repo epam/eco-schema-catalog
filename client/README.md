@@ -31,9 +31,9 @@ eco.schemacatalog.client.schemaCatalogUrl=http://schema-catalog-rest:8080
 or **application.yml**
 ```
 eco:
-    schemacatalog:
-        client:
-            schemaCatalogUrl: http://schema-catalog-rest:8080
+  schemacatalog:
+    client:
+      schemaCatalogUrl: http://schema-catalog-rest:8080
 ```
 
 ## Configuration properties

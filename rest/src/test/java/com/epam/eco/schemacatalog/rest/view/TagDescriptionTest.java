@@ -15,18 +15,21 @@
  */
 package com.epam.eco.schemacatalog.rest.view;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Raman_Babich
  */
-public class TagDescriptionTest {
+class TagDescriptionTest {
 
     @Test
-    public void testSerializedToJsonAndBack() {
+    void testSerializedToJsonAndBack() {
         TagDescription origin = TagDescription.builder()
                 .name("NAME")
                 .addParamName("param-1")
@@ -38,11 +41,11 @@ public class TagDescriptionTest {
                 .build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         TagDescription deserialized = JsonMapper.jsonToObject(json, TagDescription.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
 }

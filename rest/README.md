@@ -1,6 +1,7 @@
 # Eco Schema Catalog REST
 
 Eco Schema Catalog REST is a Spring Boot web application that exposes RESTful interface for interaction of third-party services and applications with the Schema Catalog.
+Also, Eco Schema Catalog REST requires deployment of Elasticsearch for searching existing schemas.
 
 ## Minimum configuration file
 
@@ -8,16 +9,21 @@ Eco Schema Catalog REST is a Spring Boot web application that exposes RESTful in
 ```
 eco.schemacatalog.store.schemaRegistryUrl=http://schema-registry:8081
 eco.schemacatalog.store.kafka.bootstrapServers=kafka:9092
+spring.elasticsearch.rest.uris=localhost:9200
 ```
 
 or **application.yml**
 ```
 eco:
-    schemacatalog:
-        store:
-            schemaRegistryUrl: http://schema-registry:8081
-            kafka:
-                bootstrapServers: kafka:9092
+  schemacatalog:
+    store:
+      schemaRegistryUrl: http://schema-registry:8081
+      kafka:
+        bootstrapServers: kafka:9092
+spring:
+  elasticsearch:
+    rest:
+      uris: localhost:9200
 ```
 
 ## Running Eco Schema Catalog REST 
@@ -31,9 +37,12 @@ You can run Eco Schema Catalog:
 ### Running as standalone
 
 The prerequisites include:
-* Java 8+
-* [Confluent Platform (Kafka)](https://www.confluent.io/)
-* [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html)
+* Java 17+
+* [Confluent Platform (Kafka) 7.4](https://www.confluent.io/)
+* [Schema Registry 7.4](https://docs.confluent.io/platform/current/schema-registry/index.html)
+* [Elasticsearch 7.9.x](https://www.elastic.co/)
+
+The infrastructure example could be found in [docker-compose.yml](../docker-compose.yml), which also could be used for launching Manual integration tests.
 
 Run the following command sequence:
 ```
@@ -107,6 +116,9 @@ docker run --name eco-schema-catalog-rest \
 [https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags](https://hub.docker.com/r/epam/eco-schema-catalog-rest/tags)
 
 ## Configuration properties
+
+In general, the application is built on Spring Boot 2.4.x and accepts all standard Spring Web, Spring Actuator, String Data Elasticsearch, Spring Security configuration options. 
+See [Spring Documentation](https://spring.io/).
 
 Name | Environment Variable | Description | Default
 ---  | ---                  | ---         | --- 

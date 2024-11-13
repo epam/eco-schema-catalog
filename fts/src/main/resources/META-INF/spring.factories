@@ -1,5 +1,2 @@
-org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
-com.epam.eco.schemacatalog.fts.autoconfigure.ElasticsearchAutoConfigurationImportFilter
-
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.epam.eco.schemacatalog.fts.autoconfigure.SchemaCatalogFtsAutoConfiguration

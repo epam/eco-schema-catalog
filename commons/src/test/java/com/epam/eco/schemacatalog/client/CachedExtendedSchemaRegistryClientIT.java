@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CachedExtendedSchemaRegistryClientIT {
+@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+class CachedExtendedSchemaRegistryClientIT {
 
     private static final String TEST_SCHEMA_JSON1 = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": []}";
     private static final String TEST_SCHEMA_JSON2 = "{\"type\": \"record\", \"name\": \"Name\", \"fields\": [{\"name\": \"a\", \"type\": \"string\", \"default\": \"\"}]}";
@@ -68,7 +70,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void testSchemaIsResolvedBySubjectAndVersion(
+    void testSchemaIsResolvedBySubjectAndVersion(
             ExtendedSchemaRegistryClient client
     ) throws Exception {
         String subject = "getBySubjectAndVersionTest-subj";
@@ -82,7 +84,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void getBySubjectAndNullVersionNegative(ExtendedSchemaRegistryClient client) {
+    void getBySubjectAndNullVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
                 () -> client.getSchemaBySubjectAndVersion("getBySubjectAndNullVersionNegative-subj", 0)
@@ -91,7 +93,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void getByBlankSubjectAndVersionNegative(ExtendedSchemaRegistryClient client) {
+    void getByBlankSubjectAndVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> client.getSchemaBySubjectAndVersion(" ", 1)
@@ -100,7 +102,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void testSchemaInfoIsResolvedBySubjectAndVersion(ExtendedSchemaRegistryClient client) throws Exception {
+    void testSchemaInfoIsResolvedBySubjectAndVersion(ExtendedSchemaRegistryClient client) throws Exception {
         String subject = "getSchemaInfoTest-subj";
 
         ParsedSchema schema = registerSchema(client, subject, TEST_SCHEMA_JSON1);
@@ -119,7 +121,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void getSchemaInfoByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
+    void getSchemaInfoByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> client.getSchemaInfo(" ", 1)
@@ -128,7 +130,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void getSchemaInfoByNullVersionNegative(ExtendedSchemaRegistryClient client) {
+    void getSchemaInfoByNullVersionNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
                 () -> client.getSchemaInfo("getSchemaInfoByNullVersionNegative-subj", 0)
@@ -137,7 +139,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void testLatestSchemaInfoIsResolvedBySubject(ExtendedSchemaRegistryClient client) throws Exception {
+    void testLatestSchemaInfoIsResolvedBySubject(ExtendedSchemaRegistryClient client) throws Exception {
         String subject = "getSchemaInfoLatestTest-subj";
 
         registerSchema(client, subject, TEST_SCHEMA_JSON1);
@@ -157,7 +159,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void getSchemaInfoLatestByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
+    void getSchemaInfoLatestByBlankSubjectNegative(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> client.getLatestSchemaInfo(" ")
@@ -166,19 +168,19 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void testSchemaIsModifiedAndRegistered(ExtendedSchemaRegistryClient client) {
+    void testSchemaIsModifiedAndRegistered(ExtendedSchemaRegistryClient client) {
         String subject = "modifyAndRegisterSchemaTest-subj";
 
         String schemaStr =
                 "{\"type\": \"record\", \"name\": \"orig_name\", \"namespace\": \"orig_namespace\", \"fields\": [" +
-                        "{\"name\": \"c\", \"type\": \"string\"}," +
-                        "{\"name\": \"a\", \"type\": \"string\"}," +
-                        "{\"name\": \"b\", \"type\": \"string\"}," +
-                        "{\"name\": \"field_to_exclude1\", \"type\": \"string\"}," +
-                        "{\"name\": \"field_to_exclude2\", \"type\": \"string\"}," +
-                        "{\"name\": \"field_to_exclude3\", \"type\": \"string\"}" +
-                        "]" +
-                        "}";
+                "{\"name\": \"c\", \"type\": \"string\"}," +
+                "{\"name\": \"a\", \"type\": \"string\"}," +
+                "{\"name\": \"b\", \"type\": \"string\"}," +
+                "{\"name\": \"field_to_exclude1\", \"type\": \"string\"}," +
+                "{\"name\": \"field_to_exclude2\", \"type\": \"string\"}," +
+                "{\"name\": \"field_to_exclude3\", \"type\": \"string\"}" +
+                "]" +
+                "}";
 
         Schema schema = new Schema.Parser().parse(schemaStr);
 
@@ -225,23 +227,23 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void testSchemasWithDifferentFieldOrderAreSortedModifiedAndRegisteredAsSingleSchema(ExtendedSchemaRegistryClient client) {
+    void testSchemasWithDifferentFieldOrderAreSortedModifiedAndRegisteredAsSingleSchema(ExtendedSchemaRegistryClient client) {
         String subject = "modifySortAndRegisterSchemaTest-subj";
 
         String schemaStr1 =
                 "{\"type\": \"record\", \"name\": \"testName\", \"namespace\": \"testNamespace\", \"fields\": [" +
-                        "{\"name\": \"c\", \"type\": \"string\"}," +
-                        "{\"name\": \"a\", \"type\": \"string\"}," +
-                        "{\"name\": \"b\", \"type\": \"string\"}" +
-                        "]}";
+                "{\"name\": \"c\", \"type\": \"string\"}," +
+                "{\"name\": \"a\", \"type\": \"string\"}," +
+                "{\"name\": \"b\", \"type\": \"string\"}" +
+                "]}";
         Schema schema1 = new Schema.Parser().parse(schemaStr1);
 
         String schemaStr2 =
                 "{\"type\": \"record\", \"name\": \"testName\", \"namespace\": \"testNamespace\", \"fields\": [" +
-                        "{\"name\": \"b\", \"type\": \"string\"}," +
-                        "{\"name\": \"c\", \"type\": \"string\"}," +
-                        "{\"name\": \"a\", \"type\": \"string\"}" +
-                        "]}";
+                "{\"name\": \"b\", \"type\": \"string\"}," +
+                "{\"name\": \"c\", \"type\": \"string\"}," +
+                "{\"name\": \"a\", \"type\": \"string\"}" +
+                "]}";
         Schema schema2 = new Schema.Parser().parse(schemaStr2);
 
         BasicSchemaInfo info1 = client.modifyAndRegisterSchema(
@@ -267,7 +269,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void modifyAndRegisterNotExistentSchema(ExtendedSchemaRegistryClient client) {
+    void modifyAndRegisterNotExistentSchema(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
                 () -> client.modifyAndRegisterSchema(
@@ -281,7 +283,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void modifyAndRegisterWithNullSourceSchema(ExtendedSchemaRegistryClient client) {
+    void modifyAndRegisterWithNullSourceSchema(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 NullPointerException.class,
                 () -> client.modifyAndRegisterSchema(
@@ -295,7 +297,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void modifyAndRegisterWithNullTargetSubject(ExtendedSchemaRegistryClient client) {
+    void modifyAndRegisterWithNullTargetSubject(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> client.modifyAndRegisterSchema(
@@ -309,7 +311,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void modifyAndRegisterWithBlankSourceSubject(ExtendedSchemaRegistryClient client) {
+    void modifyAndRegisterWithBlankSourceSubject(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> client.modifyAndRegisterSchema(
@@ -323,7 +325,7 @@ public class CachedExtendedSchemaRegistryClientIT {
 
     @ParameterizedTest
     @ArgumentsSource(Clients.class)
-    public void modifyAndRegisterWithNullSourceVersion(ExtendedSchemaRegistryClient client) {
+    void modifyAndRegisterWithNullSourceVersion(ExtendedSchemaRegistryClient client) {
         assertThrows(
                 RuntimeException.class,
                 () -> client.modifyAndRegisterSchema(

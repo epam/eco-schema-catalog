@@ -32,6 +32,8 @@ public interface SchemaDocumentRepository extends ElasticsearchRepository<Schema
 
     Page<SchemaDocument> findByRootNamespace(String rootNamespace, Pageable pageable);
 
+    Page<SchemaDocument> findByRootNamespaceIn(Collection<String> rootNamespaces, Pageable pageable);
+
     Page<SchemaDocument> findByRootNamespaceAndVersionLatest(
             String rootNamespace,
             Boolean versionLatest,
@@ -45,6 +47,11 @@ public interface SchemaDocumentRepository extends ElasticsearchRepository<Schema
     Page<SchemaDocument> findByRootNamespaceInAndVersionLatestAndSubjectNotIn(
             Collection<String> rootNamespaces,
             Boolean versionLatest,
+            Collection<String> subjects,
+            Pageable pageable);
+
+    Page<SchemaDocument> findByRootNamespaceInAndSubjectNotIn(
+            Collection<String> rootNamespaces,
             Collection<String> subjects,
             Pageable pageable);
 

@@ -15,6 +15,8 @@
  */
 package com.epam.eco.schemacatalog.fts;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.avro.Schema;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +41,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.TestContextManager;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -53,6 +60,7 @@ import com.epam.eco.schemacatalog.fts.utils.FtsTestUtils;
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 
+import static com.epam.eco.schemacatalog.fts.SchemaDocument.INDEX_NAME;
 import static com.epam.eco.schemacatalog.fts.asserts.FtsAsserts.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +70,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Config.class})
 @TestPropertySource(value = "classpath:application.properties")
-public class SchemaDocumentRepositoryIT {
+@Disabled("Manual, requires schema-registry and elastic running, see docker-compose in root dir")
+class SchemaDocumentRepositoryIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaDocumentRepositoryIT.class);
 
     @Autowired
@@ -71,17 +80,24 @@ public class SchemaDocumentRepositoryIT {
     @Autowired
     private ExtendedSchemaRegistryClient client;
 
-    public SchemaDocumentRepositoryIT() throws Exception {
-        new TestContextManager(getClass()).prepareTestInstance(this);
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
+
+    @BeforeEach
+    public void cleanup() {
+        NativeSearchQuery deleteQuery = new NativeSearchQuery(QueryBuilders.matchAllQuery());
+        deleteQuery.setScrollTime(Duration.of(10, ChronoUnit.SECONDS));
+
+        elasticsearchOperations.delete(deleteQuery, SchemaDocument.class, IndexCoordinates.of(INDEX_NAME));
     }
 
     @Test
-    public void searchTest() {
+    void searchTest() {
         SearchResult<SchemaDocument> ftsResult = repository.searchByQuery(
                 new QueryStringQuery("*", PageRequest.of(0, 1000)));
 
         List<Integer> list = new ArrayList<>();
-        ftsResult.getContent().forEach((doc)-> list.add(doc.getSchemaRegistryId()));
+        ftsResult.getContent().forEach((doc) -> list.add(doc.getSchemaRegistryId()));
         Collections.sort(list);
         list.forEach(System.out::println);
 
@@ -122,7 +138,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findOneBySchemaSubjectAndVersion() throws Exception {
+    void findOneBySchemaSubjectAndVersion() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchema = registerSchema(testSchema.getKey(), parseSchema(testSchema.getValue()));
@@ -138,7 +154,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespace() throws Exception {
+    void findByRootNamespace() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchema = registerSchema(testSchema.getKey(), parseSchema(testSchema.getValue()));
@@ -158,7 +174,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndVersionLatest() throws Exception {
+    void findByRootNamespaceAndVersionLatest() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
@@ -181,7 +197,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndVersionNotLatest() throws Exception {
+    void findByRootNamespaceAndVersionNotLatest() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
@@ -205,14 +221,14 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceAndAnyVersion() throws Exception {
+    void findByRootNamespaceAndAnyVersion() throws Exception {
         SimpleEntry<String, String> testSchema = FtsTestFactory.getTestSchema();
 
         Map<Integer, Schema> registeredSchemas = registerSchemaWithRandomNameAndProperty(testSchema.getKey(), parseSchema(testSchema.getValue()), 3);
 
         FtsTestUtils.checkSchemasExistence(repository, 3L, registeredSchemas.values().iterator().next().getNamespace());
 
-        Page<SchemaDocument> page = repository.findByRootNamespaceAndVersionLatest(registeredSchemas.values().iterator().next().getNamespace(), null, PageRequest.of(0, 100));
+        Page<SchemaDocument> page = repository.findByRootNamespace(registeredSchemas.values().iterator().next().getNamespace(), PageRequest.of(0, 100));
 
         assertThat(page.getNumberOfElements())
                 .describedAs("Number of schemas was found")
@@ -225,7 +241,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionLatest() throws Exception {
+    void findByRootNamespaceInAndVersionLatest() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -252,7 +268,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionNotLatest() throws Exception {
+    void findByRootNamespaceInAndVersionNotLatest() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -280,7 +296,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndAnyVersion() throws Exception {
+    void findByRootNamespaceInAndAnyVersion() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
 
@@ -292,7 +308,7 @@ public class SchemaDocumentRepositoryIT {
 
         FtsTestUtils.checkSchemasExistence(repository, 6L, namespace1, namespace2);
 
-        Page<SchemaDocument> page = repository.findByRootNamespaceInAndVersionLatest(Collections.singletonList(namespace1), null, PageRequest.of(0, 100));
+        Page<SchemaDocument> page = repository.findByRootNamespaceIn(Collections.singletonList(namespace1), PageRequest.of(0, 100));
 
         assertThat(page.getNumberOfElements())
                 .describedAs("Number of schemas was found")
@@ -305,7 +321,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionLatestAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndVersionLatestAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -341,7 +357,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndVersionNotLatestAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndVersionNotLatestAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -377,7 +393,7 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void findByRootNamespaceInAndAnyVersionAndSubjectNotIn() throws Exception {
+    void findByRootNamespaceInAndAnyVersionAndSubjectNotIn() throws Exception {
         SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas2 = FtsTestFactory.getTestSchema();
         SimpleEntry<String, String> testSchemas3 = FtsTestFactory.getTestSchema();
@@ -392,9 +408,8 @@ public class SchemaDocumentRepositoryIT {
 
         FtsTestUtils.checkSchemasExistence(repository, 6L, namespace1, namespace2, namespace3);
 
-        Page<SchemaDocument> page = repository.findByRootNamespaceInAndVersionLatestAndSubjectNotIn(
+        Page<SchemaDocument> page = repository.findByRootNamespaceInAndSubjectNotIn(
                 Arrays.asList(namespace1, namespace2),
-                null,
                 Collections.singletonList(testSchemas3.getKey()),
                 PageRequest.of(0, 100));
 
@@ -410,7 +425,13 @@ public class SchemaDocumentRepositoryIT {
     }
 
     @Test
-    public void testCompatibilityTermFilter() {
+    void testCompatibilityTermFilter() throws Exception {
+        SimpleEntry<String, String> testSchemas1 = FtsTestFactory.getTestSchema();
+        registerSchemaWithRandomNameAndProperty(testSchemas1.getKey(), parseSchema(testSchemas1.getValue()), 1);
+
+        //due to async nature of elastic client
+        Thread.currentThread().sleep(500);
+
         CompatibilityLevel compatibility = client.getGlobalCompatibilityLevel();
 
         SearchParams searchParams = new SearchParams();
@@ -432,7 +453,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByParamsTestDp")
-    public void searchByParamsTest(FtsTestCase ftsTestCase) {
+    void searchByParamsTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("Test search params: {}", ftsTestCase.getSearchParams().toString());
@@ -441,9 +462,9 @@ public class SchemaDocumentRepositoryIT {
 
         SearchParams sp = ftsTestCase.getSearchParams();
         sp.setNamespaceAggregation(new AggregationParams(
-                        FtsConstants.FIELD_ROOT_NAMESPACE,
-                        FtsConstants.FIELD_ROOT_NAMESPACE,
-                        10000));
+                FtsConstants.FIELD_ROOT_NAMESPACE,
+                FtsConstants.FIELD_ROOT_NAMESPACE,
+                10000));
         SearchResult<SchemaDocument> documents = repository.searchByParams(sp);
         assertThat(documents.getContent())
                 .describedAs("Number of schemas was found")
@@ -468,7 +489,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByJsonQueryTestDp")
-    public void searchByJsonQueryTest(FtsTestCase ftsTestCase) {
+    void searchByJsonQueryTest(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("Test search json query: {}", ftsTestCase.getSearchJsonQuery());
@@ -487,7 +508,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByNotAnalyzedFieldsNegativeDp")
-    public void searchByNotAnalyzedFieldsNegative(FtsTestCase ftsTestCase) {
+    void searchByNotAnalyzedFieldsNegative(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("searchByNotAnalyzedFieldsNegative() params: {}", ftsTestCase.getSearchParams().toString());
@@ -502,7 +523,7 @@ public class SchemaDocumentRepositoryIT {
 
     @ParameterizedTest
     @MethodSource("searchByAnalyzedFieldsDp")
-    public void searchByAnalyzedFields(FtsTestCase ftsTestCase) {
+    void searchByAnalyzedFields(FtsTestCase ftsTestCase) {
         repository.save(ftsTestCase.getSchemaDocument());
 
         LOGGER.info("searchByAnalyzedFields() params: {}", ftsTestCase.getSearchParams().toString());
@@ -539,8 +560,8 @@ public class SchemaDocumentRepositoryIT {
     private static Stream<Arguments> searchByJsonQueryTestDp() {
         FullSchemaInfo schemaInfo = FtsTestFactory.getTestSchemaInfo();
 
-        List<FtsTestCase> cases = new ArrayList<>(
-                FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
+        List<FtsTestCase> cases = new ArrayList<>();
+        cases.addAll(FtsTestCaseGenerator.getJsonRegExpTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonTermsTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonFuzzinessTestCases(schemaInfo));
         cases.addAll(FtsTestCaseGenerator.getJsonProximityTestCases(schemaInfo));
@@ -569,7 +590,6 @@ public class SchemaDocumentRepositoryIT {
         return result;
     }
 
-    @SuppressWarnings("unused")
     private Map<Integer, Schema> registerSchemas(Map<String, String> schemaMap) throws Exception {
         Map<Integer, Schema> result = new HashMap<>(schemaMap.size());
         for (Map.Entry<String, String> entry : schemaMap.entrySet()) {

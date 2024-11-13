@@ -15,36 +15,39 @@
  */
 package com.epam.eco.schemacatalog.domain.schema;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 import com.epam.eco.schemacatalog.testdata.SchemaTestData;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Andrei_Tytsik
  */
-public class LiteSchemaInfoTest {
+class LiteSchemaInfoTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    void testSerializedToJsonAndBack() {
         LiteSchemaInfo origin = SchemaTestData.randomLiteSchemaInfo();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         LiteSchemaInfo deserialized = JsonMapper.jsonToObject(json, LiteSchemaInfo.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
     @Test
-    public void testCasted() {
+    void testCasted() {
         LiteSchemaInfo origin = SchemaTestData.randomLiteSchemaInfo();
 
         IdentitySchemaInfo schemaInfo = IdentitySchemaInfo.cast(origin);
-        Assertions.assertNotNull(schemaInfo);
-        Assertions.assertNotEquals(origin, schemaInfo);
+        assertNotNull(schemaInfo);
+        assertNotEquals(origin, schemaInfo);
     }
 
 }

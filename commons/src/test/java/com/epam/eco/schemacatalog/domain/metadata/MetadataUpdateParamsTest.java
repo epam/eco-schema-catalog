@@ -17,18 +17,20 @@ package com.epam.eco.schemacatalog.domain.metadata;
 
 import java.util.Collections;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.epam.eco.commons.json.JsonMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author Andrei_Tytsik
  */
-public class MetadataUpdateParamsTest {
+class MetadataUpdateParamsTest {
 
     @Test
-    public void testSerializedToJsonAndBack() throws Exception {
+    void testSerializedToJsonAndBack() {
         MetadataUpdateParams origin = MetadataUpdateParams.builder().
                 key(SchemaMetadataKey.with("subject148", 42)).
                 doc("doc doc doc doc doc doc doc doc doc").
@@ -38,11 +40,11 @@ public class MetadataUpdateParamsTest {
                 build();
 
         String json = JsonMapper.toJson(origin);
-        Assertions.assertNotNull(json);
+        assertNotNull(json);
 
         MetadataUpdateParams deserialized = JsonMapper.jsonToObject(json, MetadataUpdateParams.class);
-        Assertions.assertNotNull(deserialized);
-        Assertions.assertEquals(origin, deserialized);
+        assertNotNull(deserialized);
+        assertEquals(origin, deserialized);
     }
 
 }

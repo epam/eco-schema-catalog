@@ -27,9 +27,6 @@ import com.epam.eco.schemacatalog.rest.config.SchemaCatalogRestConfiguration;
  * @author Andrei_Tytsik
  */
 @SpringBootApplication
-@ComponentScan
-@EnableAutoConfiguration
-@Import(SchemaCatalogRestConfiguration.class)
 public class SchemaCatalogRestApplication {
 
     public static void main(String[] args) {
