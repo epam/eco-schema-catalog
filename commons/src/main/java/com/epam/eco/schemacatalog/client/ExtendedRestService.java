@@ -90,20 +90,24 @@ public class ExtendedRestService extends RestService {
                 registerSchemaRequest,
                 encodeSubjectAsPathSegment(subject),
                 version,
+                false,
                 false).isEmpty();
     }
+
     @Override
     public List<String> testCompatibility(
             Map<String, String> requestProperties,
             RegisterSchemaRequest registerSchemaRequest,
             String subject,
             String version,
+            boolean normalize,
             boolean verbose) throws IOException, RestClientException {
         return super.testCompatibility(
                 requestProperties,
                 registerSchemaRequest,
                 encodeSubjectAsPathSegment(subject),
                 version,
+                normalize,
                 verbose);
     }
 
@@ -198,7 +202,7 @@ public class ExtendedRestService extends RestService {
 
     /**
      * Workaround: encode subject to be used by {@link RestService} as path segment when building request URL.
-     *
+     * <p>
      * {@link RestService} simply concatenates subject (path segment) and other url parts w/o encoding, thus
      * any illegal character might cause request to fail with some misleading errors...
      */
@@ -211,9 +215,8 @@ public class ExtendedRestService extends RestService {
         while (bytes.hasRemaining()) {
             int ch = bytes.get() & 0xff;
             if (isPchar(ch)) {
-                result.append((char)ch);
-            }
-            else {
+                result.append((char) ch);
+            } else {
                 result.append('%');
                 char hex1 = Character.toUpperCase(Character.forDigit((ch >> 4) & 0xF, 16));
                 char hex2 = Character.toUpperCase(Character.forDigit(ch & 0xF, 16));
