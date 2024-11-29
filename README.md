@@ -1,7 +1,7 @@
 # Eco Schema Catalog
 
 Eco Schema Catalog is a set of services, components, and utilities aimed at providing additional features on top of
-the [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html).
+the [Schema Registry](https://docs.confluent.io/platform/7.4.0/schema-registry/index.html).
 
 With Eco Schema Catalog you can use:
 
@@ -10,10 +10,7 @@ With Eco Schema Catalog you can use:
 * Utilities, helpers, and other classes that extend and augment the Schema Registry library.
 
 The currently supported version of Confluent
-is [7.0.8](https://docs.confluent.io/platform/7.0.8/schema-registry/index.html)
-Despite that, all tests are run
-against [Confluent 7.4.0](https://docs.confluent.io/platform/7.4.0/schema-registry/index.html),
-but Confluent libraries are of version 7.0.8, so bear it in mind.
+is [7.4.0](https://docs.confluent.io/platform/7.4.0/schema-registry/index.html)
 
 ## Project structure
 
@@ -122,6 +119,7 @@ docker-compose -f docker/docker-compose-all.yaml down
 
  Eco Schema Catalog | Confluent Platform | Kafka | Java version 
 --------------------|--------------------|-------|--------------
+ 3.1.x              | 7.4.0              | 3.4.x | 17           
  3.0.x              | 7.0.8              | 3.0.x | 17           
  2.0.x              | 7.0.1              | 3.0.x | 8            
  1.3.x              | 5.3.x              | 2.3.x | 8            

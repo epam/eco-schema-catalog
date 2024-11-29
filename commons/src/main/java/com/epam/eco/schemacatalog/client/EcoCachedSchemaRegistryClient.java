@@ -57,6 +57,7 @@ import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCred
 public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES;
+
     static {
         Map<String, String> requestProps = new HashMap<String, String>();
         requestProps.put("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
@@ -150,8 +151,8 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         this.maxSchemasPerSubject = maxSchemasPerSubject;
         this.restService =
                 restService instanceof ExtendedRestService ?
-                restService :
-                new ExtendedRestService(restService);
+                        restService :
+                        new ExtendedRestService(restService);
 
         this.providers.putAll(providers);
 
@@ -242,8 +243,8 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
             int retrievedId =
                     id >= 0 ?
-                    registerAndGetId(subject, schema, version, id) :
-                    registerAndGetId(subject, schema);
+                            registerAndGetId(subject, schema, version, id) :
+                            registerAndGetId(subject, schema);
             subjectCache.addSchemaWithId(schema, retrievedId);
             return retrievedId;
         } finally {
@@ -439,7 +440,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     @Override
     public void deleteCompatibility(String subject) throws IOException, RestClientException {
-        restService.deleteSubjectConfig(subject);
+        restService.deleteConfig(subject);
     }
 
     @Override
@@ -547,7 +548,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         Validate.notBlank(subject, "Subject is blank");
 
         int versionInt = Integer.parseInt(version);
-        Validate.isTrue(versionInt >= 0 , "Version is negative");
+        Validate.isTrue(versionInt >= 0, "Version is negative");
 
         SubjectCache subjectCache = getSubjectCache(subject);
         subjectCache.lock();
