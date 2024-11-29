@@ -42,6 +42,12 @@
             <organization>EPAM Systems</organization>
             <organizationUrl>https://www.epam.com</organizationUrl>
         </developer>
+        <developer>
+            <name>Ilia Zemtsov</name>
+            <email>lkane516@gmail.com</email>
+            <organization>EPAM Systems</organization>
+            <organizationUrl>https://www.epam.com</organizationUrl>
+        </developer>
     </developers>
 
     <scm>
