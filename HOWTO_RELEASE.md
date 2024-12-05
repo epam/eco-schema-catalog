@@ -8,7 +8,7 @@
   4. [How to generate access token to use it in settings.xml](https://central.sonatype.org/publish/generate-token/)
      Access via user + password now is disabled.
   5. After successful run you will be able to find tag in the vcs for new version of your artifact.
-  6. `mvn release:perform`.
+  6. `mvn release:perform -Darguments="-DskipTests"`.
   7. After successful run you will be able to find your artifact in the [Sonatype staging repository](https://oss.sonatype.org/#stagingRepositories).
   8. Because of `<autoReleaseAfterClose>false</autoReleaseAfterClose>` for `nexus-staging-maven-plugin` 
   you will see 2 buttons `Release` and `Drop`, pay attention that Maven Central Release can't be undone, that is why

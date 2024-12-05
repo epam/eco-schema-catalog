@@ -60,20 +60,66 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     private final Map<SubjectAndSchema, Boolean> writableSchemaCache = new ConcurrentHashMap<>();
     private final Map<SubjectAndVersion, Boolean> writableVersionCache = new ConcurrentHashMap<>();
 
+    /**
+     * @param baseUrls list of schema registry cluster urls
+     */
     public CachedExtendedSchemaRegistryClient(List<String> baseUrls) {
         this(baseUrls, DEFAULT_IDENTITY_MAP_CAPACITY);
     }
 
+    /**
+     * @param baseUrls list of schema registry cluster urls
+     * @param identityMapCapacity cache capacity
+     */
     public CachedExtendedSchemaRegistryClient(List<String> baseUrls, int identityMapCapacity) {
-        super(new ExtendedRestService(baseUrls), identityMapCapacity);
+        this(baseUrls, identityMapCapacity, Collections.emptyMap());
+    }
 
+    /**
+     * @param baseUrls list of schema registry cluster urls
+     * @param identityMapCapacity cache capacity
+     * @param configs config map for RestService
+     */
+    public CachedExtendedSchemaRegistryClient(List<String> baseUrls, int identityMapCapacity, Map<String, ?> configs) {
+        super(new ExtendedRestService(baseUrls), identityMapCapacity, configs);
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrls);
     }
 
+    /**
+     * @param baseUrl comma-separated list of schema registry cluster urls, could contain singular url
+     */
+    public CachedExtendedSchemaRegistryClient(String baseUrl) {
+        this(baseUrl, DEFAULT_IDENTITY_MAP_CAPACITY);
+    }
+
+    /**
+     * @param baseUrl comma-separated list of schema registry cluster urls, could contain singular url
+     * @param identityMapCapacity cache capacity
+     */
+    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity) {
+        this(baseUrl, identityMapCapacity, Collections.emptyMap());
+    }
+
+    /**
+     * @param baseUrl comma-separated list of schema registry cluster urls, could contain singular url
+     * @param identityMapCapacity cache capacity
+     * @param configs config map for RestService
+     */
+    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity, Map<String, ?> configs) {
+        super(new ExtendedRestService(baseUrl), identityMapCapacity, configs);
+        this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrl);
+    }
+
+    /**
+     * @param restService fully configured RestService
+     */
     public CachedExtendedSchemaRegistryClient(RestService restService) {
         this(restService, DEFAULT_IDENTITY_MAP_CAPACITY);
     }
 
+    /**
+     * @param restService fully configured RestService
+     */
     public CachedExtendedSchemaRegistryClient(
             RestService restService,
             int identityMapCapacity) {
@@ -81,20 +127,6 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(
                 UrlListExtractor.extract(restService.getBaseUrls()));
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl) {
-        this(baseUrl, DEFAULT_IDENTITY_MAP_CAPACITY);
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity) {
-        this(baseUrl, identityMapCapacity, Collections.emptyMap());
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity, Map<String, ?> configs) {
-        super(new ExtendedRestService(baseUrl), identityMapCapacity, configs);
-
-        this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrl);
     }
 
     @Override
