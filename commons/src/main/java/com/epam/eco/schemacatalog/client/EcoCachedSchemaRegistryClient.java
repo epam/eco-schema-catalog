@@ -37,7 +37,6 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.Versions;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
@@ -48,8 +47,6 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.SubjectVersion;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ConfigUpdateRequest;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ModeUpdateRequest;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCredentialProvider;
-import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCredentialProviderFactory;
 
 /**
  * @author Andrei_Tytsik
@@ -161,13 +158,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private void configureRestService(Map<String, ?> configs) {
         if (configs != null) {
-            String credentialSourceConfig =
-                    (String) configs.get(SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE);
-            if (credentialSourceConfig != null && !credentialSourceConfig.isEmpty()) {
-                BasicAuthCredentialProvider basicAuthCredentialProvider = BasicAuthCredentialProviderFactory.
-                        getBasicAuthCredentialProvider(credentialSourceConfig, configs);
-                restService.setBasicAuthCredentialProvider(basicAuthCredentialProvider);
-            }
+            restService.configure(configs);
         }
     }
 
