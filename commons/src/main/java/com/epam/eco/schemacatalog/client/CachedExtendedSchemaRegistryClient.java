@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,7 +88,11 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     }
 
     public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity) {
-        super(new ExtendedRestService(baseUrl), identityMapCapacity);
+        this(baseUrl, identityMapCapacity, Collections.emptyMap());
+    }
+
+    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity, Map<String, ?> configs) {
+        super(new ExtendedRestService(baseUrl), identityMapCapacity, configs);
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrl);
     }
