@@ -65,15 +65,36 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
     }
 
     public CachedExtendedSchemaRegistryClient(List<String> baseUrls, int identityMapCapacity) {
-        super(new ExtendedRestService(baseUrls), identityMapCapacity);
+        this(baseUrls, identityMapCapacity, Collections.emptyMap());
+    }
 
+    public CachedExtendedSchemaRegistryClient(List<String> baseUrls, int identityMapCapacity, Map<String, ?> configs) {
+        super(new ExtendedRestService(baseUrls), identityMapCapacity, configs);
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrls);
     }
 
+    public CachedExtendedSchemaRegistryClient(String baseUrl) {
+        this(Collections.singletonList(baseUrl));
+    }
+
+    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity) {
+        this(Collections.singletonList(baseUrl), identityMapCapacity);
+    }
+
+    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity, Map<String, ?> configs) {
+        this(Collections.singletonList(baseUrl), identityMapCapacity, configs);
+    }
+
+    /**
+     * @param restService fully configured RestService
+     */
     public CachedExtendedSchemaRegistryClient(RestService restService) {
         this(restService, DEFAULT_IDENTITY_MAP_CAPACITY);
     }
 
+    /**
+     * @param restService fully configured RestService
+     */
     public CachedExtendedSchemaRegistryClient(
             RestService restService,
             int identityMapCapacity) {
@@ -81,20 +102,6 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
 
         this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(
                 UrlListExtractor.extract(restService.getBaseUrls()));
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl) {
-        this(baseUrl, DEFAULT_IDENTITY_MAP_CAPACITY);
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity) {
-        this(baseUrl, identityMapCapacity, Collections.emptyMap());
-    }
-
-    public CachedExtendedSchemaRegistryClient(String baseUrl, int identityMapCapacity, Map<String, ?> configs) {
-        super(new ExtendedRestService(baseUrl), identityMapCapacity, configs);
-
-        this.schemaRegistryServiceInfo = SchemaRegistryServiceInfo.with(baseUrl);
     }
 
     @Override
