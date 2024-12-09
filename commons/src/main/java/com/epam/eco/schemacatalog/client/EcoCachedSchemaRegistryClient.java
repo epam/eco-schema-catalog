@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
@@ -53,13 +52,8 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
  */
 public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
-    public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES;
-
-    static {
-        Map<String, String> requestProps = new HashMap<String, String>();
-        requestProps.put("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
-        DEFAULT_REQUEST_PROPERTIES = Collections.unmodifiableMap(requestProps);
-    }
+    public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES
+            = Map.of("Content-Type", Versions.SCHEMA_REGISTRY_V1_JSON_WEIGHTED);
 
     private final Map<Integer, ParsedSchema> schemaCache = new ConcurrentHashMap<>();
     private final Map<String, SubjectCache> subjectCache = new ConcurrentHashMap<>();
@@ -183,23 +177,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     @Override
     public int register(String subject, ParsedSchema schema) throws IOException, RestClientException {
-        Validate.notBlank(subject, "Subject is blank");
-        Validate.notNull(schema, "Schema is null");
-
-        SubjectCache subjectCache = getSubjectCache(subject);
-        subjectCache.lock();
-        try {
-            Integer id = subjectCache.getIdBySchema(schema);
-            if (id != null) {
-                return id;
-            }
-
-            id = registerAndGetId(subject, schema);
-            subjectCache.addSchemaWithId(schema, id);
-            return id;
-        } finally {
-            subjectCache.unlock();
-        }
+        return this.register(subject, schema, 0 , -1);
     }
 
     @Deprecated
@@ -242,6 +220,15 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             subjectCache.unlock();
         }
     }
+
+//    @Override
+//    public RegisterSchemaResponse registerWithResponse(
+//            String subject,
+//            ParsedSchema schema,
+//            boolean normalize
+//    ) throws IOException, RestClientException {
+//        return null;
+//    }
 
     @Deprecated
     public Schema getByID(int id) throws IOException, RestClientException {
@@ -600,7 +587,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 .map(schema -> parseSchema(schema.getSchemaType(), schema.getSchema(), schema.getReferences()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private SubjectCache getSubjectCache(String subject) {
