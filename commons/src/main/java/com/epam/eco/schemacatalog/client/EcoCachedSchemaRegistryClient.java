@@ -45,6 +45,8 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaString;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SubjectVersion;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ConfigUpdateRequest;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ModeUpdateRequest;
+import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaRequest;
+import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaResponse;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
@@ -177,7 +179,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     @Override
     public int register(String subject, ParsedSchema schema) throws IOException, RestClientException {
-        return this.register(subject, schema, 0 , -1);
+        return this.register(subject, schema, 0, -1);
     }
 
     @Deprecated
@@ -195,40 +197,63 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             ParsedSchema schema,
             int version,
             int id) throws IOException, RestClientException {
+        return registerWithResponse(subject, schema, version, id, false).getId();
+    }
+
+    @Override
+    public int register(
+            String subject,
+            ParsedSchema schema,
+            boolean normalize) throws IOException, RestClientException {
+        return registerWithResponse(subject, schema, 0, -1, normalize).getId();
+    }
+
+    @Override
+    public RegisterSchemaResponse registerWithResponse(
+            String subject,
+            ParsedSchema schema,
+            boolean normalize) throws IOException, RestClientException {
+        return this.registerWithResponse(subject, schema, 0, -1, normalize);
+    }
+
+    public RegisterSchemaResponse registerWithResponse(
+            String subject,
+            ParsedSchema schema,
+            int version,
+            int id,
+            boolean normalize
+    ) throws IOException, RestClientException {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
         SubjectCache subjectCache = getSubjectCache(subject);
         subjectCache.lock();
         try {
-            Integer cachedId = subjectCache.getIdBySchema(schema);
-            if (cachedId != null) {
-                if (id >= 0 && id != cachedId) {
+            RegisterSchemaResponse cachedResponse = subjectCache.getRegisterSchemaBySchema(schema);
+            if (cachedResponse != null) {
+                if (id >= 0 && id != cachedResponse.getId()) {
                     throw new IllegalStateException(
-                            "Schema already registered with id " + cachedId + " instead of input id " + id);
+                            "Schema already registered with id " + cachedResponse.getId() + " instead of input id " + id);
                 }
-                return cachedId;
+                return cachedResponse;
             }
 
-            int retrievedId =
+            RegisterSchemaResponse retrievedResponse =
                     id >= 0 ?
-                            registerAndGetId(subject, schema, version, id) :
-                            registerAndGetId(subject, schema);
-            subjectCache.addSchemaWithId(schema, retrievedId);
-            return retrievedId;
+                            registerAndGetResponse(subject, schema, version, id, normalize) :
+                            registerAndGetResponse(subject, schema, normalize);
+
+            if (id < 0) {
+                //newly registered schema
+                schemaCache.put(retrievedResponse.getId(), schema);
+            }
+
+            subjectCache.addSchemaWithRegisterResponse(schema, retrievedResponse);
+            return retrievedResponse;
         } finally {
             subjectCache.unlock();
         }
     }
-
-//    @Override
-//    public RegisterSchemaResponse registerWithResponse(
-//            String subject,
-//            ParsedSchema schema,
-//            boolean normalize
-//    ) throws IOException, RestClientException {
-//        return null;
-//    }
 
     @Deprecated
     public Schema getByID(int id) throws IOException, RestClientException {
@@ -352,7 +377,11 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 return version;
             }
 
-            version = getSchemaVersionFromRegistry(subject, schema);
+
+            io.confluent.kafka.schemaregistry.client.rest.entities.Schema schemaFromRegistry =
+                    getSchemaFromRegistry(subject, schema);
+            schemaCache.putIfAbsent(schemaFromRegistry.getId(), schema);
+            version = schemaFromRegistry.getVersion();
             subjectCache.addSchemaWithVersion(schema, version);
             return version;
         } finally {
@@ -450,7 +479,10 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 return id;
             }
 
-            id = getSchemaIdFromRegistry(subject, schema);
+            io.confluent.kafka.schemaregistry.client.rest.entities.Schema schemaFromRegistry
+                    = getSchemaFromRegistry(subject, schema);
+            id = schemaFromRegistry.getId();
+            schemaCache.putIfAbsent(id, schema);
             subjectCache.addSchemaWithId(schema, id);
             return id;
         } finally {
@@ -594,20 +626,24 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         return subjectCache.computeIfAbsent(subject, key -> new SubjectCache(subject));
     }
 
-    private int registerAndGetId(
+    private RegisterSchemaResponse registerAndGetResponse(
             String subject,
-            ParsedSchema schema) throws IOException, RestClientException {
-        int id = restService.registerSchema(schema.toString(), subject);
-        schemaCache.put(id, schema);
-        return id;
+            ParsedSchema schema,
+            boolean normalize) throws RestClientException, IOException {
+        RegisterSchemaRequest request = new RegisterSchemaRequest(schema);
+        return restService.registerSchema(request, subject, normalize);
     }
 
-    private int registerAndGetId(
+    private RegisterSchemaResponse registerAndGetResponse(
             String subject,
             ParsedSchema schema,
             int version,
-            int id) throws IOException, RestClientException {
-        return restService.registerSchema(schema.toString(), subject, version, id);
+            int id,
+            boolean normalize) throws IOException, RestClientException {
+        RegisterSchemaRequest request = new RegisterSchemaRequest(schema);
+        request.setVersion(version);
+        request.setId(id);
+        return restService.registerSchema(request, subject, normalize);
     }
 
     private ParsedSchema getSchemaByIdFromRegistry(int id) throws IOException, RestClientException {
@@ -634,22 +670,10 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         }
     }
 
-    private int getSchemaIdFromRegistry(
+    private io.confluent.kafka.schemaregistry.client.rest.entities.Schema getSchemaFromRegistry(
             String subject,
             ParsedSchema schema) throws IOException, RestClientException {
-        io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
-                restService.lookUpSubjectVersion(schema.toString(), subject, false);
-        schemaCache.putIfAbsent(response.getId(), schema);
-        return response.getId();
-    }
-
-    private int getSchemaVersionFromRegistry(
-            String subject,
-            ParsedSchema schema) throws IOException, RestClientException {
-        io.confluent.kafka.schemaregistry.client.rest.entities.Schema response =
-                restService.lookUpSubjectVersion(schema.toString(), subject, true);
-        schemaCache.putIfAbsent(response.getId(), schema);
-        return response.getVersion();
+        return restService.lookUpSubjectVersion(schema.toString(), subject, false, false);
     }
 
     private SchemaMetadata getSchemaMetadataFromRegistry(
@@ -678,6 +702,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
         private final Map<Integer, ParsedSchema> idSchemas = new HashMap<>();
         private final Map<ParsedSchema, Integer> schemaVersions = new HashMap<>();
         private final Map<Integer, ParsedSchema> versionSchemas = new HashMap<>();
+        private final Map<ParsedSchema, RegisterSchemaResponse> schemaRegisterResponse = new HashMap<>();
 
         private final Lock lock = new ReentrantLock();
 
@@ -732,6 +757,8 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
                 return;
             }
 
+            schemaRegisterResponse.remove(schema);
+
             Integer id = schemaIds.remove(schema);
             if (id != null) {
                 idSchemas.remove(id);
@@ -750,6 +777,19 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             versionSchemas.clear();
         }
 
+        public RegisterSchemaResponse getRegisterSchemaBySchema(ParsedSchema schema) {
+            return schemaRegisterResponse.get(schema);
+        }
+
+        public void addSchemaWithRegisterResponse(ParsedSchema schema, RegisterSchemaResponse retrievedResponse) {
+            if (schemaIds.size() >= maxSchemasPerSubject) {
+                throw new IllegalStateException("Too many schema objects created for " + subject + "!");
+            }
+
+            schemaRegisterResponse.put(schema, retrievedResponse);
+            schemaIds.put(schema, retrievedResponse.getId());
+            idSchemas.put(retrievedResponse.getId(), schema);
+        }
     }
 
 }
