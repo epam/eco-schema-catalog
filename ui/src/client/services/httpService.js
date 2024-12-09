@@ -27,7 +27,7 @@ const hadleError = (error) => {
 };
 
 /* enums */
-export const getCompatibilityLevels = () => axios.get('/api/enums/avro-compatibility-levels')
+export const getCompatibilityLevels = () => axios.get('/api/enums/compatibility-levels')
   .then(res => res.data)
   .catch(error => Promise.reject(hadleError(error)));
 
