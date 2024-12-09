@@ -78,8 +78,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <cp.version>7.4.0</cp.version>
-        <kafka.version>7.4.0-ccs</kafka.version>
+        <cp.version>7.4.1</cp.version>
+        <kafka.version>7.4.1-ccs</kafka.version>
         <eco-commons.version>0.1.1</eco-commons.version>
         <eco-commons-kafka.version>2.0.0</eco-commons-kafka.version>
         <eco-commons-avro.version>0.1.1</eco-commons-avro.version>

@@ -26,6 +26,7 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ConfigUpdateRequest;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaRequest;
+import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaResponse;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.client.rest.utils.UrlList;
 
@@ -67,7 +68,7 @@ public class ExtendedRestService extends RestService {
     }
 
     @Override
-    public int registerSchema(
+    public RegisterSchemaResponse registerSchema(
             Map<String, String> requestProperties,
             RegisterSchemaRequest registerSchemaRequest,
             String subject,

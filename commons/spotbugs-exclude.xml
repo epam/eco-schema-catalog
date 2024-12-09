@@ -184,5 +184,9 @@
         <Class name="com.epam.eco.schemacatalog.client.CachedExtendedSchemaRegistryClient"/>
         <Bug pattern="ENMI_NULL_ENUM_VALUE"/>
     </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.client.EcoCachedSchemaRegistryClient"/>
+        <Bug pattern="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
+    </Match>
 
 </FindBugsFilter>

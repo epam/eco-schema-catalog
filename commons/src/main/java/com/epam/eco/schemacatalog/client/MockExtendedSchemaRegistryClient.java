@@ -521,17 +521,17 @@ public final class MockExtendedSchemaRegistryClient extends MockSchemaRegistryCl
 
     @SuppressWarnings("unchecked")
     private Map<String, Map<ParsedSchema, Integer>> getVersionsCache() {
-        return getClientPrivateMap("versionCache");
+        return getClientPrivateMap("schemaToVersionCache");
     }
 
     @SuppressWarnings("unchecked")
     private Map<String, Map<ParsedSchema, Integer>> getSchemaCache() {
-        return getClientPrivateMap("schemaCache");
+        return getClientPrivateMap("registeredSchemaCache");
     }
 
     @SuppressWarnings("unchecked")
     private Map<String, Map<Integer, ParsedSchema>> getIdCache() {
-        return getClientPrivateMap("idCache");
+        return getClientPrivateMap("idToSchemaCache");
     }
 
     @SuppressWarnings("rawtypes")
