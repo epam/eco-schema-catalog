@@ -22,6 +22,7 @@ const mapStateToProps = state => ({
   message: state.modalReducer.message,
   callbackAsync: state.modalReducer.callback,
   header: state.modalReducer.header,
+  buttonLabel: state.modalReducer.buttonLabel
 });
 
 const mapDispatchToProps = dispatch => ({

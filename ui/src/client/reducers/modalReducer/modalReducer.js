@@ -24,11 +24,12 @@ const initialState = {
   message: '',
   header: '',
   callback: null,
+  buttonLabel: 'Delete'
 };
 
 const modalReducer = (state = initialState, action) => {
   const {
-    isShow, callback, message, header,
+    isShow, callback, message, header, buttonLabel
   } = action;
   switch (action.type) {
     case SHOW_CONFIRM_MODAL: {
@@ -36,7 +37,7 @@ const modalReducer = (state = initialState, action) => {
         {},
         initialState,
         {
-          showConfirmModal: isShow, callback, message, header,
+          showConfirmModal: isShow, callback, message, header, buttonLabel
         },
       );
     }

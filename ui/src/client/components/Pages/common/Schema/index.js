@@ -16,7 +16,12 @@
 
 import { connect } from 'react-redux';
 import { getUpdatedAt, getUpdatedBy, getOriginMetadataVersion } from '../../../../selectors/schemaSelectors/schemaSelectors';
-import { deleteSchemaMetadataAsync, deleteSchemasActionAsync, deleteSchemaActionAsync } from '../../../../actions/schemaActions/schemaActions';
+import {
+  deleteSchemaMetadataAsync,
+  deleteSchemasActionAsync,
+  deleteSchemaActionAsync,
+  resetCompatibilityActionAsync
+} from '../../../../actions/schemaActions/schemaActions';
 import { showConfirmWindow, showTestSchemaModalWindow } from '../../../../actions/modalActions/modalActions';
 import Schema from './Schema';
 
@@ -25,6 +30,7 @@ const mapStateToProps = state => ({
   subject: state.schemaReducer.subject,
   mode: state.schemaReducer.mode,
   version: state.schemaReducer.version,
+  globalCompatibilityLevel: state.schemaReducer.globalCompatibilityLevel,
   isDeleted: state.schemaReducer.deleted,
   versionLatest: state.schemaReducer.versionLatest,
   updatedBy: getUpdatedBy(state),
@@ -33,20 +39,30 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  resetCompatibility: () => dispatch(showConfirmWindow(
+      true,
+      () => dispatch(resetCompatibilityActionAsync()),
+      'Do you really want to reset schema compatibility to be  implicitly inherited from cluster defaults?',
+      'Compatibility Level Resetting',
+      'Reset'
+  )),
   deleteMetadata: version => dispatch(showConfirmWindow(
     true,
     () => dispatch(deleteSchemaMetadataAsync(version)),
     'Are you really want to delete description?',
+      'Deleting description',
   )),
   deleteSchema: () => dispatch(showConfirmWindow(
     true,
     () => dispatch(deleteSchemaActionAsync()),
     'Are you really want to delete that schema version?',
+      'Deleting one schema version'
   )),
   deleteSchemas: () => dispatch(showConfirmWindow(
     true,
     () => dispatch(deleteSchemasActionAsync()),
     'Are you really want to delete all schema versions?',
+      'Deleting all schema versions'
   )),
   showTestSchemaModal: () => dispatch(showTestSchemaModalWindow()),
 

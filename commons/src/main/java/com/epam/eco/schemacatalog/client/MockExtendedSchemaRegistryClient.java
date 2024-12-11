@@ -405,6 +405,16 @@ public final class MockExtendedSchemaRegistryClient extends MockSchemaRegistryCl
         return retrieveSchemaAndConvertToInfo(subject, version, initConsumer);
     }
 
+    @Override
+    public void deleteSubjectCompatibility(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+        try {
+            deleteCompatibility(subject);
+        } catch (IOException | RestClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private BasicSchemaInfo retrieveSchemaAndConvertToInfo(
             String subject,
             Integer version,

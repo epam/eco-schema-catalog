@@ -24,11 +24,13 @@ const mapDispatchToProps = dispatch => ({
     true,
     () => dispatch(deleteSchemaActionAsync()),
     'Are you really want to delete that schema version?',
+    'Deleting one schema'
   )),
   deleteSchemas: () => dispatch(showConfirmWindow(
     true,
     () => dispatch(deleteSchemasActionAsync()),
     'Are you really want to delete all schema versions?',
+    'Deleting all schemas'
   )),
 });
 

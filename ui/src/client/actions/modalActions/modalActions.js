@@ -17,12 +17,13 @@ import {
   SHOW_CONFIRM_MODAL, SHOW_CREATE_SCHEMA_MODAL, SHOW_TEST_SCHEMA_MODAL, HIDE_MODAL,
 } from '../../consts/consts';
 
-export const showConfirmWindow = (isShow, cb = null, message = '', header) => ({
+export const showConfirmWindow = (isShow, cb = null, message = '', header, buttonLabel = 'Delete') => ({
   type: SHOW_CONFIRM_MODAL,
   isShow,
   callback: cb,
   message,
   header,
+  buttonLabel
 });
 
 export const showCreateModalWindow = () => ({

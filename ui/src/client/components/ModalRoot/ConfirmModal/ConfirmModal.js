@@ -33,6 +33,7 @@ class ConfirmModal extends Component {
   static propTypes = {
     header: PropTypes.string,
     message: PropTypes.string,
+    buttonLabel: PropTypes.string,
     closeModal: PropTypes.func,
     callbackAsync: PropTypes.func,
   }
@@ -48,6 +49,7 @@ class ConfirmModal extends Component {
       closeModal,
       callbackAsync,
       header,
+      buttonLabel
     } = this.props;
     return (
       <Modal {...this.props} className="confirm-modal">
@@ -67,7 +69,7 @@ class ConfirmModal extends Component {
           {isDeleting && <Loader type="spinner" color="lime-green" height={36} />}
           <Button
             className="red"
-            name="Delete"
+            name={buttonLabel}
             disable={isDeleting}
             onClick={() => {
               if (callbackAsync) {

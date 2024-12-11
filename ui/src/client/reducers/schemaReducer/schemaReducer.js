@@ -45,6 +45,7 @@ import getFlattenSchemas from './utils/getFlattenSchemas/getFlattenSchemas';
 const initialState = {
   view: TABLE,
   subject: null,
+  globalCompatibilityLevel: true,
   version: null,
   versionLatest: false,
 
@@ -81,6 +82,7 @@ const schemaReducer = (state = initialState, action) => {
     schemaMetadata,
     versionLatest,
     compatibilityLevel,
+    globalCompatibilityLevel,
     compatibilityLevels,
     view,
     diff,
@@ -128,6 +130,7 @@ const schemaReducer = (state = initialState, action) => {
         mode,
         isSchemaMetadataSaved: true,
         aggregations: aggr,
+        globalCompatibilityLevel,
       };
     }
 
@@ -144,7 +147,7 @@ const schemaReducer = (state = initialState, action) => {
     }
 
     case SET_COMPATIBILITY_LEVEL: {
-      return { ...state, compatibilityLevel };
+      return { ...state, compatibilityLevel, globalCompatibilityLevel: false };
     }
 
     case APPLY_SCHEMA_AGGREGATION: {

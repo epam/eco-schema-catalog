@@ -27,9 +27,10 @@
     flex-wrap: wrap;
     margin-bottom: 10px;
     flex-shrink: 0;
+    gap: 0.3em;
 
     > p {
-      flex-basis: 82px;
+      flex-basis: 120px;
       color: #C0C3CE;
       font-size: 14px;
       line-height: 18px;
@@ -55,6 +56,10 @@
       }
 
       .delete-button {
+        height: 26px !important;
+
+      }
+      .reset-button {
         height: 26px !important;
         white-space: pre;
       }

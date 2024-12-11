@@ -30,6 +30,7 @@ public final class SchemaEntity {
     private String subject;
     private int version;
     private CompatibilityLevel compatibilityLevel;
+    private boolean isCompatibilityLevelGlobal;
     private Mode mode;
     private String schema;
     private boolean versionLatest;
@@ -38,48 +39,71 @@ public final class SchemaEntity {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getSubject() {
         return subject;
     }
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
     public int getVersion() {
         return version;
     }
+
     public void setVersion(int version) {
         this.version = version;
     }
+
     public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
+
+    public boolean isCompatibilityLevelGlobal() {
+        return isCompatibilityLevelGlobal;
+    }
+
     public void setCompatibilityLevel(CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
     }
+
+    public void setCompatibilityLevelGlobal(boolean compatibilityLevelGlobal) {
+        isCompatibilityLevelGlobal = compatibilityLevelGlobal;
+    }
+
     public Mode getMode() {
         return mode;
     }
+
     public void setMode(Mode mode) {
         this.mode = mode;
     }
+
     public String getSchema() {
         return schema;
     }
+
     public void setSchema(String schema) {
         this.schema = schema;
     }
+
     public boolean isVersionLatest() {
         return versionLatest;
     }
+
     public void setVersionLatest(boolean versionLatest) {
         this.versionLatest = versionLatest;
     }
+
     public boolean isDeleted() {
         return deleted;
     }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
@@ -98,6 +122,7 @@ public final class SchemaEntity {
                 Objects.equals(this.subject, that.subject) &&
                 Objects.equals(this.version, that.version) &&
                 Objects.equals(this.compatibilityLevel, that.compatibilityLevel) &&
+                Objects.equals(this.isCompatibilityLevelGlobal, that.isCompatibilityLevelGlobal) &&
                 Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.schema, that.schema) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
@@ -111,6 +136,7 @@ public final class SchemaEntity {
                 subject,
                 version,
                 compatibilityLevel,
+                isCompatibilityLevelGlobal,
                 mode,
                 schema,
                 versionLatest,
@@ -124,6 +150,7 @@ public final class SchemaEntity {
                 ", subject: " + subject +
                 ", version: " + version +
                 ", compatibilityLevel: " + compatibilityLevel +
+                ", isCompatibilityLevelGlobal: " + isCompatibilityLevelGlobal +
                 ", mode: " + mode +
                 ", schema: " + schema +
                 ", versionLatest: " + versionLatest +

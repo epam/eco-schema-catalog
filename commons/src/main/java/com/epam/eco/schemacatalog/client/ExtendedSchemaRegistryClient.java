@@ -187,4 +187,5 @@ public interface ExtendedSchemaRegistryClient extends SchemaRegistryClient {
     boolean checkSchemaWritable(String subject, int version);
 
     boolean checkLatestSchemaWritable(String subject);
+    void deleteSubjectCompatibility(String subject);
 }

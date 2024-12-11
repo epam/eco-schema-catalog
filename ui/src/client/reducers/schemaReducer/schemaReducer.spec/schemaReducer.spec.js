@@ -34,6 +34,7 @@ describe('schema reducer spec', () => {
       subject: null,
       version: null,
       versionLatest: false,
+      globalCompatibilityLevel: true,
       schemas: [],
       deleted: false,
       schemaMetadata: null,

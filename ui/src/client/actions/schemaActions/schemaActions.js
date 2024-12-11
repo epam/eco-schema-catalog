@@ -30,6 +30,7 @@ import {
   deleteSchemas,
   getCompatibilityLevels,
   setCompatibilityLevel,
+  resetCompatibility,
 } from '../../services/httpService';
 import { gotErrorMessage, gotSuccessMessage } from '../alertActions/alertActions';
 import getSchemaFullName from './utils/getSchemaFullName/getSchemaFullName';
@@ -62,7 +63,7 @@ import {
 
 export const gotSchema = (response) => {
   const {
-    schemas, schemaMetadata, deleted, versionLatest, compatibilityLevel, mode,
+    schemas, schemaMetadata, deleted, versionLatest, compatibilityLevel, globalCompatibilityLevel, mode,
   } = response;
   return {
     type: GOT_SCHEMA,
@@ -72,6 +73,7 @@ export const gotSchema = (response) => {
     schemaMetadata,
     versionLatest,
     compatibilityLevel,
+    globalCompatibilityLevel
   };
 };
 
@@ -292,6 +294,19 @@ export const saveFieldMetadataAsync = (...args) => async (dispatch, getState) =>
   }
 };
 
+export const resetCompatibilityActionAsync = () => async (dispatch, getState) => {
+  const { subject, version } = getState().schemaReducer;
+  try {
+    const message = await resetCompatibility(subject);
+    dispatch(getSchemaAsync(subject, version));
+    dispatch(gotSuccessMessage(message));
+    return message;
+  } catch (error) {
+    dispatch(gotErrorMessage({ message: error }));
+    return null;
+  }
+};
+
 export const deleteSchemaMetadataAsync = version => (dispatch, getState) => {
   const { subject } = getState().schemaReducer;
   return deleteSchemaMetadata(subject, version)
@@ -371,10 +386,11 @@ export const getCompatibilityLevelsAsync = () => async (dispatch) => {
 };
 
 export const setCompatibilityLevelAsync = newLevel => async (dispatch, getState) => {
-  const { subject, compatibilityLevel } = getState().schemaReducer;
+  const { subject, globalCompatibilityLevel, compatibilityLevel } = getState().schemaReducer;
   try {
     dispatch({
       compatibilityLevel: newLevel,
+      globalCompatibilityLevel: globalCompatibilityLevel,
       type: SET_COMPATIBILITY_LEVEL,
     });
     const res = await setCompatibilityLevel(subject, newLevel);

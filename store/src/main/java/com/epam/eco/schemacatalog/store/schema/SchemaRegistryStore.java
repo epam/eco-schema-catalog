@@ -15,6 +15,7 @@
  */
 package com.epam.eco.schemacatalog.store.schema;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 
 /**
@@ -31,22 +33,42 @@ import io.confluent.kafka.schemaregistry.ParsedSchema;
  */
 public interface SchemaRegistryStore {
     List<String> getAllSubjects();
+
     List<SchemaEntity> getAllSchemas();
+
     List<SchemaEntity> getSchemas(String subject);
+
     List<SchemaEntity> getSchemas(Collection<String> subjects);
+
     SchemaEntity getLatestSchema(String subject);
+
     SchemaEntity getSchema(String subject, Integer version);
+
     CompatibilityLevel getSubjectCompatibility(String subject);
+
     boolean schemaExists(SubjectAndVersion subjectAndVersion);
+
     boolean schemaExists(String subject, int version);
+
     boolean subjectExists(String subject);
+
     boolean testSchemaCompatible(String subject, Schema schema);
+
     boolean testSchemaCompatible(String subject, ParsedSchema schema);
+
     SchemaEntity registerSchema(String subject, Schema schema);
+
     SchemaEntity registerSchema(String subject, ParsedSchema schema);
+
     void deleteSubject(String subject);
+
     void deleteSchema(SubjectAndVersion subjectAndVersion);
+
     void deleteSchema(String subject, int version);
+
     void updateSubjectCompatibility(String subject, CompatibilityLevel compatibilityLevel);
+
     void registerListener(SchemaRegistryStoreUpdateListener listener);
+
+    void deleteCompatibility(String subject) throws RestClientException, IOException;
 }
