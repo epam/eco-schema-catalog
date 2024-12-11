@@ -26,8 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.net.ssl.HostnameVerifier;
+
 import org.apache.avro.Schema;
 import org.apache.commons.lang3.Validate;
+import org.apache.kafka.common.config.SslConfigs;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
@@ -36,6 +39,7 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.schemaregistry.client.rest.RestService;
 import io.confluent.kafka.schemaregistry.client.rest.Versions;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Config;
@@ -48,6 +52,7 @@ import io.confluent.kafka.schemaregistry.client.rest.entities.requests.ModeUpdat
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaRequest;
 import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaResponse;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.client.security.SslFactory;
 
 /**
  * @author Andrei_Tytsik
@@ -154,8 +159,52 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
 
     private void configureRestService(Map<String, ?> configs) {
         if (configs != null) {
-            restService.configure(configs);
+            //we accommodate both
+            //schema.registry.propname=value1
+            //and
+            //propname=value2
+            //but between those two the one with explicit schema.registry. prefix will win
+            //in the case above value1 is going to win
+            Map<String, Object> normalizedConfigs = trimAndNormalizeConfigs(configs);
+
+            restService.configure(normalizedConfigs);
+
+            SslFactory sslFactory = new SslFactory(normalizedConfigs);
+            if (sslFactory.sslContext() != null) {
+                restService.setSslSocketFactory(sslFactory.sslContext().getSocketFactory());
+                restService.setHostnameVerifier(getHostnameVerifier(normalizedConfigs));
+            }
         }
+    }
+
+    private Map<String, Object> trimAndNormalizeConfigs(Map<String, ?> configs) {
+        Map<String, Object> result = new HashMap<>();
+
+        for (Map.Entry<String, ?> entry : configs.entrySet()) {
+            String key = entry.getKey().trim();
+
+            if (key.startsWith(SchemaRegistryClientConfig.CLIENT_NAMESPACE)) {
+                key = key.substring(SchemaRegistryClientConfig.CLIENT_NAMESPACE.length());
+                result.put(key, entry.getValue());
+            } else {
+                result.putIfAbsent(key, entry.getValue());
+            }
+        }
+
+        return result;
+    }
+
+    private HostnameVerifier getHostnameVerifier(Map<String, Object> config) {
+        String sslEndpointIdentificationAlgo =
+                (String) config.get(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG);
+
+        if (sslEndpointIdentificationAlgo == null
+            || "none".equals(sslEndpointIdentificationAlgo)
+            || sslEndpointIdentificationAlgo.isEmpty()) {
+            return (hostname, session) -> true;
+        }
+
+        return null;
     }
 
     @Override
