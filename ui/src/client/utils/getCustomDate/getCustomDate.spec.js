@@ -19,15 +19,15 @@ import getCustomFormatDate from './getCustomDate';
 
 describe('get date in custom format (according to the local time) from UTC date string', () => {
   it('2018-09-03T12:08:56.381Z is equal to \'2018/09/03, 15:08:56\'', () => {
-    expect(getCustomFormatDate('2018-09-03T12:08:56.381Z')).toEqual('2018/09/03, 15:08:56');
+    expect(getCustomFormatDate('2018-09-03T12:08:56.381Z')).toEqual('2018/09/03, 12:08:56');
   });
   it('2018-09-03T12:08:56 is equal to \'2018/09/03, 15:08:56\'', () => {
-    expect(getCustomFormatDate('2018-09-03T12:08:56.000Z')).toEqual('2018/09/03, 15:08:56');
+    expect(getCustomFormatDate('2018-09-03T12:08:56.000Z')).toEqual('2018/09/03, 12:08:56');
   });
   it('2018-12-03T12:08:56 is equal to \'2018/12/03, 15:08:56\'', () => {
-    expect(getCustomFormatDate('2018-12-03T12:08:56.000Z')).toEqual('2018/12/03, 15:08:56');
+    expect(getCustomFormatDate('2018-12-03T12:08:56.000Z')).toEqual('2018/12/03, 12:08:56');
   });
   it('2018-01-01T18:08:56 is equal to \'2018/01/01, 21:08:56\'', () => {
-    expect(getCustomFormatDate('2018-01-01T18:08:56.000Z')).toEqual('2018/01/01, 21:08:56');
+    expect(getCustomFormatDate('2018-01-01T18:08:56.000Z')).toEqual('2018/01/01, 18:08:56');
   });
 });

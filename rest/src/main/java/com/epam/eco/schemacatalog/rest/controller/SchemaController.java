@@ -15,6 +15,8 @@
  */
 package com.epam.eco.schemacatalog.rest.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +43,9 @@ import com.epam.eco.schemacatalog.fts.SearchResult;
 import com.epam.eco.schemacatalog.fts.repo.SchemaDocumentRepository;
 import com.epam.eco.schemacatalog.rest.convert.SchemaDocumentConverter;
 import com.epam.eco.schemacatalog.store.SchemaCatalogStore;
+import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
+
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 /**
  * @author Raman_Babich
@@ -54,6 +59,9 @@ public class SchemaController {
 
     @Autowired
     private SchemaCatalogStore schemaCatalogStore;
+
+    @Autowired
+    private SchemaRegistryStore schemaRegistryStore;
 
     @GetMapping
     public SearchResult<LiteSchemaInfo> getSubjects(SearchParams params) {
@@ -118,4 +126,10 @@ public class SchemaController {
         schemaCatalogStore.deleteSchema(subject, version);
     }
 
+    @PutMapping("/reset/{subject}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetSubject(
+            @PathVariable("subject") String subject) throws RestClientException, IOException {
+        schemaRegistryStore.deleteCompatibility(subject);
+    }
 }

@@ -54,8 +54,10 @@ public abstract class SchemaDocumentConverter {
         document.setEcoId(schemaInfo.getEcoId());
         document.setVersionLatest(schemaInfo.isVersionLatest());
         document.setCompatibility(schemaInfo.getCompatibilityLevel().name());
+        document.setGlobalCompatibility(schemaInfo.isGlobalCompatibilityLevel());
         document.setMode(schemaInfo.getMode().name());
         document.setDeleted(schemaInfo.isDeleted());
+
         if (schemaInfo.getSchemaAvro().getType() == Type.RECORD) {
             document.setRootName(schemaInfo.getSchemaAvro().getName());
             document.setRootNamespace(schemaInfo.getSchemaAvro().getNamespace());
@@ -81,6 +83,7 @@ public abstract class SchemaDocumentConverter {
                     aliases.forEach(document::addAlias);
                 }
             }
+
             @Override
             public void onSchema(String path, Schema parentSchema, Schema schema) {
                 document.addDoc(schema.getDoc());
@@ -131,9 +134,9 @@ public abstract class SchemaDocumentConverter {
         document.addUpdatedBy(metadata.getValue().getUpdatedBy());
         if (metadata.getValue().getDoc() != null) {
             MetadataDocAttributeExtractor.
-                extract(metadata.getValue().getDoc()).
-                forEach(
-                        (key, value) -> document.addAttributes(key, toString(value)));
+                    extract(metadata.getValue().getDoc()).
+                    forEach(
+                            (key, value) -> document.addAttributes(key, toString(value)));
         }
         metadata.getValue().getAttributes().forEach(
                 (key, value) -> document.addAttribute(key, Objects.toString(value, null)));

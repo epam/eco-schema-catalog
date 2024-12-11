@@ -67,7 +67,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
     @Autowired
     private MetadataStore metadataStore;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private List<SchemaCatalogStoreUpdateListener> updateListeners;
 
     @PostConstruct
@@ -143,7 +143,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
             return new SchemaCompatibilityCheckResult(
                     params.getSubject(),
                     sve.getErrors().stream().map(SchemaCompatibilityError::from).
-                    collect(Collectors.toList()));
+                            collect(Collectors.toList()));
         }
     }
 
@@ -250,6 +250,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
                 schemaRegistryId(schemaEntity.getId()).
                 schemaJson(schemaEntity.getSchema()).
                 compatibilityLevel(schemaEntity.getCompatibilityLevel()).
+                globalCompatibilityLevel(schemaEntity.isCompatibilityLevelGlobal()).
                 mode(schemaEntity.getMode()).
                 deleted(schemaEntity.isDeleted()).
                 versionLatest(schemaEntity.isVersionLatest()).
@@ -270,12 +271,12 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
         builder.doc(params.getDoc());
 
         params.getAttributes().entrySet().stream().
-            filter(e -> !MetadataDocAttributeExtractor.isAttributeKey(e.getKey())).
-            forEach(e -> builder.appendAttribute(e.getKey(), e.getValue()));
+                filter(e -> !MetadataDocAttributeExtractor.isAttributeKey(e.getKey())).
+                forEach(e -> builder.appendAttribute(e.getKey(), e.getValue()));
 
         builder.
-            updatedAtNow().
-            updatedBy(SecurityUtils.getPrincipal());
+                updatedAtNow().
+                updatedBy(SecurityUtils.getPrincipal());
 
         return builder.build();
     }

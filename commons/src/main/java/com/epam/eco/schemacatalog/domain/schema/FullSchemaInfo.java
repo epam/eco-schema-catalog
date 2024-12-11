@@ -43,12 +43,13 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
  */
 public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<FullSchemaInfo> {
 
-    private final CompatibilityLevel compatibilityLevel;
-    private final Mode mode;
-    private final boolean deleted;
-    private final boolean versionLatest;
-    @JsonSerialize(keyUsing=MetadataKeySerializer.class)
-    @JsonDeserialize(keyUsing=MetadataKeyDeserializer.class)
+    protected final CompatibilityLevel compatibilityLevel;
+    protected final boolean globalCompatibilityLevel;
+    protected final Mode mode;
+    protected final boolean deleted;
+    protected final boolean versionLatest;
+    @JsonSerialize(keyUsing = MetadataKeySerializer.class)
+    @JsonDeserialize(keyUsing = MetadataKeyDeserializer.class)
     private final Map<MetadataKey, MetadataValue> metadata;
 
     private final MetadataBrowser<FullSchemaInfo> metadataBrowser;
@@ -59,6 +60,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             @JsonProperty("schemaRegistryId") int schemaRegistryId,
             @JsonProperty("schemaJson") String schemaJson,
             @JsonProperty("compatibilityLevel") CompatibilityLevel compatibilityLevel,
+            @JsonProperty("globalCompatibilityLevel") boolean globalCompatibilityLevel,
             @JsonProperty("mode") Mode mode,
             @JsonProperty("deleted") boolean deleted,
             @JsonProperty("versionLatest") boolean versionLatest,
@@ -69,13 +71,14 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         Validate.notNull(mode, "Mode is null");
 
         this.compatibilityLevel = compatibilityLevel;
+        this.globalCompatibilityLevel = globalCompatibilityLevel;
         this.mode = mode;
         this.deleted = deleted;
         this.versionLatest = versionLatest;
         this.metadata =
                 metadata != null ?
-                Collections.unmodifiableMap(new HashMap<>(metadata)) :
-                Collections.emptyMap();
+                        Collections.unmodifiableMap(new HashMap<>(metadata)) :
+                        Collections.emptyMap();
 
         metadataBrowser = new MetadataBrowser<>(this);
     }
@@ -83,15 +86,23 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
     public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
     }
+
+    public boolean isGlobalCompatibilityLevel() {
+        return globalCompatibilityLevel;
+    }
+
     public Mode getMode() {
         return mode;
     }
+
     public boolean isDeleted() {
         return deleted;
     }
+
     public boolean isVersionLatest() {
         return versionLatest;
     }
+
     @Override
     public Map<MetadataKey, MetadataValue> getMetadata() {
         return metadata;
@@ -108,6 +119,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         return Objects.hash(
                 super.hashCode(),
                 compatibilityLevel,
+                globalCompatibilityLevel,
                 mode,
                 deleted,
                 versionLatest,
@@ -120,9 +132,10 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             return false;
         }
 
-        FullSchemaInfo that = (FullSchemaInfo)obj;
+        FullSchemaInfo that = (FullSchemaInfo) obj;
         return
                 Objects.equals(this.compatibilityLevel, that.compatibilityLevel) &&
+                Objects.equals(this.globalCompatibilityLevel, that.globalCompatibilityLevel) &&
                 Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.deleted, that.deleted) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
@@ -137,6 +150,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                 ", schemaRegistryId: " + schemaRegistryId +
                 ", schemaJson: " + schemaJson +
                 ", compatibilityLevel: " + compatibilityLevel +
+                ", globalCompatibilityLevel: " + globalCompatibilityLevel +
                 ", mode: " + mode +
                 ", deleted: " + deleted +
                 ", versionLatest: " + versionLatest +
@@ -181,6 +195,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
     public static class Builder<T extends Builder<T>> extends BasicSchemaInfo.Builder<T> {
 
         protected CompatibilityLevel compatibilityLevel;
+        protected boolean globalCompatibilityLevel;
         protected Mode mode;
         protected boolean deleted = false;
         protected boolean versionLatest = false;
@@ -197,6 +212,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             }
 
             this.compatibilityLevel = origin.compatibilityLevel;
+            this.globalCompatibilityLevel = origin.globalCompatibilityLevel;
             this.mode = origin.mode;
             this.deleted = origin.deleted;
             this.versionLatest = origin.versionLatest;
@@ -209,7 +225,12 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
 
         public T compatibilityLevel(CompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
-            return (T)this;
+            return (T) this;
+        }
+
+        public T globalCompatibilityLevel(boolean globalCompatibilityLevel) {
+            this.globalCompatibilityLevel = globalCompatibilityLevel;
+            return (T) this;
         }
 
         public T mode(String mode) {
@@ -218,17 +239,17 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
 
         public T mode(Mode mode) {
             this.mode = mode;
-            return (T)this;
+            return (T) this;
         }
 
         public T deleted(boolean deleted) {
             this.deleted = deleted;
-            return (T)this;
+            return (T) this;
         }
 
         public T versionLatest(boolean versionLatest) {
             this.versionLatest = versionLatest;
-            return (T)this;
+            return (T) this;
         }
 
         public T metadata(Map<MetadataKey, MetadataValue> metadata) {
@@ -236,19 +257,19 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             if (metadata != null) {
                 this.metadata.putAll(metadata);
             }
-            return (T)this;
+            return (T) this;
         }
 
         public T appendMetadata(MetadataKey key, MetadataValue value) {
             metadata.put(key, value);
-            return (T)this;
+            return (T) this;
         }
 
         public T appendMetadata(Metadata metadata) {
             if (metadata != null) {
                 this.metadata.put(metadata.getKey(), metadata.getValue());
             }
-            return (T)this;
+            return (T) this;
         }
 
         @Override
@@ -259,6 +280,7 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                     schemaRegistryId,
                     schemaJson,
                     compatibilityLevel,
+                    globalCompatibilityLevel,
                     mode,
                     deleted,
                     versionLatest,

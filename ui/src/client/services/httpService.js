@@ -73,6 +73,10 @@ export const setCompatibilityLevel = (subject, compatibilityLevel) => axios.put(
   .then(res => res.data)
   .catch(error => Promise.reject(hadleError(error)));
 
+export const resetCompatibility = (subject) => axios.put(`/api/schemas/reset/${subject}`)
+    .then(res => res.data)
+    .catch(error => Promise.reject(hadleError(error)));
+
 export const deleteSchema = (subject, version) => axios.delete(`/api/schemas/${subject}/${version}`)
   .then(res => res.data)
   .catch(error => Promise.reject(hadleError(error)));

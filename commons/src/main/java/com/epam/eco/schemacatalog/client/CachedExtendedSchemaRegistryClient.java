@@ -526,6 +526,16 @@ public class CachedExtendedSchemaRegistryClient extends EcoCachedSchemaRegistryC
         return checkSchemaExists(subject, (Integer)null);
     }
 
+    @Override
+    public void deleteSubjectCompatibility(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+        try {
+            deleteCompatibility(subject);
+        } catch (IOException | RestClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private boolean checkSchemaExists(String subject, ParsedSchema schema) {
         try {
             getId(subject, schema);

@@ -33,6 +33,8 @@ import SchemaHistory from './SchemaHistory';
 import SchemaAddVersionButton from './SchemaAddVersionButton';
 import SchemaCompatibilitySelector from './SchemaCompatibilitySelector';
 import './Schema.scss';
+import SchemaCompatibilityTypeSelector from "./SchemaCompatibilityTypeSelector";
+import AuthService from "../../../../services/authService/authService";
 
 class Schema extends PureComponent {
   static propTypes = {
@@ -42,10 +44,13 @@ class Schema extends PureComponent {
     mode: PropTypes.string,
     isDeleted: PropTypes.bool,
     updatedAt: PropTypes.string,
+    updatedBy: PropTypes.string,
     originMetadataVersion: PropTypes.number,
     deleteMetadata: PropTypes.func,
     deleteSchema: PropTypes.func,
     deleteSchemas: PropTypes.func,
+    resetCompatibility: PropTypes.func,
+    globalCompatibilityLevel: PropTypes.bool
   }
 
   constructor(props) {
@@ -55,6 +60,7 @@ class Schema extends PureComponent {
       [DETAILS]: SchemaDetails,
       [HISTORY]: SchemaHistory,
     };
+    this.isAdmin = AuthService.getInstance(process.env.AUTH_PROVIDER).isAdmin();
   }
 
   render() {
@@ -66,9 +72,12 @@ class Schema extends PureComponent {
       mode,
       deleteSchema,
       deleteSchemas,
+      updatedBy,
       updatedAt,
       originMetadataVersion,
       deleteMetadata,
+      resetCompatibility,
+      globalCompatibilityLevel
     } = this.props;
     if (!subject) {
       return null;
@@ -81,22 +90,35 @@ class Schema extends PureComponent {
           <p>Subject: </p>
           <div className="actions">
             <h3 className="subject">{subject}</h3>
-            <React.Fragment>
-              <SchemaCompatibilitySelector />
-              <div
-                data-tip="delete all versions of the subject"
-                data-for="delete-schemas"
-              >
-                <Button
-                  className="red delete-button"
-                  name="Delete all"
-                  onClick={() => deleteSchemas()}
-                  transparent
-                />
-              </div>
-              <ReactTooltip id="delete-schemas" place="top" />
-            </React.Fragment>
           </div>
+        </div>
+        <div className="schema-row">
+          <p>Compatibility level: </p>
+
+          <div className="actions">
+
+             <SchemaCompatibilityTypeSelector/>
+             {this.isAdmin && (
+                     <React.Fragment>
+                       <div>Set to:</div>
+                       <SchemaCompatibilitySelector/>
+                       <div
+                           data-tip="reset compatibility level to inherited from cluster defaults value"
+                           data-for="reset-compatibility"
+                       >
+                         <Button
+                             className="green transparent reset-button"
+                             name="Reset to default"
+                             onClick={() => resetCompatibility()}
+                             disable={globalCompatibilityLevel}
+                             transparent
+                         />
+                       </div>
+                       <ReactTooltip id="reset-compatibility" place="top"/>
+                     </React.Fragment>
+                 )
+             }
+           </div>
         </div>
 
         <div className="schema-row">
@@ -107,21 +129,33 @@ class Schema extends PureComponent {
             {isDeleted
               ? <DeletedIcon />
               : (
-                <React.Fragment>
-                  <div
-                    data-tip="delete current version of the subject"
-                    data-for="delete-schemas"
-                  >
-                    <Button
-                      className="red delete-button"
-                      name="Delete"
-                      onClick={() => deleteSchema()}
-                      transparent
-                    />
-                  </div>
-                  <ReactTooltip id="delete-schemas" place="top" />
-                </React.Fragment>
-              )
+                    <React.Fragment>
+                      <div
+                          data-tip="delete current version of the subject"
+                          data-for="delete-schemas"
+                      >
+                        <Button
+                            className="red delete-button"
+                            name="Delete"
+                            onClick={() => deleteSchema()}
+                            transparent
+                        />
+                      </div>
+                      <ReactTooltip id="delete-schemas" place="top"/>
+                      <div
+                          data-tip="delete all versions of the subject"
+                          data-for="delete-schemas"
+                      >
+                        <Button
+                            className="red delete-button"
+                            name="Delete all"
+                            onClick={() => deleteSchemas()}
+                            transparent
+                        />
+                      </div>
+                      <ReactTooltip id="delete-schemas" place="top"/>
+                    </React.Fragment>
+                )
             }
           </div>
         </div>
@@ -138,11 +172,22 @@ class Schema extends PureComponent {
           <div className="schema-metadata-row">
             <p className="description">Description: </p>
             <div className="content">
-              <Metadata
+            <Metadata
                 key={subject + version}
               />
             </div>
           </div>
+
+          {updatedBy
+            && (
+            <div className="schema-metadata-row">
+              <p>Updated by: </p>
+              <div className="content">
+                <span className="value by">{updatedBy}</span>
+              </div>
+            </div>
+            )
+          }
 
           {updatedAt
             && (

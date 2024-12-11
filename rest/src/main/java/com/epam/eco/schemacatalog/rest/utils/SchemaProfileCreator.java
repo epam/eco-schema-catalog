@@ -63,6 +63,7 @@ public class SchemaProfileCreator {
                 .version(schemaInfo.getVersion())
                 .schemaRegistryId(schemaInfo.getSchemaRegistryId())
                 .compatibilityLevel(schemaInfo.getCompatibilityLevel())
+                .globalCompatibilityLevel(schemaInfo.isGlobalCompatibilityLevel())
                 .mode(schemaInfo.getMode())
                 .versionLatest(schemaInfo.isVersionLatest())
                 .schemaMetadata(schemaMetadata.map(meta -> FormattedMetadata.with(meta, metadataDocFormatter))
@@ -79,7 +80,7 @@ public class SchemaProfileCreator {
 
         Map<String, SchemaEntity.Builder> builders = new HashMap<>();
         List<FieldInfo> fieldInfoList = schemaInfo.getSchemaFieldInfosAsList();
-        for(FieldInfo fieldInfo : fieldInfoList) {
+        for (FieldInfo fieldInfo : fieldInfoList) {
             Schema parent = fieldInfo.getParent();
             Schema.Field field = fieldInfo.getField();
             SchemaEntity.Builder builder = builders.get(parent.getFullName());
@@ -100,8 +101,8 @@ public class SchemaProfileCreator {
                     .metadata(
                             FormattedMetadata.with(
                                     metadataBrowser.
-                                        getFieldMetadata(parent.getFullName(), field.name()).orElse(null),
-                                        formatter))
+                                            getFieldMetadata(parent.getFullName(), field.name()).orElse(null),
+                                    formatter))
                     .build());
         }
 
@@ -114,8 +115,8 @@ public class SchemaProfileCreator {
         Schema.Type type = fieldSchema.getType();
         String logicalType =
                 fieldSchema.getLogicalType() != null ?
-                fieldSchema.getLogicalType().getName() :
-                null;
+                        fieldSchema.getLogicalType().getName() :
+                        null;
 
         if (AvroUtils.isPrimitive(type)) {
             return PrimitiveSchemaFieldType.builder()

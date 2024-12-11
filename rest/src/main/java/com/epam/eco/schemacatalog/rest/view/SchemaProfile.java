@@ -37,6 +37,7 @@ public final class SchemaProfile {
     private final int version;
     private final int schemaRegistryId;
     private final CompatibilityLevel compatibilityLevel;
+    private final boolean globalCompatibilityLevel;
     private final Mode mode;
     private final boolean versionLatest;
     private final boolean deleted;
@@ -48,6 +49,7 @@ public final class SchemaProfile {
             @JsonProperty("version") int version,
             @JsonProperty("schemaRegistryId") int schemaRegistryId,
             @JsonProperty("compatibilityLevel") CompatibilityLevel compatibilityLevel,
+            @JsonProperty("globalCompatibilityLevel") boolean globalCompatibilityLevel,
             @JsonProperty("mode") Mode mode,
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("schemaMetadata") FormattedMetadata schemaMetadata,
@@ -66,6 +68,7 @@ public final class SchemaProfile {
         this.version = version;
         this.schemaRegistryId = schemaRegistryId;
         this.compatibilityLevel = compatibilityLevel;
+        this.globalCompatibilityLevel = globalCompatibilityLevel;
         this.mode = mode;
         this.versionLatest = versionLatest;
         this.deleted = deleted;
@@ -87,6 +90,10 @@ public final class SchemaProfile {
 
     public CompatibilityLevel getCompatibilityLevel() {
         return compatibilityLevel;
+    }
+
+    public boolean isGlobalCompatibilityLevel() {
+        return globalCompatibilityLevel;
     }
 
     public Mode getMode() {
@@ -115,35 +122,37 @@ public final class SchemaProfile {
         if (o == null || getClass() != o.getClass()) return false;
         SchemaProfile that = (SchemaProfile) o;
         return version == that.version &&
-                schemaRegistryId == that.schemaRegistryId &&
-                versionLatest == that.versionLatest &&
-                deleted == that.deleted &&
-                Objects.equals(subject, that.subject) &&
-                compatibilityLevel == that.compatibilityLevel &&
-                mode == that.mode &&
-                Objects.equals(schemaMetadata, that.schemaMetadata) &&
-                Objects.equals(schemas, that.schemas);
+               schemaRegistryId == that.schemaRegistryId &&
+               versionLatest == that.versionLatest &&
+               deleted == that.deleted &&
+               Objects.equals(subject, that.subject) &&
+               compatibilityLevel == that.compatibilityLevel &&
+               globalCompatibilityLevel == that.globalCompatibilityLevel &&
+               mode == that.mode &&
+               Objects.equals(schemaMetadata, that.schemaMetadata) &&
+               Objects.equals(schemas, that.schemas);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(subject, version, schemaRegistryId,
-                compatibilityLevel, mode, versionLatest, deleted, schemaMetadata, schemas);
+                compatibilityLevel, globalCompatibilityLevel, mode, versionLatest, deleted, schemaMetadata, schemas);
     }
 
     @Override
     public String toString() {
         return "SchemaProfile{" +
-                "subject='" + subject + '\'' +
-                ", version=" + version +
-                ", schemaRegistryId=" + schemaRegistryId +
-                ", compatibilityLevel=" + compatibilityLevel +
-                ", mode=" + mode +
-                ", versionLatest=" + versionLatest +
-                ", deleted=" + deleted +
-                ", schemaMetadata=" + schemaMetadata +
-                ", schemas=" + schemas +
-                '}';
+               "subject='" + subject + '\'' +
+               ", version=" + version +
+               ", schemaRegistryId=" + schemaRegistryId +
+               ", compatibilityLevel=" + compatibilityLevel +
+               ", globalCompatibilityLevel=" + globalCompatibilityLevel +
+               ", mode=" + mode +
+               ", versionLatest=" + versionLatest +
+               ", deleted=" + deleted +
+               ", schemaMetadata=" + schemaMetadata +
+               ", schemas=" + schemas +
+               '}';
     }
 
     public Builder toBuilder() {
@@ -164,6 +173,7 @@ public final class SchemaProfile {
         private int version;
         private int schemaRegistryId;
         private CompatibilityLevel compatibilityLevel;
+        private boolean globalCompatibilityLevel;
         private Mode mode;
         private boolean versionLatest;
         private boolean deleted;
@@ -179,6 +189,7 @@ public final class SchemaProfile {
             this.version = profile.version;
             this.schemaRegistryId = profile.schemaRegistryId;
             this.compatibilityLevel = profile.compatibilityLevel;
+            this.globalCompatibilityLevel = profile.globalCompatibilityLevel;
             this.mode = profile.mode;
             this.versionLatest = profile.versionLatest;
             this.deleted = profile.deleted;
@@ -203,6 +214,11 @@ public final class SchemaProfile {
 
         public Builder compatibilityLevel(CompatibilityLevel compatibilityLevel) {
             this.compatibilityLevel = compatibilityLevel;
+            return this;
+        }
+
+        public Builder globalCompatibilityLevel(boolean globalCompatibilityLevel) {
+            this.globalCompatibilityLevel = globalCompatibilityLevel;
             return this;
         }
 
@@ -249,7 +265,7 @@ public final class SchemaProfile {
         }
 
         public SchemaProfile build() {
-            return new SchemaProfile(subject, version, schemaRegistryId, compatibilityLevel, mode,
+            return new SchemaProfile(subject, version, schemaRegistryId, compatibilityLevel, globalCompatibilityLevel, mode,
                     versionLatest, schemaMetadata, schemas, deleted);
         }
     }

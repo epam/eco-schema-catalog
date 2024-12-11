@@ -65,6 +65,7 @@ describe('getIsClearAll spec', () => {
         compatibilityTerm: [],
         namespaceTerm: [],
         metadataUpdatedByTerm: [],
+        modeTerm: [],
         deletedTerm: [],
         versionTerm: [],
         versionLatestTerm: [],

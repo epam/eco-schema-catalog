@@ -25,13 +25,15 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 public class ConfigValue extends Value {
 
     private CompatibilityLevel compatibilityLevel;
+    private boolean globalCompatibilityLevel;
 
     public ConfigValue() {
-        this(null);
+        this(null,false);
     }
 
-    public ConfigValue(CompatibilityLevel compatibilityLevel) {
+    public ConfigValue(CompatibilityLevel compatibilityLevel, boolean globalCompatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
+        this.globalCompatibilityLevel = globalCompatibilityLevel;
     }
 
     public CompatibilityLevel getCompatibilityLevel() {
@@ -40,6 +42,14 @@ public class ConfigValue extends Value {
 
     public void setCompatibilityLevel(CompatibilityLevel compatibilityLevel) {
         this.compatibilityLevel = compatibilityLevel;
+    }
+
+    public boolean isGlobalCompatibilityLevel() {
+        return globalCompatibilityLevel;
+    }
+
+    public void setGlobalCompatibilityLevel(boolean globalCompatibilityLevel) {
+        this.globalCompatibilityLevel = globalCompatibilityLevel;
     }
 
     @Override
@@ -58,13 +68,15 @@ public class ConfigValue extends Value {
 
         ConfigValue that = (ConfigValue)obj;
         return
-                Objects.equals(this.compatibilityLevel, that.compatibilityLevel);
+                Objects.equals(this.compatibilityLevel, that.compatibilityLevel) &&
+                Objects.equals(this.globalCompatibilityLevel, that.globalCompatibilityLevel);
     }
 
     @Override
     public String toString() {
         return
                 "{compatibilityLevel: " + compatibilityLevel +
+                ", globalCompatibilityLevel: " + globalCompatibilityLevel +
                 "}";
     }
 

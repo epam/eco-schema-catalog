@@ -104,9 +104,10 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         }
 
         try {
-            readGlobalConfig();
+            readAndSetGlobalConfig();
             readGlobalMode();
             initAndStartSchemaRegistryCache();
+            setGlobalConfigCompatibility();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -146,7 +147,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         callback.run();
     }
 
-    private void readGlobalConfig() throws Exception {
+    private void readAndSetGlobalConfig() {
         // retry at start-up only
         CompatibilityLevel globalCompatibilityLevel = retryTemplate.
                 execute(context -> schemaRegistryClient.getGlobalCompatibilityLevel());
@@ -157,10 +158,20 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         configCache.put(
                 null,
-                new ConfigValue(globalCompatibilityLevel));
+                new ConfigValue(globalCompatibilityLevel, true));
     }
 
-    private void readGlobalMode() throws Exception {
+    // It is needed in case of global compatibility level will be changed directly
+    // from topic _schemas, in that case this level will have globalCompatibilityLevel false
+    // that wrong, thus we should change it to true
+    private void setGlobalConfigCompatibility() {
+        CompatibilityLevel compatibilityLevel = configCache.get(null).getCompatibilityLevel();
+        configCache.put(
+                null,
+                new ConfigValue(compatibilityLevel, true));
+    }
+
+    private void readGlobalMode() {
         // retry at start-up only
         Mode globalMode = retryTemplate.
                 execute(context -> schemaRegistryClient.getModeValue());
@@ -323,8 +334,19 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         Validate.notNull(compatibilityLevel, "Compatibility Level is null");
 
         try (ResourceSemaphore<String, SubjectOperation> semaphore =
-                subjectSemaphores.createSemaphore(subject, SubjectOperation.UPDATE)) {
+                     subjectSemaphores.createSemaphore(subject, SubjectOperation.UPDATE)) {
             schemaRegistryClient.updateCompatibility(subject, compatibilityLevel);
+            semaphore.awaitUnchecked();
+        }
+    }
+
+    @Override
+    public void deleteCompatibility(String subject) {
+        Validate.notBlank(subject, "Subject is blank");
+
+        try (ResourceSemaphore<String, SubjectOperation> semaphore =
+                     subjectSemaphores.createSemaphore(subject, SubjectOperation.UPDATE)) {
+            schemaRegistryClient.deleteSubjectCompatibility(subject);
             semaphore.awaitUnchecked();
         }
     }
@@ -392,7 +414,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         Validate.notBlank(subject, "Subject is blank");
 
         try (ResourceSemaphore<String, SubjectOperation> semaphore =
-                subjectSemaphores.createSemaphore(subject, SubjectOperation.DELETE)) {
+                     subjectSemaphores.createSemaphore(subject, SubjectOperation.DELETE)) {
             schemaRegistryClient.deleteSubjectUnchecked(subject);
             semaphore.awaitUnchecked();
         }
@@ -412,7 +434,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         SubjectAndVersion subjectAndVersion = new SubjectAndVersion(subject, version);
         try (ResourceSemaphore<SubjectAndVersion, SchemaOperation> semaphore =
-                schemaSemaphores.createSemaphore(subjectAndVersion, SchemaOperation.DELETE)) {
+                     schemaSemaphores.createSemaphore(subjectAndVersion, SchemaOperation.DELETE)) {
             schemaRegistryClient.deleteSchema(subject, version);
             semaphore.awaitUnchecked();
         }
@@ -524,8 +546,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                     NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseEmpty(subject);
                     affected.addAll(
                             subjectSchemas.keySet().stream().
-                                map(version -> new SubjectAndVersion(subject, version)).
-                                collect(Collectors.toSet()));
+                                    map(version -> new SubjectAndVersion(subject, version)).
+                                    collect(Collectors.toSet()));
                 }
             }
         } else {
@@ -533,8 +555,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                     getSubjectSchemasOrElseEmpty(key.getSubject());
             affected.addAll(
                     subjectSchemas.keySet().stream().
-                        map(version -> new SubjectAndVersion(key.getSubject(), version)).
-                        collect(Collectors.toSet()));
+                            map(version -> new SubjectAndVersion(key.getSubject(), version)).
+                            collect(Collectors.toSet()));
         }
 
         // subject UPDATE semaphore
@@ -564,8 +586,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                     NavigableMap<Integer, SchemaValue> subjectSchemas = getSubjectSchemasOrElseEmpty(subject);
                     affected.addAll(
                             subjectSchemas.keySet().stream().
-                                map(version -> new SubjectAndVersion(subject, version)).
-                                collect(Collectors.toSet()));
+                                    map(version -> new SubjectAndVersion(subject, version)).
+                                    collect(Collectors.toSet()));
                 }
             }
         } else {
@@ -573,8 +595,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                     getSubjectSchemasOrElseEmpty(key.getSubject());
             affected.addAll(
                     subjectSchemas.keySet().stream().
-                        map(version -> new SubjectAndVersion(key.getSubject(), version)).
-                        collect(Collectors.toSet()));
+                            map(version -> new SubjectAndVersion(key.getSubject(), version)).
+                            collect(Collectors.toSet()));
         }
 
         // subject UPDATE semaphore
@@ -693,7 +715,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
     @SuppressWarnings("unchecked")
     private NavigableMap<Integer, SchemaValue> getSubjectSchemasOrElseEmpty(String subject) {
-        return schemaCache.getOrDefault(subject, (NavigableMap<Integer, SchemaValue>)EMPTY_MAP);
+        return schemaCache.getOrDefault(subject, (NavigableMap<Integer, SchemaValue>) EMPTY_MAP);
     }
 
     private NavigableMap<Integer, SchemaValue> getSubjectSchemasOrElseCreate(String subject) {
@@ -719,6 +741,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         schemaEntity.setSubject(schemaValue.getSubject());
         schemaEntity.setVersion(schemaValue.getVersion());
         schemaEntity.setCompatibilityLevel(configValue.getCompatibilityLevel());
+        schemaEntity.setCompatibilityLevelGlobal(configValue.isGlobalCompatibilityLevel());
         schemaEntity.setMode(modeValue.getMode());
         schemaEntity.setSchema(schemaValue.getSchema());
         schemaEntity.setVersionLatest(subjectSchemas.lastKey().equals(schemaValue.getVersion()));
