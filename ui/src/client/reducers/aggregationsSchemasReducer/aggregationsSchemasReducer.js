@@ -74,8 +74,8 @@ const aggregationsSchemasReducer = (state = initialState, action) => {
           rootNamespace,
           version,
           mode,
-          deleted: { 1: deleted.true, 0: deleted.false },
-          versionLatest: { 1: versionLatest.true, 0: versionLatest.false },
+          deleted: { true: deleted.true, false: deleted.false },
+          versionLatest: { true: versionLatest.true, false: versionLatest.false },
         },
       );
     }

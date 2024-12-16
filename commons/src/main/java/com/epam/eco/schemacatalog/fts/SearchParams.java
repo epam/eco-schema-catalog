@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.kafka.common.protocol.types.Field;
+
 
 /**
  * @author Andrei_Tytsik
@@ -30,9 +32,9 @@ public final class SearchParams extends AbstractPagedQuery {
     private List<String> subjectTerm;
     private List<String> nameTerm;
     private List<String> fullnameTerm;
-    private List<Integer> deletedTerm;
+    private List<Boolean> deletedTerm;
     private List<Integer> versionTerm;
-    private List<Integer> versionLatestTerm;
+    private List<Boolean> versionLatestTerm;
     private List<String> compatibilityTerm;
     private List<String> modeTerm;
     private List<String> namespaceTerm;
@@ -82,234 +84,311 @@ public final class SearchParams extends AbstractPagedQuery {
     public String getQuery() {
         return query;
     }
+
     public void setQuery(String query) {
         this.query = query;
     }
+
     public List<String> getSubjectTerm() {
         return subjectTerm;
     }
+
     public void setSubjectTerm(List<String> subjectTerm) {
         this.subjectTerm = subjectTerm;
     }
+
     public List<String> getNameTerm() {
         return nameTerm;
     }
+
     public void setNameTerm(List<String> nameTerm) {
         this.nameTerm = nameTerm;
     }
+
     public List<String> getFullnameTerm() {
         return fullnameTerm;
     }
+
     public void setFullnameTerm(List<String> fullnameTerm) {
         this.fullnameTerm = fullnameTerm;
     }
+
     public List<Integer> getVersionTerm() {
         return versionTerm;
     }
+
     public void setVersionTerm(List<Integer> versionTerm) {
         this.versionTerm = versionTerm;
     }
-    public List<Integer> getVersionLatestTerm() {
+
+    public List<Boolean> getVersionLatestTerm() {
         return versionLatestTerm;
     }
-    public void setVersionLatestTerm(List<Integer> versionLatestTerm) {
+
+    public void setVersionLatestTerm(List<Boolean> versionLatestTerm) {
         this.versionLatestTerm = versionLatestTerm;
     }
+
     public List<String> getCompatibilityTerm() {
         return compatibilityTerm;
     }
+
     public void setCompatibilityTerm(List<String> compatibilityTerm) {
         this.compatibilityTerm = compatibilityTerm;
     }
+
     public List<String> getModeTerm() {
         return modeTerm;
     }
+
     public void setModeTerm(List<String> modeTerm) {
         this.modeTerm = modeTerm;
     }
+
     public List<String> getNamespaceTerm() {
         return namespaceTerm;
     }
+
     public void setNamespaceTerm(List<String> namespaceTerm) {
         this.namespaceTerm = namespaceTerm;
     }
+
     public List<String> getMetadataUpdatedByTerm() {
         return metadataUpdatedByTerm;
     }
+
     public void setMetadataUpdatedByTerm(List<String> metadataUpdatedByTerm) {
         this.metadataUpdatedByTerm = metadataUpdatedByTerm;
     }
-    public List<Integer> getDeletedTerm() {
+
+    public List<Boolean> getDeletedTerm() {
         return deletedTerm;
     }
-    public void setDeletedTerm(List<Integer> deletedTerm) {
+
+    public void setDeletedTerm(List<Boolean> deletedTerm) {
         this.deletedTerm = deletedTerm;
     }
+
     public String getSubjectRegExp() {
         return subjectRegExp;
     }
+
     public void setSubjectRegExp(String subjectRegExp) {
         this.subjectRegExp = subjectRegExp;
     }
+
     public String getNameRegExp() {
         return nameRegExp;
     }
+
     public void setNameRegExp(String nameRegExp) {
         this.nameRegExp = nameRegExp;
     }
+
     public String getFullnameRegExp() {
         return fullnameRegExp;
     }
+
     public void setFullnameRegExp(String fullnameRegExp) {
         this.fullnameRegExp = fullnameRegExp;
     }
+
     public String getNamespaceRegExp() {
         return namespaceRegExp;
     }
+
     public void setNamespaceRegExp(String namespaceRegExp) {
         this.namespaceRegExp = namespaceRegExp;
     }
+
     public String getMetadataUpdatedByRegExp() {
         return metadataUpdatedByRegExp;
     }
+
     public void setMetadataUpdatedByRegExp(String metadataUpdatedByRegExp) {
         this.metadataUpdatedByRegExp = metadataUpdatedByRegExp;
     }
+
     public Float getSchemaRegistryIdBoost() {
         return schemaRegistryIdBoost;
     }
+
     public void setSchemaRegistryIdBoost(Float schemaRegistryIdBoost) {
         this.schemaRegistryIdBoost = schemaRegistryIdBoost;
     }
+
     public Float getSubjectBoost() {
         return subjectBoost;
     }
+
     public void setSubjectBoost(Float subjectBoost) {
         this.subjectBoost = subjectBoost;
     }
+
     public Float getVersionBoost() {
         return versionBoost;
     }
+
     public void setVersionBoost(Float versionBoost) {
         this.versionBoost = versionBoost;
     }
+
     public Float getVersionLatestBoost() {
         return versionLatestBoost;
     }
+
     public void setVersionLatestBoost(Float versionLatestBoost) {
         this.versionLatestBoost = versionLatestBoost;
     }
+
     public Float getCompatibilityBoost() {
         return compatibilityBoost;
     }
+
     public void setCompatibilityBoost(Float compatibilityBoost) {
         this.compatibilityBoost = compatibilityBoost;
     }
+
     public Float getModeBoost() {
         return modeBoost;
     }
+
     public void setModeBoost(Float modeBoost) {
         this.modeBoost = modeBoost;
     }
+
     public Float getNameBoost() {
         return nameBoost;
     }
+
     public void setNameBoost(Float nameBoost) {
         this.nameBoost = nameBoost;
     }
+
     public Float getNamespaceBoost() {
         return namespaceBoost;
     }
+
     public void setNamespaceBoost(Float namespaceBoost) {
         this.namespaceBoost = namespaceBoost;
     }
+
     public Float getFullnameBoost() {
         return fullnameBoost;
     }
+
     public Float getDeletedBoost() {
         return deletedBoost;
     }
+
     public void setDeletedBoost(Float deletedBoost) {
         this.deletedBoost = deletedBoost;
     }
+
     public Float getMetadataDocBoost() {
         return metadataDocBoost;
     }
+
     public void setMetadataDocBoost(Float metadataDocBoost) {
         this.metadataDocBoost = metadataDocBoost;
     }
+
     public Float getMetadataUpdatedByBoost() {
         return metadataUpdatedByBoost;
     }
+
     public void setMetadataUpdatedByBoost(Float metadataUpdatedByBoost) {
         this.metadataUpdatedByBoost = metadataUpdatedByBoost;
     }
+
     public Float getMetadataAttributeKeyBoost() {
         return metadataAttributeKeyBoost;
     }
+
     public void setMetadataAttributeKeyBoost(Float metadataAttributeKeyBoost) {
         this.metadataAttributeKeyBoost = metadataAttributeKeyBoost;
     }
+
     public Float getMetadataAttributeValueBoost() {
         return metadataAttributeValueBoost;
     }
+
     public void setMetadataAttributeValueBoost(Float metadataAttributeValueBoost) {
         this.metadataAttributeValueBoost = metadataAttributeValueBoost;
     }
+
     public void setFullnameBoost(Float fullnameBoost) {
         this.fullnameBoost = fullnameBoost;
     }
+
     public Float getPropertyKeysBoost() {
         return propertyKeysBoost;
     }
+
     public void setPropertyKeysBoost(Float propertyKeysBoost) {
         this.propertyKeysBoost = propertyKeysBoost;
     }
+
     public Float getPropertyValuesBoost() {
         return propertyValuesBoost;
     }
+
     public void setPropertyValuesBoost(Float propertyValuesBoost) {
         this.propertyValuesBoost = propertyValuesBoost;
     }
+
     public AggregationParams getVersionAggregation() {
         return versionAggregation;
     }
+
     public void setVersionAggregation(AggregationParams versionAggregation) {
         this.versionAggregation = versionAggregation;
     }
+
     public AggregationParams getVersionLatestAggregation() {
         return versionLatestAggregation;
     }
+
     public void setVersionLatestAggregation(AggregationParams versionLatestAggregation) {
         this.versionLatestAggregation = versionLatestAggregation;
     }
+
     public AggregationParams getCompatibilityAggregation() {
         return compatibilityAggregation;
     }
+
     public void setCompatibilityAggregation(AggregationParams compatibilityAggregation) {
         this.compatibilityAggregation = compatibilityAggregation;
     }
+
     public AggregationParams getModeAggregation() {
         return modeAggregation;
     }
+
     public void setModeAggregation(AggregationParams modeAggregation) {
         this.modeAggregation = modeAggregation;
     }
+
     public AggregationParams getNamespaceAggregation() {
         return namespaceAggregation;
     }
+
     public void setNamespaceAggregation(AggregationParams namespaceAggregation) {
         this.namespaceAggregation = namespaceAggregation;
     }
+
     public AggregationParams getMetadataUpdatedByAggregation() {
         return metadataUpdatedByAggregation;
     }
+
     public void setMetadataUpdatedByAggregation(AggregationParams metadataUpdatedByAggregation) {
         this.metadataUpdatedByAggregation = metadataUpdatedByAggregation;
     }
+
     public AggregationParams getDeletedAggregation() {
         return deletedAggregation;
     }
+
     public void setDeletedAggregation(AggregationParams deletedAggregation) {
         this.deletedAggregation = deletedAggregation;
     }

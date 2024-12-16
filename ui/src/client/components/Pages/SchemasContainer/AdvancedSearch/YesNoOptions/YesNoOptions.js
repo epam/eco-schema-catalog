@@ -28,8 +28,8 @@ class YesNoOptions extends Component {
   }
 
   items = {
-    1: 'yes',
-    0: 'no',
+    true: 'yes',
+    false: 'no',
   }
 
   onCheck = (_isChecked, value) => {

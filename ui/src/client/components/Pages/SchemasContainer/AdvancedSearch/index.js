@@ -19,15 +19,18 @@ import toggleArrayItem from '../../../../utils/toggleArrayItem/toggleArrayItem';
 import {
   NAMESPACE_TERM,
   COMPATIBILITY_TERM,
+  METADATA_UPDATED_BY_TERM,
   DELETED_TERM,
   VERSION_TERM,
   VERSION_LATEST_TERM,
+  MODE_TERM,
 } from '../../../../consts/terms';
 import { getSchemasAsync, applyAggregation, applyAggregationsBatch } from '../../../../actions/schemasActions/schemasActions';
 import { closeSchema } from '../../../../actions/schemaActions/schemaActions';
 import {
   getCompatibilityTerm,
   getNamespaceTerm,
+  getMetadataUpdatedByTerm,
   getSortedRootNamspace,
   getIsClearAll,
   getDeletedTerm,
@@ -40,11 +43,13 @@ import AdvancedSearch from './AdvancedSearch';
 const mapStateToProps = state => ({
   rootNamespace: getSortedRootNamspace(state),
   compatibility: state.aggregationsSchemasReducer.compatibility,
+  metadataUpdatedBy: state.aggregationsSchemasReducer.metadataUpdatedBy,
   mode: state.aggregationsSchemasReducer.mode,
   deleted: state.aggregationsSchemasReducer.deleted,
   version: state.aggregationsSchemasReducer.version,
   versionLatest: state.aggregationsSchemasReducer.versionLatest,
 
+  metadataUpdatedByTerm: getMetadataUpdatedByTerm(state),
   namespaceTerm: getNamespaceTerm(state),
   compatibilityTerm: getCompatibilityTerm(state),
   modeTerm: getModeTerm(state),
@@ -68,7 +73,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(applyAggregationsBatch({
       [COMPATIBILITY_TERM]: [],
       [DELETED_TERM]: [],
+      [METADATA_UPDATED_BY_TERM]: [],
       [NAMESPACE_TERM]: [],
+      [MODE_TERM]: [],
       [VERSION_TERM]: [],
       [VERSION_LATEST_TERM]: [],
     }));
