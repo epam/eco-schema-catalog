@@ -16,7 +16,6 @@
 
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Loader } from 'react-eco-ui';
@@ -70,10 +69,10 @@ class Metadata extends Component {
       <div className="metadata">
         {isLoading
           && (
-          <div className="metadata-loading">
-            <div className="metadata-loading-backgroung" />
-            <Loader type="spinner" color="lime-green" />
-          </div>
+            <div className="metadata-loading">
+              <div className="metadata-loading-backgroung" />
+              <Loader type="spinner" color="lime-green" />
+            </div>
           )
         }
         <MetadataEdit

@@ -13,6 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+import isNaN from 'lodash/isNaN';
 import qs from 'qs';
 
 const parseTerms = (terms) => {
@@ -46,10 +48,10 @@ const parseSearchString = (search) => {
     }
     page = Number.parseInt(page, 10);
     pageSize = Number.parseInt(pageSize, 10);
-    if (page <= 0 || Number.isNaN(page)) {
+    if (page <= 0 || isNaN(page)) {
       page = 0;
     }
-    if (pageSize <= 0 || Number.isNaN(pageSize)) {
+    if (pageSize <= 0 || isNaN(pageSize)) {
       pageSize = 20;
     }
     // pages starts from 1 for user, but for REST from 0

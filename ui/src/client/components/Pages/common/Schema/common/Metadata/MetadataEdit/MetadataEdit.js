@@ -94,73 +94,74 @@ class MetadataEdit extends PureComponent {
 
         {isEdit
           && (
-          <MetadataEditInput
-            key={doc}
-            value={doc}
-            handleChange={this.handleChange}
-          />
+            <MetadataEditInput
+              key={doc}
+              value={doc}
+              handleChange={this.handleChange}
+            />
           )
         }
 
         {!isEdit
           && (
-          <div
-            className="metadata-no-edit"
-            onClick={e => this.handleIsEditOn(e)}
-            role="presentation"
-          >
-            <PencilIconSVG />
             <div
-              className={`formatted-doc ${formattedDoc ? 'haveDoc' : ''}`}
-              dangerouslySetInnerHTML={{ __html: formattedDoc || 'Enter description...' }}
-            />
+              className="metadata-no-edit"
+              onClick={e => this.handleIsEditOn(e)}
+              role="presentation"
+            >
+              <PencilIconSVG />
+              <div
+                className={`formatted-doc ${formattedDoc ? 'haveDoc' : ''}`}
+                dangerouslySetInnerHTML={{ __html: formattedDoc || 'Enter description...' }}
+              />
 
-          </div>
+            </div>
           )
         }
 
         {getOverridingAvailabilty(currentVersion, originVersion) && !isSaved
           && (
-          <MetadataEditCheckbox
-            isChecked={isOverrideVersion}
-            handleCheck={this.handleCheckOverrideVersion}
-          />
+            <MetadataEditCheckbox
+              isChecked={isOverrideVersion}
+              handleCheck={this.handleCheckOverrideVersion}
+            />
           )
         }
 
         <div className="actions">
           {isEdit
             && (
-            <Button
-              name="preview"
-              transparent
-              disable={doc === inputValue || !inputValue}
-              onClick={() => this.handleActionMetadata(updateMetada)}
-            />
+              <Button
+                name="preview"
+                transparent
+                disable={doc === inputValue || !inputValue}
+                onClick={() => this.handleActionMetadata(updateMetada)}
+              />
             )
           }
           {(!isSaved)
             && (
-            <Button
-              className="green"
-              name="save"
-              transparent
-              disable={!inputValue}
-              onClick={() => this.handleActionMetadata(saveMetada)}
-            />
+              <Button
+                className="green"
+                name="save"
+                transparent
+                disable={!inputValue}
+                onClick={() => this.handleActionMetadata(saveMetada)}
+              />
             )
           }
           {isEdit
             && (
-            <Button
-              className="grey"
-              name="cancel"
-              transparent
-              onClick={() => this.setState({ isEdit: false })}
-            />
+              <Button
+                className="grey"
+                name="cancel"
+                transparent
+                onClick={() => this.setState({ isEdit: false })}
+              />
             )
           }
         </div>
+
       </div>
     );
   }
