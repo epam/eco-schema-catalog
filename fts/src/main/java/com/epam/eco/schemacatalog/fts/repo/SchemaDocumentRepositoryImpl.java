@@ -30,7 +30,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -47,6 +46,7 @@ import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 
@@ -56,6 +56,8 @@ import com.epam.eco.schemacatalog.fts.QueryStringQuery;
 import com.epam.eco.schemacatalog.fts.SchemaDocument;
 import com.epam.eco.schemacatalog.fts.SearchParams;
 import com.epam.eco.schemacatalog.fts.SearchResult;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author Andrei_Tytsik
@@ -124,7 +126,7 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     @Override
     public SearchResult<SchemaDocument> searchByQuery(Query query) {
         Validate.notNull(query, "Query is null");
-
+        query.setTrackTotalHits(TRUE);
         return toSearchResult(
                 elasticsearchOperations.queryForPage(
                         query,
@@ -137,15 +139,12 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     @Override
     public SearchResult<SchemaDocument> searchByQuery(JsonSearchQuery query) {
         Validate.notNull(query, "Query is null");
-
-        WrapperQueryBuilder wrapperQueryBuilder = QueryBuilders.wrapperQuery(query.getJson());
-        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-        nativeSearchQueryBuilder.withQuery(wrapperQueryBuilder);
-        nativeSearchQueryBuilder.withPageable(query.getPageable());
+        NativeSearchQuery nativeSearchQuery = buildNativeSearchQuery(
+                QueryBuilders.wrapperQuery(query.getJson()), query.getPageable());
 
         return toSearchResult(
                 elasticsearchOperations.queryForPage(
-                        nativeSearchQueryBuilder.build(),
+                        nativeSearchQuery,
                         SchemaDocument.class,
                         IndexCoordinates.of(SchemaDocument.INDEX_NAME)
                 ));
@@ -154,15 +153,12 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
     @Override
     public SearchResult<SchemaDocument> searchByQuery(QueryStringQuery query) {
         Validate.notNull(query, "Query is null");
-
-        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        queryBuilder.
-                withQuery(QueryBuilders.queryStringQuery(query.getQueryString())).
-                withPageable(query.getPageable());
+        NativeSearchQuery nativeSearchQuery = buildNativeSearchQuery(
+                QueryBuilders.queryStringQuery(query.getQueryString()), query.getPageable());
 
         return toSearchResult(
                 elasticsearchOperations.queryForPage(
-                        queryBuilder.build(),
+                        nativeSearchQuery,
                         SchemaDocument.class,
                         IndexCoordinates.of(SchemaDocument.INDEX_NAME)
                 )
@@ -181,7 +177,7 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
         queryBuilder.withFilter(createFilter(params));
 
         return toSearchResult(elasticsearchOperations.queryForPage(
-                        queryBuilder.build(),
+                        buildNativeSearchQuery(queryBuilder),
                         SchemaDocument.class,
                         IndexCoordinates.of(SchemaDocument.INDEX_NAME)
                 )
@@ -214,6 +210,23 @@ public class SchemaDocumentRepositoryImpl implements SchemaDocumentRepositoryCus
                         .size(aggregationParams.getSize())));
 
         return queryBuilder;
+    }
+
+    private NativeSearchQuery buildNativeSearchQuery(
+            QueryBuilder queryBuilder,
+            Pageable pageable
+    ) {
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+        nativeSearchQueryBuilder.
+                withQuery(queryBuilder).
+                withPageable(pageable);
+        return buildNativeSearchQuery(nativeSearchQueryBuilder);
+    }
+
+    private NativeSearchQuery buildNativeSearchQuery(NativeSearchQueryBuilder nativeSearchQueryBuilder) {
+        NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
+        nativeSearchQuery.setTrackTotalHits(TRUE);
+        return nativeSearchQuery;
     }
 
     private static QueryBuilder createBoostedQuery(SearchParams params) {
