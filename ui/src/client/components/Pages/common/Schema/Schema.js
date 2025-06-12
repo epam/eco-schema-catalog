@@ -50,7 +50,8 @@ class Schema extends PureComponent {
     deleteSchema: PropTypes.func,
     deleteSchemas: PropTypes.func,
     resetCompatibility: PropTypes.func,
-    globalCompatibilityLevel: PropTypes.bool
+    globalCompatibilityLevel: PropTypes.bool,
+    schemaRegistryId: PropTypes.number
   }
 
   constructor(props) {
@@ -77,7 +78,8 @@ class Schema extends PureComponent {
       originMetadataVersion,
       deleteMetadata,
       resetCompatibility,
-      globalCompatibilityLevel
+      globalCompatibilityLevel,
+      schemaRegistryId,
     } = this.props;
     if (!subject) {
       return null;
@@ -165,6 +167,13 @@ class Schema extends PureComponent {
           <div className="actions">
             <span className="mode">{mode}</span>
           </div>
+        </div>
+
+        <div className="schema-row">
+           <p>Schema Id: </p>
+            <div className="actions">
+                <span className="schema-id">{schemaRegistryId}</span>
+            </div>
         </div>
 
         <div className="schema-metadata">
