@@ -51,6 +51,7 @@ describe('schema reducer spec', () => {
       },
       compatibilityLevels: [],
       schemaNameFilter: '',
+      schemaRegistryId: null,
     };
     expect(schemaReducer(undefined, {})).toEqual(state);
   });

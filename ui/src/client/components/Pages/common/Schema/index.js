@@ -36,6 +36,7 @@ const mapStateToProps = state => ({
   updatedBy: getUpdatedBy(state),
   updatedAt: getUpdatedAt(state),
   originMetadataVersion: getOriginMetadataVersion(state),
+  schemaRegistryId: state.schemaReducer.schemaRegistryId,
 });
 
 const mapDispatchToProps = dispatch => ({
