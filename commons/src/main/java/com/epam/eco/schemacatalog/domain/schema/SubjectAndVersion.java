@@ -28,6 +28,7 @@ public final class SubjectAndVersion {
 
     private final String subject;
     private final int version;
+    private Long deletedTimestamp;
 
     public SubjectAndVersion(
             @JsonProperty("subject") String subject,
@@ -39,11 +40,23 @@ public final class SubjectAndVersion {
         this.version = version;
     }
 
+    public SubjectAndVersion(
+            @JsonProperty("subject") String subject,
+            @JsonProperty("version") int version,
+            @JsonProperty("deletedTimestamp") Long deletedTimestamp
+    ) {
+        this(subject, version);
+        this.deletedTimestamp = deletedTimestamp;
+    }
+
     public String getSubject() {
         return subject;
     }
     public int getVersion() {
         return version;
+    }
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
     }
 
     @Override
@@ -63,6 +76,7 @@ public final class SubjectAndVersion {
         SubjectAndVersion that = (SubjectAndVersion)obj;
         return
                 Objects.equals(this.subject, that.subject) &&
+                Objects.equals(this.deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(this.version, that.version);
     }
 
@@ -71,7 +85,12 @@ public final class SubjectAndVersion {
         return
                 "{subject: " + subject +
                 ", version: " + version +
+                ", deletedTimestamp: " + deletedTimestamp +
                 "}";
+    }
+
+    public static SubjectAndVersion with(String subject, int version, long deletedTimestamp) {
+        return new SubjectAndVersion(subject, version, deletedTimestamp);
     }
 
     public static SubjectAndVersion with(String subject, int version) {

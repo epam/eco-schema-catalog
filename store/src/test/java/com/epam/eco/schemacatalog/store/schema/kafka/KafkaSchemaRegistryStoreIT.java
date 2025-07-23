@@ -109,6 +109,7 @@ class KafkaSchemaRegistryStoreIT {
 
         SchemaEntity schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
         assertNotNull(schemaEntity);
+        assertNotNull(schemaEntity.getCreatedTimestamp());
 
         // and one more time
         schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
@@ -119,6 +120,9 @@ class KafkaSchemaRegistryStoreIT {
         schemaEntity = schemaRegistryStore.getSchema(subject, schemaEntity.getVersion());
         assertNotNull(schemaEntity);
         assertTrue(schemaEntity.isDeleted());
+        assertNotNull(schemaEntity.getDeletedTimestamp());
+        assertNotNull(schemaEntity.getCreatedTimestamp());
+        assertTrue(schemaEntity.getDeletedTimestamp() > schemaEntity.getCreatedTimestamp());
     }
 
     @Test
@@ -149,6 +153,9 @@ class KafkaSchemaRegistryStoreIT {
         assertTrue(schemas.get(0).isDeleted());
         assertTrue(schemas.get(1).isDeleted());
         assertTrue(schemas.get(2).isDeleted());
+        assertNotNull(schemas.get(0).getDeletedTimestamp());
+        assertNotNull(schemas.get(1).getDeletedTimestamp());
+        assertNotNull(schemas.get(2).getDeletedTimestamp());
     }
 
     @Test

@@ -36,6 +36,10 @@
       line-height: 18px;
       color: #868996;
       font-weight: 600;
+      &.deleted-at {
+        flex-basis: 70px;
+        margin-top: 2px;
+      }
     }
 
     > .actions {

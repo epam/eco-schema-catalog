@@ -18,6 +18,8 @@ package com.epam.eco.schemacatalog.store.schema.kafka;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -89,18 +91,27 @@ public abstract class SchemaRegistrySerde {
         }
     }
 
-    public static Value deserializeValue(Key key, byte[] valueBytes) throws SchemaRegistrySerdeException {
-        if (valueBytes == null) {
+    public static Value deserializeValue(Key key, ConsumerRecord<byte[], byte[]> consumerRecord) throws SchemaRegistrySerdeException {
+        if (consumerRecord == null || consumerRecord.value() == null) {
             return null;
         }
-
+        byte[] valueBytes = consumerRecord.value();
         try {
             if (KeyType.CONFIG == key.getKeytype()) {
                 return MAPPER.readValue(valueBytes, ConfigValue.class);
             } else if (KeyType.SCHEMA == key.getKeytype()) {
-                return MAPPER.readValue(valueBytes, SchemaValue.class);
+                SchemaValue schemaValue = MAPPER.readValue(valueBytes, SchemaValue.class);
+                if (schemaValue.isDeleted()) {
+                    schemaValue.setDeletedTimestamp(consumerRecord.timestamp());
+                } else {
+                    schemaValue.setCreatedTimestamp(consumerRecord.timestamp());
+                }
+                return schemaValue;
             } else if (KeyType.DELETE_SUBJECT == key.getKeytype()) {
-                return MAPPER.readValue(valueBytes, DeleteSubjectValue.class);
+                DeleteSubjectValue deleteSubjectValue = MAPPER.readValue(valueBytes,
+                        DeleteSubjectValue.class);
+                deleteSubjectValue.setDeletedTimestamp(consumerRecord.timestamp());
+                return deleteSubjectValue;
             } else if (KeyType.MODE == key.getKeytype()) {
                 return MAPPER.readValue(valueBytes, ModeValue.class);
             } else if (KeyType.CLEAR_SUBJECT == key.getKeytype()) {

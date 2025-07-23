@@ -51,7 +51,9 @@ class Schema extends PureComponent {
     deleteSchemas: PropTypes.func,
     resetCompatibility: PropTypes.func,
     globalCompatibilityLevel: PropTypes.bool,
-    schemaRegistryId: PropTypes.number
+    schemaRegistryId: PropTypes.number,
+    createdAt: PropTypes.string,
+    deletedAt: PropTypes.string,
   }
 
   constructor(props) {
@@ -80,6 +82,8 @@ class Schema extends PureComponent {
       resetCompatibility,
       globalCompatibilityLevel,
       schemaRegistryId,
+      createdAt,
+      deletedAt,
     } = this.props;
     if (!subject) {
       return null;
@@ -159,7 +163,24 @@ class Schema extends PureComponent {
                     </React.Fragment>
                 )
             }
+
           </div>
+          {isDeleted && deletedAt && (
+            <React.Fragment>
+               <p className="deleted-at">Deleted At: </p>
+                <div className="actions">
+                   <span>{deletedAt}</span>
+                </div>
+             </React.Fragment>
+           )}
+
+        </div>
+
+        <div className="schema-row">
+           <p>Created At: </p>
+            <div className="actions">
+                <span className="created-at">{createdAt}</span>
+            </div>
         </div>
 
         <div className="schema-row">

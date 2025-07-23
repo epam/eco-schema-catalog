@@ -24,6 +24,7 @@ import {
 } from '../../../../actions/schemaActions/schemaActions';
 import { showConfirmWindow, showTestSchemaModalWindow } from '../../../../actions/modalActions/modalActions';
 import Schema from './Schema';
+import convertToDate from '../../../../utils/convertToDate/convertToDate';
 
 const mapStateToProps = state => ({
   view: state.schemaReducer.view,
@@ -37,6 +38,8 @@ const mapStateToProps = state => ({
   updatedAt: getUpdatedAt(state),
   originMetadataVersion: getOriginMetadataVersion(state),
   schemaRegistryId: state.schemaReducer.schemaRegistryId,
+  createdAt: convertToDate(state.schemaReducer.createdTimestamp),
+  deletedAt: convertToDate(state.schemaReducer.deletedTimestamp),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -64,7 +64,7 @@ import {
 export const gotSchema = (response) => {
   const {
     schemas, schemaMetadata, deleted, versionLatest, compatibilityLevel, globalCompatibilityLevel,
-    mode, schemaRegistryId,
+    mode, schemaRegistryId, createdTimestamp, deletedTimestamp,
   } = response;
   return {
     type: GOT_SCHEMA,
@@ -76,6 +76,8 @@ export const gotSchema = (response) => {
     compatibilityLevel,
     globalCompatibilityLevel,
     schemaRegistryId,
+    createdTimestamp,
+    deletedTimestamp,
   };
 };
 

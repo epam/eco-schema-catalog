@@ -27,6 +27,8 @@ public class SchemaValue extends Value {
     private Integer id;
     private String schema;
     private boolean deleted;
+    private Long createdTimestamp;
+    private Long deletedTimestamp;
 
     public String getSubject() {
         return subject;
@@ -59,9 +61,25 @@ public class SchemaValue extends Value {
         this.deleted = deleted;
     }
 
+    public Long getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(Long createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
+    public void setDeletedTimestamp(Long deletedTimestamp) {
+        this.deletedTimestamp = deletedTimestamp;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(subject, version, id, schema, deleted);
+        return Objects.hash(subject, version, id, schema, deleted, createdTimestamp, deletedTimestamp);
     }
 
     @Override
@@ -79,6 +97,8 @@ public class SchemaValue extends Value {
                 Objects.equals(this.version, that.version) &&
                 Objects.equals(this.id, that.id) &&
                 Objects.equals(this.schema, that.schema) &&
+                Objects.equals(this.createdTimestamp, that.createdTimestamp) &&
+                Objects.equals(this.deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(this.deleted, that.deleted);
     }
 
@@ -89,6 +109,8 @@ public class SchemaValue extends Value {
                 ", version: " + version +
                 ", id: " + id +
                 ", schema: " + schema +
+                ", createdTimestamp: " + createdTimestamp +
+                ", deletedTimestamp: " + deletedTimestamp +
                 ", deleted: " + deleted +
                 "}";
     }

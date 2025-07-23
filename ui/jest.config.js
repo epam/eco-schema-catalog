@@ -1,3 +1,4 @@
+process.env.TZ = 'UTC';
 module.exports = {
   transform: {
     '^.+\\.js$': 'babel-jest',

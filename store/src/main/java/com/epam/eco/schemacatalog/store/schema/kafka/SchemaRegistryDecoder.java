@@ -15,6 +15,7 @@
  */
 package com.epam.eco.schemacatalog.store.schema.kafka;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,13 @@ public class SchemaRegistryDecoder implements KeyValueDecoder<Key, Value> {
 
     @Override
     public Value decodeValue(Key key, byte[] valueBytes) {
+        return null;
+    }
+
+    @Override
+    public Value decodeRecord(ConsumerRecord<byte[], byte[]> consumerRecord) {
         try {
-            return SchemaRegistrySerde.deserializeValue(key, valueBytes);
+            return SchemaRegistrySerde.deserializeValue(decodeKey(consumerRecord.key()), consumerRecord);
         } catch (SchemaRegistrySerdeException srse) {
             LOGGER.warn("", srse);
             return null;

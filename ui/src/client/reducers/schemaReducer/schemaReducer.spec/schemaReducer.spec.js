@@ -52,6 +52,8 @@ describe('schema reducer spec', () => {
       compatibilityLevels: [],
       schemaNameFilter: '',
       schemaRegistryId: null,
+      createdTimestamp: null,
+      deletedTimestamp: null
     };
     expect(schemaReducer(undefined, {})).toEqual(state);
   });

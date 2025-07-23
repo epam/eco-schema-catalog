@@ -107,6 +107,8 @@ public class SchemaInfoTestData {
     public static final boolean DELETED = false;
     public static final boolean VERSION_LATEST = true;
     public static final int SCHEMA_REGISTRY_ID = 1243534266;
+    public static final long CREATED_TIMESTAMP = 156;
+    public static final long DELETED_TIMESTAMP = 345;
 
     public static FullSchemaInfo sample(Date now) {
         return FullSchemaInfo.builder()
@@ -119,6 +121,8 @@ public class SchemaInfoTestData {
                 .appendMetadata(getSchemaMetadata(now))
                 .schemaJson(SCHEMA_JSON)
                 .schemaRegistryId(SCHEMA_REGISTRY_ID)
+                .deletedTimestamp(DELETED_TIMESTAMP)
+                .createdTimestamp(CREATED_TIMESTAMP)
                 .version(VERSION)
                 .build();
     }
