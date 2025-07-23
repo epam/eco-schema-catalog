@@ -70,6 +70,8 @@ public class SchemaProfileCreator {
                         .orElse(null))
                 .schemas(getAllSchemaEntities(schemaInfo, metadataDocFormatter))
                 .deleted(schemaInfo.isDeleted())
+                .deletedTimestamp(schemaInfo.getDeletedTimestamp())
+                .createdTimestamp(schemaInfo.getCreatedTimestamp())
                 .build();
     }
 

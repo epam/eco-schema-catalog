@@ -60,6 +60,8 @@ import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistryStoreUpdateListener, MetadataStoreUpdateListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaCatalogStoreImpl.class);
+    private static final String SCHEMA_REGISTER_PARAMS_OBJECT_IS_NULL = "Schema Register params " +
+            "object is null";
 
     @Autowired
     private SchemaRegistryStore schemaRegistryStore;
@@ -116,7 +118,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
     @Override
     public boolean testSchemaCompatible(SchemaRegisterParams params) {
-        Validate.notNull(params, "Schema Register params object is null");
+        Validate.notNull(params, SCHEMA_REGISTER_PARAMS_OBJECT_IS_NULL);
 
         return schemaRegistryStore.testSchemaCompatible(
                 params.getSubject(), params.getParsedSchema());
@@ -124,7 +126,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
     @Override
     public SchemaCompatibilityCheckResult testSchemaCompatibleDetailed(SchemaRegisterParams params) {
-        Validate.notNull(params, "Schema Register params object is null");
+        Validate.notNull(params, SCHEMA_REGISTER_PARAMS_OBJECT_IS_NULL);
 
         CompatibilityLevel compatibilityLevel =
                 schemaRegistryStore.getSubjectCompatibility(params.getSubject());
@@ -149,7 +151,7 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
 
     @Override
     public FullSchemaInfo registerSchema(SchemaRegisterParams params) {
-        Validate.notNull(params, "Schema Register params object is null");
+        Validate.notNull(params, SCHEMA_REGISTER_PARAMS_OBJECT_IS_NULL);
 
         return toFullSchemaInfo(
                 schemaRegistryStore.registerSchema(params.getSubject(), params.getParsedSchema()));
@@ -253,6 +255,8 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
                 globalCompatibilityLevel(schemaEntity.isCompatibilityLevelGlobal()).
                 mode(schemaEntity.getMode()).
                 deleted(schemaEntity.isDeleted()).
+                createdTimestamp(schemaEntity.getCreatedTimestamp()).
+                deletedTimestamp(schemaEntity.getDeletedTimestamp()).
                 versionLatest(schemaEntity.isVersionLatest()).
                 metadata(
                         metadataStore.getCollection(

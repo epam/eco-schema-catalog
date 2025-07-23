@@ -51,6 +51,8 @@ class SchemaDocumentConverterTest {
         softly.assertThat(schemaDocument.getVersion()).isEqualTo(schemaInfo.getVersion());
 
         softly.assertThat(schemaDocument.getVersionLatest()).isNotNull();
+        softly.assertThat(schemaDocument.getCreatedTimestamp()).isNotNull();
+        softly.assertThat(schemaDocument.getDeletedTimestamp()).isNotNull();
 
         softly.assertThat(schemaInfo.isVersionLatest()).isEqualTo(schemaDocument.getVersionLatest());
 
@@ -100,7 +102,7 @@ class SchemaDocumentConverterTest {
 
     @Test
     void testSubjectAndVersionConverted() {
-        SubjectAndVersion subjectAndVersion = SubjectAndVersion.with("TestSubject", 42);
+        SubjectAndVersion subjectAndVersion = SubjectAndVersion.with("TestSubject", 42, 1L);
 
         SchemaDocument schemaDocument = SchemaDocumentConverter.convert(subjectAndVersion);
 
@@ -110,6 +112,7 @@ class SchemaDocumentConverterTest {
         softly.assertThat(schemaDocument.getEcoId()).isNotNull();
         softly.assertThat(schemaDocument.getSubject()).isEqualTo("TestSubject");
         softly.assertThat(schemaDocument.getVersion()).isEqualTo(42);
+        softly.assertThat(schemaDocument.getDeletedTimestamp()).isEqualTo(1L);
     }
 
 }

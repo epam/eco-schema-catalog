@@ -615,6 +615,9 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         SchemaValue oldValue = null;
         if (value != null) {
             oldValue = subjectSchemas.put(key.getVersion(), value);
+            if (oldValue != null && value.isDeleted() && value.getCreatedTimestamp() == null) {
+                value.setCreatedTimestamp(oldValue.getCreatedTimestamp());
+            }
         } else {
             oldValue = subjectSchemas.remove(key.getVersion());
         }
@@ -623,10 +626,11 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
             return Collections.emptySet();
         }
 
-        populateSchemasDeleteIfNeededAndGetAffeted(key.getSubject());
+        populateSchemasDeleteIfNeededAndGetAffected(key.getSubject());
 
         SubjectAndVersion subjectAndVersion =
-                new SubjectAndVersion(key.getSubject(), key.getVersion());
+                new SubjectAndVersion(key.getSubject(), key.getVersion(),
+                        (value != null && value.isDeleted()) ? value.getDeletedTimestamp() : null);
 
         Set<SubjectAndVersion> affected = new HashSet<>();
         affected.add(subjectAndVersion);
@@ -654,7 +658,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
             return Collections.emptySet();
         }
 
-        Set<SubjectAndVersion> affected = populateSchemasDeleteIfNeededAndGetAffeted(key.getSubject());
+        Set<SubjectAndVersion> affected = populateSchemasDeleteIfNeededAndGetAffected(key.getSubject());
 
         // subject DELETE semaphore
         if (!affected.isEmpty()) {
@@ -664,7 +668,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         return affected;
     }
 
-    private Set<SubjectAndVersion> populateSchemasDeleteIfNeededAndGetAffeted(String subject) {
+    private Set<SubjectAndVersion> populateSchemasDeleteIfNeededAndGetAffected(String subject) {
         DeleteSubjectValue deleteSubject = deleteSubjectCache.get(subject);
         if (deleteSubject == null) {
             return Collections.emptySet();
@@ -679,7 +683,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         for (SchemaValue schema : subjectSchemas.values()) {
             if (!schema.isDeleted() && schema.getVersion() <= deleteSubject.getVersion()) {
                 schema.setDeleted(true);
-                affected.add(new SubjectAndVersion(subject, schema.getVersion()));
+                schema.setDeletedTimestamp(deleteSubject.getDeletedTimestamp());
+                affected.add(new SubjectAndVersion(subject, schema.getVersion(), deleteSubject.getDeletedTimestamp()));
             }
         }
         return affected;
@@ -746,6 +751,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         schemaEntity.setSchema(schemaValue.getSchema());
         schemaEntity.setVersionLatest(subjectSchemas.lastKey().equals(schemaValue.getVersion()));
         schemaEntity.setDeleted(schemaValue.isDeleted());
+        schemaEntity.setCreatedTimestamp(schemaValue.getCreatedTimestamp());
+        schemaEntity.setDeletedTimestamp(schemaValue.getDeletedTimestamp());
         return schemaEntity;
     }
 

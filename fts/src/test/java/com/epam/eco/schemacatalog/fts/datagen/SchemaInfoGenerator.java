@@ -117,14 +117,17 @@ public class SchemaInfoGenerator {
     public static final Schema AVRO_SCHEMA = new Schema.Parser().parse(SCHEMA);
 
     public static FullSchemaInfo randomFull(String subject, int latestSchemaVersion) {
+        Random random = new Random();
         return FullSchemaInfo.builder()
                 .subject(subject)
                 .schemaJson(SCHEMA)
-                .version(Math.max(1, new Random().nextInt(latestSchemaVersion)))
-                .schemaRegistryId(new Random().nextInt(100))
+                .version(Math.max(1, random.nextInt(latestSchemaVersion)))
+                .schemaRegistryId(random.nextInt(100))
+                .createdTimestamp(random.nextLong())
+                .deletedTimestamp(random.nextLong())
                 .compatibilityLevel(CompatibilityLevel.BACKWARD)
                 .mode(Mode.READWRITE)
-                .deleted(new Random().nextBoolean())
+                .deleted(random.nextBoolean())
                 .build();
     }
 

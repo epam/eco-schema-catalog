@@ -38,6 +38,8 @@ import com.epam.eco.schemacatalog.rest.view.SchemaEntity;
 import com.epam.eco.schemacatalog.rest.view.SchemaField;
 import com.epam.eco.schemacatalog.rest.view.SchemaProfile;
 
+import static com.epam.eco.schemacatalog.rest.utils.SchemaInfoTestData.CREATED_TIMESTAMP;
+import static com.epam.eco.schemacatalog.rest.utils.SchemaInfoTestData.DELETED_TIMESTAMP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -247,6 +249,8 @@ class SchemaProfileCreatorTest {
                 .schemaMetadata(FormattedMetadata.with(SchemaInfoTestData.getSchemaMetadata(now), HtmlPartFormatter.INSTANCE))
                 .schemas(schemaEntities)
                 .deleted(false)
+                .createdTimestamp(CREATED_TIMESTAMP)
+                .deletedTimestamp(DELETED_TIMESTAMP)
                 .build();
 
         assertEquals(assertProfile, profile);

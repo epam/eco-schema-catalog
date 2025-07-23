@@ -35,6 +35,8 @@ public final class SchemaEntity {
     private String schema;
     private boolean versionLatest;
     private boolean deleted;
+    private Long createdTimestamp;
+    private Long deletedTimestamp;
 
     public int getId() {
         return id;
@@ -108,6 +110,22 @@ public final class SchemaEntity {
         this.deleted = deleted;
     }
 
+    public Long getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(Long createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
+    public void setDeletedTimestamp(Long deletedTimestamp) {
+        this.deletedTimestamp = deletedTimestamp;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -126,6 +144,8 @@ public final class SchemaEntity {
                 Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.schema, that.schema) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
+                Objects.equals(this.createdTimestamp, that.createdTimestamp) &&
+                Objects.equals(this.deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(this.deleted, that.deleted);
     }
 
@@ -140,6 +160,8 @@ public final class SchemaEntity {
                 mode,
                 schema,
                 versionLatest,
+                createdTimestamp,
+                deletedTimestamp,
                 deleted);
     }
 
@@ -154,6 +176,8 @@ public final class SchemaEntity {
                 ", mode: " + mode +
                 ", schema: " + schema +
                 ", versionLatest: " + versionLatest +
+                ", createdTimestamp: " + createdTimestamp +
+                ", deletedTimestamp: " + deletedTimestamp +
                 ", deleted: " + deleted +
                 "}";
     }

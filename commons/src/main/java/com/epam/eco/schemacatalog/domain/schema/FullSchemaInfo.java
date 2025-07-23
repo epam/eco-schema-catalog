@@ -48,6 +48,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
     protected final Mode mode;
     protected final boolean deleted;
     protected final boolean versionLatest;
+    protected final Long createdTimestamp;
+    protected final Long deletedTimestamp;
     @JsonSerialize(keyUsing = MetadataKeySerializer.class)
     @JsonDeserialize(keyUsing = MetadataKeyDeserializer.class)
     private final Map<MetadataKey, MetadataValue> metadata;
@@ -64,6 +66,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             @JsonProperty("mode") Mode mode,
             @JsonProperty("deleted") boolean deleted,
             @JsonProperty("versionLatest") boolean versionLatest,
+            @JsonProperty("createdTimestamp") Long createdTimestamp,
+            @JsonProperty("deletedTimestamp") Long deletedTimestamp,
             @JsonProperty("metadata") Map<MetadataKey, MetadataValue> metadata) {
         super(subject, version, schemaRegistryId, schemaJson);
 
@@ -75,6 +79,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         this.mode = mode;
         this.deleted = deleted;
         this.versionLatest = versionLatest;
+        this.createdTimestamp = createdTimestamp;
+        this.deletedTimestamp = deletedTimestamp;
         this.metadata =
                 metadata != null ?
                         Collections.unmodifiableMap(new HashMap<>(metadata)) :
@@ -103,6 +109,14 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         return versionLatest;
     }
 
+    public Long getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
     @Override
     public Map<MetadataKey, MetadataValue> getMetadata() {
         return metadata;
@@ -123,6 +137,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                 mode,
                 deleted,
                 versionLatest,
+                createdTimestamp,
+                deletedTimestamp,
                 metadata);
     }
 
@@ -139,6 +155,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                 Objects.equals(this.mode, that.mode) &&
                 Objects.equals(this.deleted, that.deleted) &&
                 Objects.equals(this.versionLatest, that.versionLatest) &&
+                Objects.equals(this.createdTimestamp, that.createdTimestamp) &&
+                Objects.equals(this.deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(this.metadata, that.metadata);
     }
 
@@ -154,6 +172,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                 ", mode: " + mode +
                 ", deleted: " + deleted +
                 ", versionLatest: " + versionLatest +
+                ", createdTimestamp: " + createdTimestamp +
+                ", deletedTimestamp: " + deletedTimestamp +
                 ", metadata: " + metadata +
                 "}";
     }
@@ -200,7 +220,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
         protected boolean deleted = false;
         protected boolean versionLatest = false;
         protected Map<MetadataKey, MetadataValue> metadata = new HashMap<>();
-
+        protected Long createdTimestamp;
+        protected Long deletedTimestamp;
         protected Builder() {
         }
 
@@ -217,6 +238,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             this.deleted = origin.deleted;
             this.versionLatest = origin.versionLatest;
             this.metadata.putAll(origin.metadata);
+            this.createdTimestamp = origin.createdTimestamp;
+            this.deletedTimestamp = origin.deletedTimestamp;
         }
 
         public T compatibilityLevel(String compatibilityLevel) {
@@ -272,6 +295,16 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
             return (T) this;
         }
 
+        public T createdTimestamp(Long createdTimestamp) {
+            this.createdTimestamp = createdTimestamp;
+            return (T) this;
+        }
+
+        public T deletedTimestamp(Long deletedTimestamp) {
+            this.deletedTimestamp = deletedTimestamp;
+            return (T) this;
+        }
+
         @Override
         public FullSchemaInfo build() {
             return new FullSchemaInfo(
@@ -284,6 +317,8 @@ public class FullSchemaInfo extends BasicSchemaInfo implements MetadataAware<Ful
                     mode,
                     deleted,
                     versionLatest,
+                    createdTimestamp,
+                    deletedTimestamp,
                     metadata);
         }
 

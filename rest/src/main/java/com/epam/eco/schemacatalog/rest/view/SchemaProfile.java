@@ -43,6 +43,8 @@ public final class SchemaProfile {
     private final boolean deleted;
     private final FormattedMetadata schemaMetadata;
     private final Set<SchemaEntity> schemas;
+    private final Long createdTimestamp;
+    private final Long deletedTimestamp;
 
     public SchemaProfile(
             @JsonProperty("subject") String subject,
@@ -54,6 +56,8 @@ public final class SchemaProfile {
             @JsonProperty("versionLatest") boolean versionLatest,
             @JsonProperty("schemaMetadata") FormattedMetadata schemaMetadata,
             @JsonProperty("schemas") Set<SchemaEntity> schemas,
+            @JsonProperty("createdTimestamp") Long createdTimestamp,
+            @JsonProperty("deletedTimestamp") Long deletedTimestamp,
             @JsonProperty("deleted") boolean deleted) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.isTrue(version >= 0, "Version is invalid");
@@ -73,6 +77,8 @@ public final class SchemaProfile {
         this.versionLatest = versionLatest;
         this.deleted = deleted;
         this.schemaMetadata = schemaMetadata;
+        this.createdTimestamp = createdTimestamp;
+        this.deletedTimestamp = deletedTimestamp;
         this.schemas = schemas == null ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(schemas));
     }
 
@@ -116,6 +122,15 @@ public final class SchemaProfile {
         return schemas;
     }
 
+    public Long getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -130,13 +145,16 @@ public final class SchemaProfile {
                globalCompatibilityLevel == that.globalCompatibilityLevel &&
                mode == that.mode &&
                Objects.equals(schemaMetadata, that.schemaMetadata) &&
+               Objects.equals(createdTimestamp, that.createdTimestamp) &&
+               Objects.equals(deletedTimestamp, that.deletedTimestamp) &&
                Objects.equals(schemas, that.schemas);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(subject, version, schemaRegistryId,
-                compatibilityLevel, globalCompatibilityLevel, mode, versionLatest, deleted, schemaMetadata, schemas);
+                compatibilityLevel, globalCompatibilityLevel, mode, versionLatest, deleted,
+                schemaMetadata, schemas, createdTimestamp, deletedTimestamp);
     }
 
     @Override
@@ -152,6 +170,8 @@ public final class SchemaProfile {
                ", deleted=" + deleted +
                ", schemaMetadata=" + schemaMetadata +
                ", schemas=" + schemas +
+               ", createdTimestamp=" + createdTimestamp +
+               ", deletedTimestamp=" + deletedTimestamp +
                '}';
     }
 
@@ -179,6 +199,9 @@ public final class SchemaProfile {
         private boolean deleted;
         private FormattedMetadata schemaMetadata;
         private Set<SchemaEntity> schemas;
+        private Long createdTimestamp;
+        private Long deletedTimestamp;
+
 
         public Builder(SchemaProfile profile) {
             if (profile == null) {
@@ -193,6 +216,8 @@ public final class SchemaProfile {
             this.mode = profile.mode;
             this.versionLatest = profile.versionLatest;
             this.deleted = profile.deleted;
+            this.createdTimestamp = profile.createdTimestamp;
+            this.deletedTimestamp = profile.deletedTimestamp;
             this.schemaMetadata = profile.schemaMetadata;
             this.schemas = new HashSet<>(profile.schemas);
         }
@@ -219,6 +244,16 @@ public final class SchemaProfile {
 
         public Builder globalCompatibilityLevel(boolean globalCompatibilityLevel) {
             this.globalCompatibilityLevel = globalCompatibilityLevel;
+            return this;
+        }
+
+        public Builder createdTimestamp(Long createdTimestamp) {
+            this.createdTimestamp = createdTimestamp;
+            return this;
+        }
+
+        public Builder deletedTimestamp(Long deletedTimestamp) {
+            this.deletedTimestamp = deletedTimestamp;
             return this;
         }
 
@@ -266,7 +301,7 @@ public final class SchemaProfile {
 
         public SchemaProfile build() {
             return new SchemaProfile(subject, version, schemaRegistryId, compatibilityLevel, globalCompatibilityLevel, mode,
-                    versionLatest, schemaMetadata, schemas, deleted);
+                    versionLatest, schemaMetadata, schemas, createdTimestamp, deletedTimestamp, deleted);
         }
     }
 }

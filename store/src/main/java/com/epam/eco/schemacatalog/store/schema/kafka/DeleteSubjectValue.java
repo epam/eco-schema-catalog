@@ -24,6 +24,7 @@ public class DeleteSubjectValue extends Value {
 
     private String subject;
     private Integer version;
+    private Long deletedTimestamp;
 
     public String getSubject() {
         return subject;
@@ -38,9 +39,17 @@ public class DeleteSubjectValue extends Value {
         this.version = version;
     }
 
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
+    public void setDeletedTimestamp(Long deletedTimestamp) {
+        this.deletedTimestamp = deletedTimestamp;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(subject, version);
+        return Objects.hash(subject, version, deletedTimestamp);
     }
 
     @Override
@@ -55,6 +64,7 @@ public class DeleteSubjectValue extends Value {
         DeleteSubjectValue that = (DeleteSubjectValue)obj;
         return
                 Objects.equals(this.subject, that.subject) &&
+                Objects.equals(this.deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(this.version, that.version);
     }
 
@@ -63,6 +73,7 @@ public class DeleteSubjectValue extends Value {
         return
                 "{subject: " + subject +
                 ", version: " + version +
+                ", deletedTimestamp: " + deletedTimestamp +
                 "}";
     }
 

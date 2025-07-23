@@ -64,6 +64,8 @@ public final class SchemaDocument {
     private Set<String> alias;
     private Set<KeyValue> property;
     private MetadataDocument metadata;
+    private Long createdTimestamp;
+    private Long deletedTimestamp;
 
     public String getEcoId() {
         return ecoId;
@@ -233,6 +235,22 @@ public final class SchemaDocument {
         this.metadata = metadata;
     }
 
+    public Long getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(Long createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public Long getDeletedTimestamp() {
+        return deletedTimestamp;
+    }
+
+    public void setDeletedTimestamp(Long deletedTimestamp) {
+        this.deletedTimestamp = deletedTimestamp;
+    }
+
     public void addPath(String path) {
         path = StringUtils.stripToNull(path);
         if (path == null) {
@@ -371,6 +389,8 @@ public final class SchemaDocument {
                 Objects.equals(path, that.path) &&
                 Objects.equals(alias, that.alias) &&
                 Objects.equals(property, that.property) &&
+                Objects.equals(createdTimestamp, that.createdTimestamp) &&
+                Objects.equals(deletedTimestamp, that.deletedTimestamp) &&
                 Objects.equals(metadata, that.metadata);
     }
 
@@ -397,7 +417,9 @@ public final class SchemaDocument {
                 path,
                 alias,
                 property,
-                metadata);
+                metadata,
+                createdTimestamp,
+                deletedTimestamp);
     }
 
     @Override
@@ -423,6 +445,8 @@ public final class SchemaDocument {
                 ", path: " + path +
                 ", alias: " + alias +
                 ", property: " + property +
+                ", createdTimestamp: " + createdTimestamp +
+                ", deletedTimestamp: " + deletedTimestamp +
                 ", metadata: " + metadata +
                 "}";
     }

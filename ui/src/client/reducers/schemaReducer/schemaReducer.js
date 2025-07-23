@@ -70,6 +70,8 @@ const initialState = {
   compatibilityLevels: [],
   schemaNameFilter: '',
   schemaRegistryId: null,
+  createdTimestamp: null,
+  deletedTimestamp: null,
 };
 
 const schemaReducer = (state = initialState, action) => {
@@ -97,6 +99,8 @@ const schemaReducer = (state = initialState, action) => {
     metadataFormattedDoc,
     isSaved,
     schemaRegistryId,
+    createdTimestamp,
+    deletedTimestamp,
   } = action;
   switch (type) {
     case SELECT_SCHEMA: {
@@ -134,6 +138,8 @@ const schemaReducer = (state = initialState, action) => {
         aggregations: aggr,
         globalCompatibilityLevel,
         schemaRegistryId,
+        createdTimestamp,
+        deletedTimestamp,
       };
     }
 

@@ -57,6 +57,8 @@ public abstract class SchemaDocumentConverter {
         document.setGlobalCompatibility(schemaInfo.isGlobalCompatibilityLevel());
         document.setMode(schemaInfo.getMode().name());
         document.setDeleted(schemaInfo.isDeleted());
+        document.setCreatedTimestamp(schemaInfo.getCreatedTimestamp());
+        document.setDeletedTimestamp(schemaInfo.getDeletedTimestamp());
 
         if (schemaInfo.getSchemaAvro().getType() == Type.RECORD) {
             document.setRootName(schemaInfo.getSchemaAvro().getName());
@@ -114,6 +116,8 @@ public abstract class SchemaDocumentConverter {
         document.setSubject(subjectAndVersion.getSubject());
         document.setVersion(subjectAndVersion.getVersion());
         document.setEcoId(EcoIdUtils.formatId(subjectAndVersion));
+        document.setDeletedTimestamp(subjectAndVersion.getDeletedTimestamp());
+
         return document;
     }
 

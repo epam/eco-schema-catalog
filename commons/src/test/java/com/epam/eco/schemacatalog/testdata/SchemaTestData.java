@@ -134,14 +134,17 @@ public class SchemaTestData {
     }
 
     public static FullSchemaInfo randomFullSchemaInfo(String subject, Integer version) {
+        Random random = new Random();
         return FullSchemaInfo.builder().
                 subject(subject != null ? subject : UUID.randomUUID().toString()).
-                version(version != null ? version : new Random().nextInt(1000)).
+                version(version != null ? version : random.nextInt(1000)).
                 schemaRegistryId(new Random().nextInt(1000)).
                 schemaJson(SchemaTestData.SCHEMA1_JSON).
                 compatibilityLevel(CompatibilityLevel.BACKWARD).
                 mode(Mode.READWRITE).
-                deleted(false).
+                deleted(true).
+                createdTimestamp(random.nextLong()).
+                deletedTimestamp(random.nextLong()).
                 versionLatest(true).
                 appendMetadata(MetadataTestData.randomKey(), MetadataTestData.randomValue()).
                 appendMetadata(MetadataTestData.randomKey(), MetadataTestData.randomValue()).
