@@ -30,6 +30,8 @@ import MetadataCell from './MetadataCell/index';
 
 import './SchemaTable.scss';
 import FieldNameCell from './FieldNameCell/FieldNameCell';
+const {ResizableBox} = require('react-resizable');
+import 'react-resizable/css/styles.css'
 
 class SchemaTable extends PureComponent {
   static propTypes = {
@@ -100,6 +102,7 @@ class SchemaTable extends PureComponent {
             this.tableHeader.map(item => (
               <div key={item.key} className="cell header-cell">
                 {this.getHeaderCell(item.customHeaderCell, item.alias)}
+                <ResizableBox  axis="x" width={20} height={35} />
               </div>
             ))
           }

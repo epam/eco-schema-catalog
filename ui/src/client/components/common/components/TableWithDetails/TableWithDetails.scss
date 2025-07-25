@@ -112,3 +112,18 @@ $borderColor: rgb(209, 212, 221);
 
   }
 }
+
+.col-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 2;
+  background: transparent;
+  transition: background 0.2s;
+}
+.col-resizer:hover {
+  background: rgba(0,0,0,0.08);
+}
