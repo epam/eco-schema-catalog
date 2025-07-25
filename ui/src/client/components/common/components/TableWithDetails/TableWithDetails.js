@@ -50,7 +50,58 @@ class TableWithDetails extends Component {
       numberOfRows: 10,
       selectedRowIndex: props.selectedRowIndex,
       isExpanded: false,
+      columnWidths: props.headers ? props.headers.map(() => null) : [],
+      resizing: null,
     };
+    this.tableRef = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.headers !== this.props.headers) {
+      this.setState({
+        columnWidths: this.props.headers.map((header) => header.weight),
+      });
+    }
+  }
+
+  handleResizeStart = (e, colIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const startWidth = this.getColumnWidthPx(colIndex);
+    this.setState({
+      resizing: { colIndex, startX, startWidth },
+    });
+    document.addEventListener('mousemove', this.handleResizing);
+    document.addEventListener('mouseup', this.handleResizeEnd);
+  }
+
+  handleResizing = (e) => {
+    const { resizing, columnWidths } = this.state;
+    if (!resizing) return;
+    const { colIndex, startX, startWidth } = resizing;
+    const delta = e.clientX - startX;
+    const newWidth = Math.max(50, startWidth + delta); // min width 50px
+    const newColumnWidths = [...columnWidths];
+    newColumnWidths[colIndex] = newWidth;
+    this.setState({ columnWidths: newColumnWidths });
+  }
+
+  handleResizeEnd = () => {
+    this.setState({ resizing: null });
+    document.removeEventListener('mousemove', this.handleResizing);
+    document.removeEventListener('mouseup', this.handleResizeEnd);
+  }
+
+  getColumnWidthPx = (colIndex) => {
+    // Try to get actual px width from DOM, fallback to 120px
+    if (this.tableRef.current) {
+      const headerCells = this.tableRef.current.querySelectorAll('.row.header .cell');
+      if (headerCells[colIndex]) {
+        return headerCells[colIndex].offsetWidth;
+      }
+    }
+    return 120;
   }
 
   handleRowClick = (e, rowIndex) => {
@@ -102,6 +153,7 @@ class TableWithDetails extends Component {
       numberOfRows,
       selectedRowIndex,
       isExpanded,
+      columnWidths,
     } = this.state;
     const tableHeight = (numberOfRows + 1) * rowHeight;
     const isHaveDetails = !!React.Children.count(children);
@@ -110,12 +162,21 @@ class TableWithDetails extends Component {
     const detailsContainerWeight = tableData[0] ? tableData[0].weights.slice(1)
       .reduce((acc, cur) => acc + cur) : 1;
 
+    // Calculate style for each column
+    const getColStyle = (colIndex) => {
+      if (columnWidths && columnWidths[colIndex] != null) {
+        return { width: columnWidths[colIndex], minWidth: 50, flex: 'none' };
+      }
+      return { flex: headers[colIndex].weight };
+    };
+
     return (
       <div className="table-with-details">
 
         <div
           className="table"
           style={{ minHeight: tableHeight }}
+          ref={this.tableRef}
         >
 
           <div
@@ -123,12 +184,29 @@ class TableWithDetails extends Component {
             className="row header"
           >
             {
-              headers.map(header => (
+              headers.map((header, colIndex) => (
                 <div
                   key={header.key}
-                  style={{ flex: header.weight }}
+                  style={getColStyle(colIndex)}
                 >
-                  <div className="cell">{header.alias || header.key}</div>
+                  <div className="cell" style={{ position: 'relative', userSelect: 'none' }}>
+                    {header.alias || header.key}
+                    {colIndex < headers.length - 1 && (
+                      <div
+                        className="col-resizer"
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          height: '100%',
+                          width: 6,
+                          cursor: 'col-resize',
+                          zIndex: 2,
+                        }}
+                        onMouseDown={e => this.handleResizeStart(e, colIndex)}
+                      />
+                    )}
+                  </div>
                 </div>
               ))
             }
@@ -151,10 +229,15 @@ class TableWithDetails extends Component {
                 onMouseUp={e => this.handleRowKeyUp(e, rowIndex)}
               >
                 {
-                  rowItem.values.map((value, index) => (
+                  rowItem.values.map((value, colIndex) => (
                     <div
-                      key={rowItem.id + headers[index].key}
-                      style={{ flex: rowItem.weights[index], minWidth: 0 }}
+                      key={rowItem.id + headers[colIndex].key}
+                      style={{
+                        ...getColStyle(colIndex),
+                        minWidth: 0, // allow shrinking
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                      }}
                     >
                       <div className="cell">{value}</div>
                     </div>
