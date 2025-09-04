@@ -17,6 +17,7 @@ package com.epam.eco.schemacatalog.rest.controller;
 
 import java.io.IOException;
 
+import com.epam.eco.schemacatalog.rest.utils.AuditLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -97,6 +98,7 @@ public class SchemaController {
                 .schemaJson(request.getSchemaJson())
                 .build();
         FullSchemaInfo fullSchemaInfo = schemaCatalogStore.registerSchema(params);
+        AuditLogger.logSchemaRegistration(request.getSubject(), fullSchemaInfo.getVersion());
         return VersionResponse.with(fullSchemaInfo.getVersion());
     }
 
@@ -116,6 +118,7 @@ public class SchemaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSubject(@PathVariable("subject") String subject) {
         schemaCatalogStore.deleteSubject(subject);
+        AuditLogger.logSubjectDeletion(subject);
     }
 
     @DeleteMapping("/{subject}/{version}")
@@ -124,6 +127,7 @@ public class SchemaController {
             @PathVariable("subject") String subject,
             @PathVariable("version") Integer version) {
         schemaCatalogStore.deleteSchema(subject, version);
+        AuditLogger.logSchemaDeletion(subject, version);
     }
 
     @PutMapping("/reset/{subject}")
