@@ -40,5 +40,9 @@
         <Class name="com.epam.eco.schemacatalog.rest.view.TagDescription$Builder" />
         <Bug pattern="EI_EXPOSE_REP2" />
     </Match>
+    <Match>
+        <Class name="com.epam.eco.schemacatalog.rest.utils.AuditLogger" />
+        <Bug pattern="CRLF_INJECTION_LOGS" />
+    </Match>
 
 </FindBugsFilter>
