@@ -97,9 +97,9 @@ public class SchemaController {
                 .subject(request.getSubject())
                 .schemaJson(request.getSchemaJson())
                 .build();
-        FullSchemaInfo fullSchemaInfo = schemaCatalogStore.registerSchema(params);
-        AuditLogger.logSchemaRegistration(request.getSubject(), fullSchemaInfo.getVersion());
-        return VersionResponse.with(fullSchemaInfo.getVersion());
+        int version = schemaCatalogStore.registerSchema(params);
+        AuditLogger.logSchemaRegistration(request.getSubject(), version);
+        return VersionResponse.with(version);
     }
 
     @PutMapping("/{subject}")

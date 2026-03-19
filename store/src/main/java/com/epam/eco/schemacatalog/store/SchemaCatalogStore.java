@@ -38,7 +38,7 @@ public interface SchemaCatalogStore {
     SubjectSchemas<FullSchemaInfo> getSubjectSchemas(String subject);
     boolean testSchemaCompatible(SchemaRegisterParams params);
     SchemaCompatibilityCheckResult testSchemaCompatibleDetailed(SchemaRegisterParams params);
-    FullSchemaInfo registerSchema(SchemaRegisterParams params);
+    int registerSchema(SchemaRegisterParams params);
     void updateSubject(SubjectCompatibilityUpdateParams params);
     void deleteSubject(String subject);
     void deleteSchema(String subject, int version);

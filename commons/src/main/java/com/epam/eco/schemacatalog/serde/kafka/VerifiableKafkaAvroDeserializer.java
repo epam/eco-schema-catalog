@@ -40,6 +40,7 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
 
     public static final String KEY_VERIFIER_CLASS_CONFIG = KEY_VERIFIER_CONFIG_PREFIX + "class";
     public static final String VALUE_VERIFIER_CLASS_CONFIG = VALUE_VERIFIER_CONFIG_PREFIX + "class";
+    private static final int MAGIC_BYTE = 0;
 
     private Map<String, ?> configs;
     private boolean isKey;
@@ -94,7 +95,7 @@ public final class VerifiableKafkaAvroDeserializer extends KafkaAvroDeserializer
         return buffer.getInt();
     }
 
-    protected ByteBuffer getByteBuffer(byte[] payload) {
+    private ByteBuffer getByteBuffer(byte[] payload) {
         ByteBuffer buffer = ByteBuffer.wrap(payload);
         if (buffer.get() != MAGIC_BYTE) {
           throw new SerializationException("Unknown magic byte!");

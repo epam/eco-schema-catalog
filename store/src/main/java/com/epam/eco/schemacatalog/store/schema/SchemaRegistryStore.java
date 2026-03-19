@@ -56,9 +56,9 @@ public interface SchemaRegistryStore {
 
     boolean testSchemaCompatible(String subject, ParsedSchema schema);
 
-    SchemaEntity registerSchema(String subject, Schema schema);
+    int registerSchema(String subject, Schema schema);
 
-    SchemaEntity registerSchema(String subject, ParsedSchema schema);
+    int registerSchema(String subject, ParsedSchema schema);
 
     void deleteSubject(String subject);
 

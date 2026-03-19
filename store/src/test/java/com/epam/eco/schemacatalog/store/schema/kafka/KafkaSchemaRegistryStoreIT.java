@@ -15,19 +15,30 @@
  */
 package com.epam.eco.schemacatalog.store.schema.kafka;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.eco.commons.avro.AvroUtils;
@@ -36,9 +47,11 @@ import com.epam.eco.schemacatalog.store.schema.SchemaRegistryStore;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -46,14 +59,72 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Config.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Disabled("Manual, requires schema-registry running, see docker-compose in resources dir")
+@ContextConfiguration(initializers = KafkaSchemaRegistryStoreIT.DynamicTimestampInitializer.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestPropertySource(properties = {
+        "eco.schemacatalog.store.schema-registry.urls=<put_here_url>",
+        "eco.schemacatalog.store.kafka.bootstrap-servers=<put_here_url>"
+})
+@Disabled("put kafka and schema-registry urls")
 class KafkaSchemaRegistryStoreIT {
+
+    public static class DynamicTimestampInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            ConfigurableEnvironment environment = applicationContext.getEnvironment();
+            Map<String, Object> props = new HashMap<>();
+            //speedup bootstrap _scheme topic for test purpose
+            props.put("eco.schemacatalog.store.kafka.bootstrap-start-timestamp-ms",
+                    System.getProperty("BOOTSTRAP_START_TIMESTAMP_MS",
+                            String.valueOf(Instant.now().toEpochMilli())));
+
+            MapPropertySource propertySource = new MapPropertySource("dynamicProperties", props);
+            environment.getPropertySources().addFirst(propertySource);
+        }
+    }
 
     @Autowired
     private SchemaRegistryStore schemaRegistryStore;
 
     @Test
+    @Order(1)
+    void testSchemaRegisteredAndDeleted() {
+        String subject = "test_register_and_delete_schema_" + System.currentTimeMillis();
+        Schema schema = Schema.create(Type.LONG);
+
+        int initialSchemaVersion = schemaRegistryStore.registerSchema(subject, schema);
+        assertTrue(initialSchemaVersion > 0);
+
+        // and one more time
+        //return cached response and the same scheme won't be created
+        int skippedSchemaVersion = schemaRegistryStore.registerSchema(subject, schema);
+        assertEquals(initialSchemaVersion, skippedSchemaVersion);
+
+        schemaRegistryStore.deleteSchema(subject, initialSchemaVersion);
+
+        //it was performed only soft delete by schema-registryv
+        SchemaEntity schemaEntityDeleted = schemaRegistryStore.getSchema(subject, initialSchemaVersion);
+        assertNotNull(schemaEntityDeleted);
+        assertTrue(schemaEntityDeleted.isDeleted());
+        assertNotNull(schemaEntityDeleted.getDeletedTimestamp());
+        assertNotNull(schemaEntityDeleted.getCreatedTimestamp());
+        assertTrue(schemaEntityDeleted.getDeletedTimestamp() > schemaEntityDeleted.getCreatedTimestamp());
+
+        // the same scheme can be created only after deletion
+        //schema-registry perform hard delete previous version with the creation the new the same schema
+        int newVersion = schemaRegistryStore.registerSchema(subject, schema);
+        assertTrue(initialSchemaVersion < newVersion);
+        assertThat(schemaRegistryStore.getSchemas(subject)).hasSize(1);
+
+        SchemaEntity schemaEntity = schemaRegistryStore.getSchema(subject, newVersion);
+        assertNotNull(schemaEntity);
+        assertFalse(schemaEntity.isDeleted());
+        assertNull(schemaEntity.getDeletedTimestamp());
+        assertNotNull(schemaEntity.getCreatedTimestamp());
+    }
+
+    @Test
+    @Order(2)
     void fetchesSchemaDataFromKafka() {
         List<String> allSubjects = schemaRegistryStore.getAllSubjects();
         assertNotNull(allSubjects);
@@ -103,29 +174,7 @@ class KafkaSchemaRegistryStoreIT {
     }
 
     @Test
-    void testSchemaRegisteredAndDeleted() {
-        String subject = "test_register_and_delete_schema_" + System.currentTimeMillis();
-        Schema schema = Schema.create(Type.LONG);
-
-        SchemaEntity schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
-        assertNotNull(schemaEntity);
-        assertNotNull(schemaEntity.getCreatedTimestamp());
-
-        // and one more time
-        schemaEntity = schemaRegistryStore.registerSchema(subject, schema);
-        assertNotNull(schemaEntity);
-
-        schemaRegistryStore.deleteSchema(subject, schemaEntity.getVersion());
-
-        schemaEntity = schemaRegistryStore.getSchema(subject, schemaEntity.getVersion());
-        assertNotNull(schemaEntity);
-        assertTrue(schemaEntity.isDeleted());
-        assertNotNull(schemaEntity.getDeletedTimestamp());
-        assertNotNull(schemaEntity.getCreatedTimestamp());
-        assertTrue(schemaEntity.getDeletedTimestamp() > schemaEntity.getCreatedTimestamp());
-    }
-
-    @Test
+    @Order(3)
     void testSubjectDeleted() {
         String schema1 = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"}]}";
         String schema2 = "{\"type\":\"record\",\"name\":\"Test\",\"fields\":[{\"name\":\"f1\",\"type\":\"int\"},{\"name\":\"f2\",\"type\":[\"null\",\"int\"],\"default\": null}]}";
@@ -133,17 +182,17 @@ class KafkaSchemaRegistryStoreIT {
 
         String subject = "test_delete_subject_" + System.currentTimeMillis();
 
-        SchemaEntity schemaEntity1 =
+        int version1 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema1));
-        assertNotNull(schemaEntity1);
+        assertNotNull(version1 > 0);
 
-        SchemaEntity schemaEntity2 =
+        int version2 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema2));
-        assertNotNull(schemaEntity2);
+        assertNotNull(version2 > version1);
 
-        SchemaEntity schemaEntity3 =
+        int version3 =
                 schemaRegistryStore.registerSchema(subject, AvroUtils.schemaFromJson(schema3));
-        assertNotNull(schemaEntity3);
+        assertNotNull(version3 > version2);
 
         schemaRegistryStore.deleteSubject(subject);
 
@@ -159,6 +208,7 @@ class KafkaSchemaRegistryStoreIT {
     }
 
     @Test
+    @Order(4)
     void testSubjectCompatibilityUpdated() {
         String subject = "test_update_subject_compatibility_" + System.currentTimeMillis();
         CompatibilityLevel compatibilityLevel =

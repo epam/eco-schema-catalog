@@ -28,6 +28,7 @@ public class KafkaStoreProperties {
     private String bootstrapServers;
     private Map<String, Object> clientConfig;
     private long bootstrapTimeoutInMs = 60000;
+    private Long bootstrapStartTimestampMs;
 
     public String getBootstrapServers() {
         return bootstrapServers;
@@ -46,6 +47,14 @@ public class KafkaStoreProperties {
     }
     public void setBootstrapTimeoutInMs(long bootstrapTimeoutInMs) {
         this.bootstrapTimeoutInMs = bootstrapTimeoutInMs;
+    }
+
+    public Long getBootstrapStartTimestampMs() {
+        return bootstrapStartTimestampMs;
+    }
+
+    public void setBootstrapStartTimestampMs(Long bootstrapStartTimestampMs) {
+        this.bootstrapStartTimestampMs = bootstrapStartTimestampMs;
     }
 
 }

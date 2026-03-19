@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 import org.apache.avro.Schema;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +47,12 @@ import com.epam.eco.commons.concurrent.ResourceSemaphores;
 import com.epam.eco.commons.concurrent.ResourceSemaphores.ResourceSemaphore;
 import com.epam.eco.commons.kafka.cache.CacheListener;
 import com.epam.eco.commons.kafka.cache.KafkaCache;
+import com.epam.eco.commons.kafka.consumer.bootstrap.BeginningOffsetInitializer;
+import com.epam.eco.commons.kafka.consumer.bootstrap.OffsetInitializer;
+import com.epam.eco.commons.kafka.consumer.bootstrap.TimestampOffsetInitializer;
 import com.epam.eco.schemacatalog.client.ExtendedSchemaRegistryClient;
 import com.epam.eco.schemacatalog.domain.exception.NotFoundException;
+import com.epam.eco.schemacatalog.domain.schema.BasicSchemaInfo;
 import com.epam.eco.schemacatalog.domain.schema.Mode;
 import com.epam.eco.schemacatalog.domain.schema.SubjectAndVersion;
 import com.epam.eco.schemacatalog.store.common.kafka.KafkaStoreProperties;
@@ -192,6 +198,9 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
                 bootstrapTimeoutInMs(properties.getBootstrapTimeoutInMs()).
                 consumerConfig(properties.getClientConfig()).
                 keyValueDecoder(new SchemaRegistryDecoder()).
+                offsetInitializer(properties.getBootstrapStartTimestampMs() != null ?
+                        new TimestampOffsetInitializer(properties.getBootstrapStartTimestampMs()) :
+                        BeginningOffsetInitializer.INSTANCE).
                 readOnly(true).
                 storeData(false).
                 listener(this).
@@ -370,7 +379,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
     @Override
     @Deprecated
-    public SchemaEntity registerSchema(String subject, Schema schema) {
+    public int registerSchema(String subject, Schema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -378,7 +387,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
     }
 
     @Override
-    public SchemaEntity registerSchema(String subject, ParsedSchema schema) {
+    public int registerSchema(String subject, ParsedSchema schema) {
         Validate.notBlank(subject, "Subject is blank");
         Validate.notNull(schema, "Schema is null");
 
@@ -387,7 +396,8 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         lock.readLock().lock();
         try {
-            schemaRegistryClient.registerUnchecked(subject, schema);
+            int schemaId = schemaRegistryClient.registerUnchecked(subject, schema);
+            LOGGER.info("Registered avpo scheme subject {} with schemaId {}.", subject, schemaId);
             version = schemaRegistryClient.getVersionUnchecked(subject, schema);
             if (!schemaExists(subject, version)) {
                 semaphore = schemaSemaphores.createSemaphore(
@@ -406,7 +416,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
             }
         }
 
-        return getSchema(subject, version);
+        return schemaRegistryClient.getSchemaInfo(subject, version).getVersion();
     }
 
     @Override
@@ -614,6 +624,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         SchemaValue oldValue = null;
         if (value != null) {
+            deleteSubjectCache.remove(key.getSubject());
             oldValue = subjectSchemas.put(key.getVersion(), value);
             if (oldValue != null && value.isDeleted() && value.getCreatedTimestamp() == null) {
                 value.setCreatedTimestamp(oldValue.getCreatedTimestamp());
@@ -625,8 +636,6 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
         if (Objects.equals(oldValue, value)) {
             return Collections.emptySet();
         }
-
-        populateSchemasDeleteIfNeededAndGetAffected(key.getSubject());
 
         SubjectAndVersion subjectAndVersion =
                 new SubjectAndVersion(key.getSubject(), key.getVersion(),
@@ -681,7 +690,7 @@ public class KafkaSchemaRegistryStore implements SchemaRegistryStore, CacheListe
 
         Set<SubjectAndVersion> affected = new HashSet<>();
         for (SchemaValue schema : subjectSchemas.values()) {
-            if (!schema.isDeleted() && schema.getVersion() <= deleteSubject.getVersion()) {
+            if (!schema.isDeleted() && schema.getCreatedTimestamp() < deleteSubject.getDeletedTimestamp()) {
                 schema.setDeleted(true);
                 schema.setDeletedTimestamp(deleteSubject.getDeletedTimestamp());
                 affected.add(new SubjectAndVersion(subject, schema.getVersion(), deleteSubject.getDeletedTimestamp()));
