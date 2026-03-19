@@ -823,6 +823,7 @@ public class EcoCachedSchemaRegistryClient implements SchemaRegistryClient {
             idSchemas.clear();
             schemaVersions.clear();
             versionSchemas.clear();
+            schemaRegisterResponse.clear();
         }
 
         public RegisterSchemaResponse getRegisterSchemaBySchema(ParsedSchema schema) {

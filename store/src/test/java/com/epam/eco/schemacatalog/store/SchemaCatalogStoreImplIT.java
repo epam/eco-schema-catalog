@@ -144,12 +144,12 @@ class SchemaCatalogStoreImplIT {
 
         String subject = "test_detailed_compatibility_check_subject_" + System.currentTimeMillis();
 
-        FullSchemaInfo existingSchemaInfo = schemaCatalogStore.registerSchema(
+        int version = schemaCatalogStore.registerSchema(
                 SchemaRegisterParams.builder().
                         subject(subject).
                         schemaJson(existingSchema).
                         build());
-        assertNotNull(existingSchemaInfo);
+        assertTrue(version > 0);
 
         SchemaCompatibilityCheckResult checkResult = schemaCatalogStore.testSchemaCompatibleDetailed(
                 SchemaRegisterParams.builder().

@@ -150,11 +150,10 @@ public class SchemaCatalogStoreImpl implements SchemaCatalogStore, SchemaRegistr
     }
 
     @Override
-    public FullSchemaInfo registerSchema(SchemaRegisterParams params) {
+    public int registerSchema(SchemaRegisterParams params) {
         Validate.notNull(params, SCHEMA_REGISTER_PARAMS_OBJECT_IS_NULL);
 
-        return toFullSchemaInfo(
-                schemaRegistryStore.registerSchema(params.getSubject(), params.getParsedSchema()));
+        return schemaRegistryStore.registerSchema(params.getSubject(), params.getParsedSchema());
     }
 
     @Override
